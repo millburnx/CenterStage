@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.*;
 public class MainTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot robot = new Robot(hardwareMap, gamepad1);
+        Robot robot = new Robot(hardwareMap);
 
         waitForStart();
 

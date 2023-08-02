@@ -7,7 +7,7 @@ public class Robot {
     public Drive drive;
     public Odometry odom;
 
-    public Robot(HardwareMap hardwareMap, Gamepad gamepad) {
+    public Robot(HardwareMap hardwareMap) {
         drive = new Drive(hardwareMap);
         odom = new Odometry(drive);
     }
