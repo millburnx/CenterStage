@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
@@ -12,11 +15,11 @@ import java.util.List;
 public class Drive {
     public boolean isFieldCentric;
     public BNO055IMU imu;
-    public DcMotorEx leftFront;
-    public DcMotorEx leftRear;
-    public DcMotorEx rightFront;
-    public DcMotorEx rightRear;
-    private List<DcMotorEx> motors;
+    public MotorEx leftFront;
+    public MotorEx leftRear;
+    public MotorEx rightFront;
+    public MotorEx rightRear;
+    private List<MotorEx> motors;
 
     public Drive(HardwareMap hardwareMap) {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -24,21 +27,16 @@ public class Drive {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        leftRear = hardwareMap.get(DcMotorEx.class, "backLeft");
-        rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
-        rightRear = hardwareMap.get(DcMotorEx.class, "backRight");
+        leftFront = new MotorEx(hardwareMap, "frontLeft", Motor.GoBILDA.RPM_435);
+        leftRear = new MotorEx(hardwareMap, "backLeft", Motor.GoBILDA.RPM_435);
+        rightFront = new MotorEx(hardwareMap, "frontRight", Motor.GoBILDA.RPM_435);
+        rightRear = new MotorEx(hardwareMap, "backRight", Motor.GoBILDA.RPM_435);
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
-        for (DcMotorEx motor : motors) {
-            motor.setDirection(DcMotor.Direction.FORWARD);
-            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
-            motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
-            motor.setMotorType(motorConfigurationType);
-            motor.setPower(0);
+        for (MotorEx motor : motors) {
+            motor.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
+            motor.set(0);
         }
     }
 
@@ -57,10 +55,10 @@ public class Drive {
         double frontRightPower = (power - strafe - turn) / denominator;
         double backRightPower = (power + strafe - turn) / denominator;
 
-        leftFront.setPower(frontLeftPower);
-        leftRear.setPower(backLeftPower);
-        rightFront.setPower(frontRightPower);
-        rightRear.setPower(backRightPower);
+        leftFront.set(frontLeftPower);
+        leftRear.set(backLeftPower);
+        rightFront.set(frontRightPower);
+        rightRear.set(backRightPower);
     }
 
     public void fieldCentric(double power, double strafe, double turn) {
@@ -73,10 +71,10 @@ public class Drive {
         double frontRightPower = (rotationY - rotationX - turn) / denominator;
         double backRightPower = (rotationY + rotationX - turn) / denominator;
 
-        leftFront.setPower(frontLeftPower);
-        leftRear.setPower(backLeftPower);
-        rightFront.setPower(frontRightPower);
-        rightRear.setPower(backRightPower);
+        leftFront.set(frontLeftPower);
+        leftRear.set(backLeftPower);
+        rightFront.set(frontRightPower);
+        rightRear.set(backRightPower);
     }
 
     public void switchDrive() {
