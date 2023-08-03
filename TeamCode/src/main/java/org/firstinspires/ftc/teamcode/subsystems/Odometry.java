@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -27,5 +28,13 @@ public class Odometry {
                 centerOdom::getDistance,
                 TRACKWIDTH, CENTER_WHEEL_OFFSET
         );
+    }
+
+    public void update() {
+        odometry.updatePose();
+    }
+
+    public Pose2d getPos() {
+        return new Pose2d(odometry.getPose().getX(), odometry.getPose().getY(), odometry.getPose().getHeading());
     }
 }
