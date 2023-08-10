@@ -19,13 +19,16 @@ public class MainTeleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
             double power = -gamepad1.left_stick_y;
-            double strafe = gamepad1.left_stick_x * 1.1;
+            double strafe = gamepad1.left_stick_x;
             double turn = gamepad1.right_stick_x;
 
             robot.drive.moveTeleOp(power, strafe, turn);
 
             telemetry.addData("Field Centric: ", robot.drive.isFieldCentric);
             telemetry.addData("Odom: ", robot.odom.odometry.getPose());
+            telemetry.addData("Power: ", power);
+            telemetry.addData("Strafe: ", strafe);
+            telemetry.addData("Turn: ", turn);
 
             telemetry.update();
 

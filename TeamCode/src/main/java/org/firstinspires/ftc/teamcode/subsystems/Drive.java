@@ -38,6 +38,9 @@ public class Drive {
             motor.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
             motor.set(0);
         }
+
+        leftFront.setInverted(true);
+        leftRear.setInverted(true);
     }
 
     public void moveTeleOp(double power, double strafe, double turn) {
