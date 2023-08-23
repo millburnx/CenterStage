@@ -30,6 +30,15 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Strafe: ", strafe);
             telemetry.addData("Turn: ", turn);
 
+            telemetry.addData("rightFront Pos: ", robot.drive.rightFront.encoder.getPosition());
+            telemetry.addData("leftFront Pos: ", robot.drive.leftFront.encoder.getPosition());
+            telemetry.addData("rightRear Pos: ", robot.drive.rightRear.encoder.getPosition());
+            telemetry.addData("leftRear Pos: ", robot.drive.leftRear.encoder.getPosition());
+
+            telemetry.addData("x: ", robot.drive.x);
+            telemetry.addData("y: ", robot.drive.y);
+            telemetry.addData("heading: ", robot.drive.heading);
+
             telemetry.update();
 
             robot.odom.odometry.updatePose();

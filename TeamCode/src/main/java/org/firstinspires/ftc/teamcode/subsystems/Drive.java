@@ -20,6 +20,7 @@ public class Drive {
     public MotorEx rightFront;
     public MotorEx rightRear;
     private List<MotorEx> motors;
+    public double x, y, heading;
 
     public Drive(HardwareMap hardwareMap) {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -35,12 +36,17 @@ public class Drive {
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
         for (MotorEx motor : motors) {
-            motor.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
+            motor.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.FLOAT);
             motor.set(0);
+            motor.resetEncoder();
         }
 
         leftFront.setInverted(true);
         leftRear.setInverted(true);
+
+        x = 0;
+        y = 0;
+        heading = 0;
     }
 
     public void moveTeleOp(double power, double strafe, double turn) {
@@ -49,6 +55,20 @@ public class Drive {
         } else {
             robotCentric(power, strafe, turn);
         }
+
+        updatePose(
+                leftFront.encoder.getPosition(),
+                rightFront.encoder.getPosition(),
+                leftRear.encoder.getPosition(),
+                rightRear.encoder.getPosition()
+        );
+    }
+
+    public void updatePose(double frontLeftPos, double frontRightPos, double backLeftPos, double backRightPos) {
+        double r  = 0.03;
+        x = (frontLeftPos + frontRightPos + backLeftPos + backRightPos) * (r/4);
+        y = (-frontLeftPos + frontRightPos + backLeftPos - backRightPos) * (r/4);
+        heading = (-frontLeftPos + frontRightPos - backLeftPos + backRightPos) * (r/(4*12));
     }
 
     public void robotCentric(double power, double strafe, double turn) {
