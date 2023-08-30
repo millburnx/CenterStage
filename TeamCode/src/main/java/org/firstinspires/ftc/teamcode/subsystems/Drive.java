@@ -125,10 +125,11 @@ public class Drive extends MecanumDrive {
             motor.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
             motor.set(0);
             motor.resetEncoder();
+            motor.motorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
-        leftFront.setInverted(true);
-        leftRear.setInverted(true);
+        leftFront.motorEx.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRear.motorEx.setDirection(DcMotorSimple.Direction.REVERSE);
 
         x = 0;
         y = 0;
@@ -335,7 +336,7 @@ public class Drive extends MecanumDrive {
     public List<Double> getWheelPositions() {
         List<Double> wheelPositions = new ArrayList<>();
         for (MotorEx motor : motors) {
-            wheelPositions.add(encoderTicksToInches(motor.getCurrentPosition()));
+            wheelPositions.add(encoderTicksToInches(motor.motorEx.getCurrentPosition()));
         }
         return wheelPositions;
     }
@@ -344,7 +345,7 @@ public class Drive extends MecanumDrive {
     public List<Double> getWheelVelocities() {
         List<Double> wheelVelocities = new ArrayList<>();
         for (MotorEx motor : motors) {
-            wheelVelocities.add(encoderTicksToInches(motor.getVelocity()));
+            wheelVelocities.add(encoderTicksToInches(motor.motorEx.getVelocity()));
         }
         return wheelVelocities;
     }
