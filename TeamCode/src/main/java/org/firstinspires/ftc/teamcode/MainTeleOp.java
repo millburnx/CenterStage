@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -9,11 +9,12 @@ import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
 
 import org.firstinspires.ftc.teamcode.subsystems.*;
 
-@TeleOp(name="TeleOp")
+@TeleOp(name="TeleOp2")
 public class MainTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
+        Odometry odom = new Odometry(robot.drive);
 
         waitForStart();
 
@@ -21,6 +22,8 @@ public class MainTeleOp extends LinearOpMode {
             double power = -gamepad1.left_stick_y;
             double strafe = gamepad1.left_stick_x;
             double turn = gamepad1.right_stick_x;
+
+            Pose2d pose = odom.getPos();
 
             robot.drive.moveTeleOp(power, strafe, turn);
 
@@ -30,18 +33,13 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Strafe: ", strafe);
             telemetry.addData("Turn: ", turn);
 
-            telemetry.addData("rightFront Pos: ", robot.drive.rightFront.encoder.getPosition());
-            telemetry.addData("leftFront Pos: ", robot.drive.leftFront.encoder.getPosition());
-            telemetry.addData("rightRear Pos: ", robot.drive.rightRear.encoder.getPosition());
-            telemetry.addData("leftRear Pos: ", robot.drive.leftRear.encoder.getPosition());
-
-            telemetry.addData("x: ", robot.drive.x);
-            telemetry.addData("y: ", robot.drive.y);
-            telemetry.addData("heading: ", robot.drive.heading);
+            telemetry.addData("x: ", pose.getX());
+            telemetry.addData("y: ", pose.getY());
+            telemetry.addData("heading: ", pose.getHeading());
 
             telemetry.update();
 
-            robot.odom.odometry.updatePose();
+            odom.odometry.updatePose();
         }
     }
 }

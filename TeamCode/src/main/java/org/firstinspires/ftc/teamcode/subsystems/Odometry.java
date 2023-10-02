@@ -17,7 +17,7 @@ public class Odometry {
 
     public Odometry(Drive drive){
         leftOdom = drive.leftFront.encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
-        rightOdom = drive.rightFront.encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
+        rightOdom = drive.rightRear.encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
         centerOdom = drive.leftRear.encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
 
         rightOdom.setDirection(Motor.Direction.REVERSE);

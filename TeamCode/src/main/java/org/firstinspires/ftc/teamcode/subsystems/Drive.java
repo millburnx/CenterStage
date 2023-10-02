@@ -97,7 +97,9 @@ public class Drive extends MecanumDrive {
 
     public Drive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
-
+        List<Integer> lastEncPositions = new ArrayList<>();
+        List<Integer> lastEncVels = new ArrayList<>();
+        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastEncPositions, lastEncVels));
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
@@ -125,7 +127,7 @@ public class Drive extends MecanumDrive {
             motor.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
             motor.set(0);
             motor.resetEncoder();
-            motor.motorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motor.motorEx.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         leftFront.motorEx.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -155,20 +157,20 @@ public class Drive extends MecanumDrive {
             robotCentric(power, strafe, turn);
         }
 
-        updatePose(
-                leftFront.encoder.getPosition(),
-                rightFront.encoder.getPosition(),
-                leftRear.encoder.getPosition(),
-                rightRear.encoder.getPosition()
-        );
+//        updatePose(
+//                leftFront.encoder.getPosition(),
+//                rightFront.encoder.getPosition(),
+//                leftRear.encoder.getPosition(),
+//                rightRear.encoder.getPosition()
+//        );
     }
 
-    public void updatePose(double frontLeftPos, double frontRightPos, double backLeftPos, double backRightPos) {
-        double r  = 0.03;
-        x = (frontLeftPos + frontRightPos + backLeftPos + backRightPos) * (r/4);
-        y = (-frontLeftPos + frontRightPos + backLeftPos - backRightPos) * (r/4);
-        heading = (-frontLeftPos + frontRightPos - backLeftPos + backRightPos) * (r/(4*12));
-    }
+//    public void updatePose(double frontLeftPos, double frontRightPos, double backLeftPos, double backRightPos) {
+//        double r  = 0.03;
+//        x = (frontLeftPos + frontRightPos + backLeftPos + backRightPos) * (r/4);
+//        y = (-frontLeftPos + frontRightPos + backLeftPos - backRightPos) * (r/4);
+//        heading = (-frontLeftPos + frontRightPos - backLeftPos + backRightPos) * (r/(4*12));
+//    }
 
     public void robotCentric(double power, double strafe, double turn) {
         double denominator = Math.max(Math.abs(power) + Math.abs(strafe) + Math.abs(turn), 1);
