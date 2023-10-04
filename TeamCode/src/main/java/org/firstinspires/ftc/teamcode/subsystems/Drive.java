@@ -156,21 +156,7 @@ public class Drive extends MecanumDrive {
         } else {
             robotCentric(power, strafe, turn);
         }
-
-//        updatePose(
-//                leftFront.encoder.getPosition(),
-//                rightFront.encoder.getPosition(),
-//                leftRear.encoder.getPosition(),
-//                rightRear.encoder.getPosition()
-//        );
     }
-
-//    public void updatePose(double frontLeftPos, double frontRightPos, double backLeftPos, double backRightPos) {
-//        double r  = 0.03;
-//        x = (frontLeftPos + frontRightPos + backLeftPos + backRightPos) * (r/4);
-//        y = (-frontLeftPos + frontRightPos + backLeftPos - backRightPos) * (r/4);
-//        heading = (-frontLeftPos + frontRightPos - backLeftPos + backRightPos) * (r/(4*12));
-//    }
 
     public void robotCentric(double power, double strafe, double turn) {
         double denominator = Math.max(Math.abs(power) + Math.abs(strafe) + Math.abs(turn), 1);

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -7,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.arcrobotics.ftclib.hardware.motors.Motor.Encoder;
 import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 
 @TeleOp(name="TeleOp2")
@@ -14,7 +17,8 @@ public class MainTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
-        Odometry odom = new Odometry(robot.drive);
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        Telemetry dashTelemetry = dashboard.getTelemetry();
 
         waitForStart();
 
@@ -23,9 +27,9 @@ public class MainTeleOp extends LinearOpMode {
             double strafe = gamepad1.left_stick_x;
             double turn = gamepad1.right_stick_x;
 
-            Pose2d pose = odom.getPos();
-
             robot.drive.moveTeleOp(power, strafe, turn);
+
+            Pose2d pose = robot.odom.getPos();
 
             telemetry.addData("Field Centric: ", robot.drive.isFieldCentric);
             telemetry.addData("Odom: ", robot.odom.odometry.getPose());
@@ -37,9 +41,14 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("y: ", pose.getY());
             telemetry.addData("heading: ", pose.getHeading());
 
-            telemetry.update();
+            dashTelemetry.addData("x: ", pose.getX());
+            dashTelemetry.addData("y: ", pose.getY());
+            dashTelemetry.addData("heading: ", pose.getHeading());
 
-            odom.odometry.updatePose();
+            telemetry.update();
+            dashTelemetry.update();
+
+            robot.odom.odometry.updatePose();
         }
     }
 }
