@@ -13,7 +13,7 @@ public class Odometry {
     public static final double TICKS_PER_REV = 8192;
     public static final double DISTANCE_PER_PULSE = Math.PI * WHEEL_DIAMETER / TICKS_PER_REV;
 
-    private Motor.Encoder leftOdom, rightOdom, centerOdom;
+    public Motor.Encoder leftOdom, rightOdom, centerOdom;
     public HolonomicOdometry odometry;
 
     public Odometry(Drive drive){

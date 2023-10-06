@@ -1,12 +1,19 @@
 package org.firstinspires.ftc.teamcode.drive;
 
+import static org.firstinspires.ftc.teamcode.subsystems.Odometry.DISTANCE_PER_PULSE;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.subsystems.Odometry;
+import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
 import java.util.Arrays;
@@ -36,6 +43,10 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 
+    private Motor.Encoder leftOdom, rightOdom, centerOdom;
+
+    private MotorEx leftFront, rightRear, leftRear;
+
     private List<Integer> lastEncPositions, lastEncVels;
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap, List<Integer> lastTrackingEncPositions, List<Integer> lastTrackingEncVels) {
@@ -49,9 +60,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         lastEncPositions = lastTrackingEncPositions;
         lastEncVels = lastTrackingEncVels;
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontLeft"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "backRight"));
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "backLeft"));
+//        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontLeft"));
+//        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "backRight"));
+//        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "backLeft"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
     }

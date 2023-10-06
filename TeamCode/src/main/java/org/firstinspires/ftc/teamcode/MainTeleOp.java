@@ -12,13 +12,13 @@ import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 
-@TeleOp(name="TeleOp2")
+@TeleOp(name="Main TeleOp")
 public class MainTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap);
         FtcDashboard dashboard = FtcDashboard.getInstance();
-        Telemetry dashTelemetry = dashboard.getTelemetry();
+        TelemetryPacket packet = new TelemetryPacket();
 
         waitForStart();
 
@@ -41,12 +41,12 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("y: ", pose.getY());
             telemetry.addData("heading: ", pose.getHeading());
 
-            dashTelemetry.addData("x: ", pose.getX());
-            dashTelemetry.addData("y: ", pose.getY());
-            dashTelemetry.addData("heading: ", pose.getHeading());
+//            packet.put("x: ", pose.getX());
+//            packet.put("y: ", pose.getY());
+//            packet.put("heading: ", pose.getHeading());
 
             telemetry.update();
-            dashTelemetry.update();
+            robot.telemetry.drawField(pose, dashboard);
 
             robot.odom.odometry.updatePose();
         }

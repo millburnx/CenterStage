@@ -17,6 +17,8 @@ public class autoTest extends LinearOpMode {
     Robot robot;
 
     public void runOpMode() {
+        waitForStart();
+
         telemetry.addData("Status", "Initialized");
 
         robot = new Robot(hardwareMap);

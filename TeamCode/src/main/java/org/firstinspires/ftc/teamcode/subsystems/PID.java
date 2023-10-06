@@ -8,9 +8,9 @@ public class PID {
     public PIDController yPID;
 
     public PID() {
-        headingPID = new PIDController(0, 0, 0, 0, 0.1);
-        xPID = new PIDController(0, 0, 0, 0, 0.1);
-        yPID = new PIDController(0, 0, 0, 0, 0.1);
+        headingPID = new PIDController(0.5, 0, 0, 0, 0.1);
+        xPID = new PIDController(0.5, 0, 0, 0, 0.1);
+        yPID = new PIDController(0.5, 0, 0, 0, 0.1);
     }
 
     public void setPID(double Kp, double Kd, double Ki, double Kf) {
