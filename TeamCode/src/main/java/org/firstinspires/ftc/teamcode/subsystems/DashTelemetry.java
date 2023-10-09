@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
-public class Telemetry {
+public class DashTelemetry {
     public static void drawRobot(Canvas canvas, Pose2d pose) {
         canvas.strokeCircle(pose.getX(), pose.getY(), 9);
         Vector2d v = pose.headingVec().times(9);
@@ -26,6 +26,25 @@ public class Telemetry {
 //        drawRobot(fieldOverlay,desiredPose);
 //        fieldOverlay.setStroke("#B53F51");
 //        drawRobot(fieldOverlay,startPose);
+
+        packet.put("x: ", pose.getX());
+        packet.put("y: ", pose.getY());
+        packet.put("heading (degrees):", Math.toDegrees(pose.getHeading()));
+
+        dash.sendTelemetryPacket(packet);
+    }
+
+    public void drawFieldAuto(Pose2d pose, Pose2d desiredPose, Pose2d startPose, FtcDashboard dash){
+        TelemetryPacket packet = new TelemetryPacket();
+        Canvas fieldOverlay = packet.fieldOverlay();
+
+        fieldOverlay.setStrokeWidth(1);
+        fieldOverlay.setStroke("#3F51B5");
+        drawRobot(fieldOverlay, pose);
+        fieldOverlay.setStroke("#51B53F");
+        drawRobot(fieldOverlay,desiredPose);
+        fieldOverlay.setStroke("#B53F51");
+        drawRobot(fieldOverlay,startPose);
 
         packet.put("x: ", pose.getX());
         packet.put("y: ", pose.getY());

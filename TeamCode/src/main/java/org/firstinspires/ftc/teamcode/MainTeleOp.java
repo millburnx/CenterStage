@@ -41,12 +41,8 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("y: ", pose.getY());
             telemetry.addData("heading: ", pose.getHeading());
 
-//            packet.put("x: ", pose.getX());
-//            packet.put("y: ", pose.getY());
-//            packet.put("heading: ", pose.getHeading());
-
             telemetry.update();
-            robot.telemetry.drawField(pose, dashboard);
+            robot.dashTelemetry.drawField(pose, dashboard);
 
             robot.odom.odometry.updatePose();
         }

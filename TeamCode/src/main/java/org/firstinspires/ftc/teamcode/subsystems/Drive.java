@@ -101,9 +101,6 @@ public class Drive extends MecanumDrive {
 
     public Drive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
-        List<Integer> lastEncPositions = new ArrayList<>();
-        List<Integer> lastEncVels = new ArrayList<>();
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastEncPositions, lastEncVels));
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 

@@ -7,8 +7,8 @@ import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Odometry {
-    public static final double TRACKWIDTH = 14.7;
-    public static final double CENTER_WHEEL_OFFSET = -2.1; // distance between center of rotation of the robot and the center odometer
+    public static final double TRACKWIDTH = 12;
+    public static final double CENTER_WHEEL_OFFSET = 0; // distance between center of rotation of the robot and the center odometer
     public static final double WHEEL_DIAMETER = 2.0;
     public static final double TICKS_PER_REV = 8192;
     public static final double DISTANCE_PER_PULSE = Math.PI * WHEEL_DIAMETER / TICKS_PER_REV;
@@ -23,6 +23,10 @@ public class Odometry {
 
         rightOdom.setDirection(Motor.Direction.REVERSE);
 
+        leftOdom.reset();
+        rightOdom.reset();
+        centerOdom.reset();
+
         odometry = new HolonomicOdometry(
                 leftOdom::getDistance,
                 rightOdom::getDistance,
@@ -30,6 +34,7 @@ public class Odometry {
                 TRACKWIDTH, CENTER_WHEEL_OFFSET
         );
 
+        // change to reflect starting field position
         odometry.updatePose(new com.arcrobotics.ftclib.geometry.Pose2d(0, 0, new Rotation2d(0)));
     }
 
