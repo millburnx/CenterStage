@@ -20,7 +20,11 @@ public class MainTeleOp extends LinearOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         TelemetryPacket packet = new TelemetryPacket();
 
+        double rollPower = 0.7;
+
         waitForStart();
+
+        robot.intake.roll(rollPower);
 
         while (opModeIsActive()) {
             double power = -gamepad1.left_stick_y;
@@ -28,6 +32,25 @@ public class MainTeleOp extends LinearOpMode {
             double turn = gamepad1.right_stick_x;
 
             robot.drive.moveTeleOp(power, strafe, turn);
+
+            if(gamepad1.x) {
+                rollPower = -rollPower;
+                robot.intake.roll(rollPower);
+            }
+
+//            if(gamepad1.right_bumper) {
+//                robot.lift.setMotors(0.6);
+//            }
+//            else {
+//                robot.lift.setMotors(0);
+//            }
+//
+//            if(gamepad1.left_bumper) {
+//                robot.lift.setMotors(-0.6);
+//            }
+//            else {
+//                robot.lift.setMotors(0);
+//            }
 
             Pose2d pose = robot.odom.getPos();
 
@@ -40,6 +63,9 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("x: ", pose.getX());
             telemetry.addData("y: ", pose.getY());
             telemetry.addData("heading: ", pose.getHeading());
+
+            telemetry.addData("rightLift: ", robot.lift.rightLift.motorEx.getCurrentPosition());
+            telemetry.addData("leftLift: ", robot.lift.leftLift.motorEx.getCurrentPosition());
 
             telemetry.update();
             robot.dashTelemetry.drawField(pose, dashboard);

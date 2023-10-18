@@ -22,7 +22,7 @@ public class DriveConstants {
     /*
      * These are motor constants that should be listed online for your motors.
      */
-    public static final double TICKS_PER_REV = 384.5;
+    public static final double TICKS_PER_REV = 8192;
     public static final double MAX_RPM = 435;
 
     /*
@@ -33,7 +33,7 @@ public class DriveConstants {
      * If using the built-in motor velocity PID, update MOTOR_VELO_PID with the tuned coefficients
      * from DriveVelocityPIDTuner.
      */
-    public static final boolean RUN_USING_ENCODER = true;
+    public static final boolean RUN_USING_ENCODER = false;
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0.3,
             21.408785790376793);
 
@@ -47,7 +47,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.8898; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 24; // in
+    public static double TRACK_WIDTH = 12; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using

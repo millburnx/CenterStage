@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.auton;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -9,6 +11,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 import java.util.ArrayList;
 
+@Autonomous(name="autoPP", group="Linear Opmode")
 public class autonPP extends OpMode {
     MoveTo moveTo;
     Robot robot;
