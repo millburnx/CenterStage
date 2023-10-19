@@ -52,10 +52,9 @@ public class MainTeleOp extends LinearOpMode {
 //                robot.lift.setMotors(0);
 //            }
 
-            Pose2d pose = robot.odom.getPos();
+            Pose2d pose = robot.drive.getPos();
 
             telemetry.addData("Field Centric: ", robot.drive.isFieldCentric);
-            telemetry.addData("Odom: ", robot.odom.odometry.getPose());
             telemetry.addData("Power: ", power);
             telemetry.addData("Strafe: ", strafe);
             telemetry.addData("Turn: ", turn);
@@ -70,7 +69,7 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.update();
             robot.dashTelemetry.drawField(pose, dashboard);
 
-            robot.odom.odometry.updatePose();
+            robot.drive.update();
         }
     }
 }

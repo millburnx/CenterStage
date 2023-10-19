@@ -4,8 +4,10 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -99,6 +101,15 @@ public class Drive extends MecanumDrive {
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
 
+    public static final double TRACKWIDTH = 12;
+    public static final double CENTER_WHEEL_OFFSET = 0; // distance between center of rotation of the robot and the center odometer
+    public static final double WHEEL_DIAMETER = 2.0;
+    public static final double TICKS_PER_REV = 8192;
+    public static final double DISTANCE_PER_PULSE = Math.PI * WHEEL_DIAMETER / TICKS_PER_REV;
+
+    public Motor.Encoder leftOdom, rightOdom, centerOdom;
+    public HolonomicOdometry odometry;
+
     public Drive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
@@ -145,6 +156,33 @@ public class Drive extends MecanumDrive {
                 follower, HEADING_PID, batteryVoltageSensor,
                 lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
         );
+
+        // odom stuff
+
+        leftOdom = rightFront.encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
+        rightOdom = rightRear.encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
+        centerOdom = leftRear.encoder.setDistancePerPulse(DISTANCE_PER_PULSE);
+
+        rightOdom.setDirection(Motor.Direction.REVERSE);
+        leftOdom.setDirection(Motor.Direction.REVERSE);
+
+        leftOdom.reset();
+        rightOdom.reset();
+        centerOdom.reset();
+
+        odometry = new HolonomicOdometry(
+                leftOdom::getDistance,
+                rightOdom::getDistance,
+                centerOdom::getDistance,
+                TRACKWIDTH, CENTER_WHEEL_OFFSET
+        );
+
+        // change to reflect starting field position
+        odometry.updatePose(new com.arcrobotics.ftclib.geometry.Pose2d(0, 0, new Rotation2d(0)));
+    }
+
+    public Pose2d getPos() {
+        return new Pose2d(odometry.getPose().getX(), odometry.getPose().getY(), odometry.getPose().getHeading());
     }
 
     public void changeFollowerAccuracy(double timeout, double translational_error, double turn_error) {
@@ -188,6 +226,13 @@ public class Drive extends MecanumDrive {
         rightRear.set(backRightPower);
     }
 
+    public void setDrivePowers(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower) {
+        leftFront.set(frontLeftPower);
+        leftRear.set(backLeftPower);
+        rightFront.set(frontRightPower);
+        rightRear.set(backRightPower);
+    }
+
     public void switchDrive() {
         isFieldCentric = !isFieldCentric;
     }
@@ -224,7 +269,7 @@ public class Drive extends MecanumDrive {
 
     public void turnAsync(double angle) {
         trajectorySequenceRunner.followTrajectorySequenceAsync(
-                trajectorySequenceBuilder(getPoseEstimate())
+                trajectorySequenceBuilder(getPos()) // change this
                         .turn(angle)
                         .build()
         );
@@ -263,7 +308,8 @@ public class Drive extends MecanumDrive {
 
     public void update() {
         updatePoseEstimate();
-        DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
+        odometry.updatePose();
+        DriveSignal signal = trajectorySequenceRunner.update(getPos(), getPoseVelocity()); // change this
         if (signal != null) setDriveSignal(signal);
     }
 

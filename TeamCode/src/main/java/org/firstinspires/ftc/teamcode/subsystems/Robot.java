@@ -18,8 +18,7 @@ public class Robot {
         drive = new Drive(hardwareMap);
         intake = new Intake(hardwareMap);
         lift = new Lift(hardwareMap);
-        odom = new Odometry(drive);
-        pid = new PID();
+//        odom = new Odometry(drive);
         dashTelemetry = new DashTelemetry();
     }
 }

@@ -1,32 +1,78 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Config
 public class PID {
-    public static PIDController headingPID;
-    public static PIDController xPID;
-    public static PIDController yPID;
+    public PID.Config settings;
 
-    public static double headingP, xP, yP;
+    private double integralSum = 0.0;
+    private double lastError = 0.0;
 
-    public PID() {
-        headingP = 1;
-        xP = 1;
-        yP = 1;
+    private ElapsedTime timer;
 
-        headingPID = new PIDController(headingP, 0, 5, 0, 0.1);
-        xPID = new PIDController(xP, 0, 5, 0, 0.1);
-        yPID = new PIDController(yP, 0, 5, 0, 0.1);
+    public PID(Config settings) {
+        this.settings = settings;
+        timer = new ElapsedTime();
+        timer.reset();
     }
 
-    public void setPID(double Kp, double Kd, double Ki, double Kf) {
-        xPID.setPIDF(Kp, Kd, Ki, Kf);
-        yPID.setPIDF(Kp, Kd, Ki, Kf);
+    public PID(double Kp, double Ki, double Kd) {
+        this.settings = new PID.Config(Kp, Ki, Kd);
+        timer = new ElapsedTime();
+        timer.reset();
     }
 
-    public void setHeadingPID(double Kp, double Kd, double Ki, double Kf) {
-        headingPID.setPIDF(Kp, Kd, Ki, Kf);
+    // error is given by the user so that this class has multiple use cases
+    public double getValue(double error) {
+        double dT = timer.seconds();
+        double derivative = (error - lastError) / dT;
+
+        // sum all the error over time
+        integralSum += (error * dT);
+
+        // returns this value which can differ depending on the use case of the class
+        // eg. set motor power
+        double out = (settings.getKp() * error) + (settings.getKi() * integralSum) + (settings.getKd() * derivative);
+
+        lastError = error;
+
+        timer.reset();
+
+        return out;
+    }
+
+    public void reset() {
+        lastError = 0;
+        integralSum = 0;
+        timer.reset();
+    }
+
+    public static class Config {
+        private double Kp;
+        private double Ki;
+        private double Kd;
+
+        public Config(double Kp, double Ki, double Kd) {
+            this.Kp = Kp;
+            this.Ki = Ki;
+            this.Kd = Kd;
+        }
+
+        public double getKp() {
+            return Kp;
+        }
+
+        public double getKi() {
+            return Ki;
+        }
+
+        public double getKd() {
+            return Kd;
+        }
+
+        @Override
+        public String toString() {
+            return "{ Kp: " + getKp() + ", Ki: " + getKi() + ", Kd: " + getKd() + " }";
+        }
     }
 }
