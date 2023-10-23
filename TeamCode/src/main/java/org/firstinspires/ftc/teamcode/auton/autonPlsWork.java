@@ -24,8 +24,9 @@ public class autonPlsWork extends LinearOpMode {
         if (opModeIsActive()) {
             movement.move(new Pose2d(Config.targetX, Config.targetY, Math.toRadians(Config.targetH)));
             for (int i = 0; i < Config.pathCount; i ++) {
-                movement.move(new Pose2d(20, 20, Math.toRadians(90)));
+                movement.move(new Pose2d(20, 0, Math.toRadians(0)));
             }
+            robot.drive.update();
         }
         while (opModeIsActive()) {
             telemetry.addData("Pose", robot.drive.getPos().toString());
