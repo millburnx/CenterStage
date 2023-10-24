@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.ctrl.Movement;
-import org.firstinspires.ftc.teamcode.ctrl.Rotate;
 import org.firstinspires.ftc.teamcode.subsystems.PID;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
@@ -20,13 +19,13 @@ public class autonPlsWork extends LinearOpMode {
         PID.Config rotationConfig = new PID.Config(Config.rotationP, Config.rotationI, Config.rotationD);
         Movement movement = new Movement(robot.drive, this::opModeIsActive, translationConfig, rotationConfig, 1, telemetry);
         waitForStart();
+        robot.drive.odometry.updatePose(new com.arcrobotics.ftclib.geometry.Pose2d(0, 0, new Rotation2d(0)));
         robot.drive.update();
         if (opModeIsActive()) {
             movement.move(new Pose2d(Config.targetX, Config.targetY, Math.toRadians(Config.targetH)));
             for (int i = 0; i < Config.pathCount; i ++) {
                 movement.move(new Pose2d(20, 0, Math.toRadians(0)));
             }
-            robot.drive.update();
         }
         while (opModeIsActive()) {
             telemetry.addData("Pose", robot.drive.getPos().toString());

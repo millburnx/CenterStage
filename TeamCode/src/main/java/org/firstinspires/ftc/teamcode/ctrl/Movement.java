@@ -37,14 +37,14 @@ public class Movement {
 
     public void move(Pose2d target) {
         Pose2d init = drive.getPos();
-        Pose2d init_target_pose = new Pose2d(target.getX() - init.getX(), target.getY() - init.getY(), Math.toRadians(utils.angleDifference(target.getHeading(), init.getHeading())));
+        Pose2d init_target_pose = new Pose2d(target.getX() - init.getX(), target.getY() - init.getY(), Math.toRadians(MathUtils.angleDifference(target.getHeading(), init.getHeading())));
         timer.reset();
         double elapsed_time;
         Pose2d pose = init;
         FtcDashboard dashboard = FtcDashboard.getInstance();
         Telemetry dashTelem = dashboard.getTelemetry();
 
-        while (opModeIsActive.get() && (Math.abs(target.getX() - pose.getX()) > tolerance || Math.abs(target.getY() - pose.getY()) > tolerance || Math.abs(utils.angleDifference(target.getHeading(), pose.getHeading())) > 3.0)) {
+        while (opModeIsActive.get() && (Math.abs(target.getX() - pose.getX()) > tolerance || Math.abs(target.getY() - pose.getY()) > tolerance || Math.abs(MathUtils.angleDifference(target.getHeading(), pose.getHeading())) > 3.0)) {
             elapsed_time = timer.seconds();
             drive.update();
             pose = drive.getPos();
@@ -53,7 +53,7 @@ public class Movement {
             double instantTargetPositionH = MotionProfile.motion_profile(Config.MAX_ACCEL, Config.MAX_VELOCITY, init_target_pose.getHeading(), elapsed_time)  + Math.toDegrees(init.getHeading());
             double x = driveXPID.getValue(target.getX() - pose.getX());
             double y = driveYPID.getValue(target.getY() - pose.getY());
-            double rx = headingPID.getValue(utils.angleDifference(target.getHeading(), Math.toDegrees(pose.getHeading())));
+            double rx = headingPID.getValue(MathUtils.angleDifference(target.getHeading(), Math.toDegrees(pose.getHeading())));
 
             double botHeading = Math.toRadians(-pose.getHeading());
 
@@ -97,5 +97,6 @@ public class Movement {
             drive.setDrivePowers(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
         }
         drive.setDrivePowers(0,0,0,0);
+        drive.update();
     }
 }

@@ -5,7 +5,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.PID;
 
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
-import org.firstinspires.ftc.teamcode.ctrl.utils;
 
 public class Rotate {
     private Drive drive;
@@ -27,9 +26,9 @@ public class Rotate {
         rotatePID.reset();
         double error;
         drive.update();
-        while (Math.abs(utils.angleDifference(targetHeading, drive.getPos().getHeading())) > tolerance && opModeIsActive.get()) {
+        while (Math.abs(MathUtils.angleDifference(targetHeading, drive.getPos().getHeading())) > tolerance && opModeIsActive.get()) {
             drive.update();
-            error = utils.angleDifference(targetHeading, drive.getPos().getHeading());
+            error = MathUtils.angleDifference(targetHeading, drive.getPos().getHeading());
             double headingPower = rotatePID.getValue(error);
             drive.moveTeleOp(0, 0, headingPower);
             telemetry.addData("heading ", drive.getPos().getHeading());
