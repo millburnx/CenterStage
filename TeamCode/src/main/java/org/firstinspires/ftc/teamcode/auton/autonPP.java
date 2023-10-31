@@ -18,7 +18,7 @@ public class autonPP extends OpMode {
 
     @Override
     public void init() {
-        robot = new Robot(hardwareMap);
+        robot = new Robot(hardwareMap, gamepad1);
         telemetry.addData("Status", "Initialized");
         purePursuit = new PurePursuit(robot, telemetry);
     }

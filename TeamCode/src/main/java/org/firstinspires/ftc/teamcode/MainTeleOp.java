@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor.Encoder;
 import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
 
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystems.*;
 public class MainTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot robot = new Robot(hardwareMap);
+        Robot robot = new Robot(hardwareMap, gamepad1);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         TelemetryPacket packet = new TelemetryPacket();
 
@@ -38,20 +39,6 @@ public class MainTeleOp extends LinearOpMode {
                 robot.intake.roll(rollPower);
             }
 
-//            if(gamepad1.right_bumper) {
-//                robot.lift.setMotors(0.6);
-//            }
-//            else {
-//                robot.lift.setMotors(0);
-//            }
-//
-//            if(gamepad1.left_bumper) {
-//                robot.lift.setMotors(-0.6);
-//            }
-//            else {
-//                robot.lift.setMotors(0);
-//            }
-
             Pose2d pose = robot.drive.getPos();
 
             telemetry.addData("Field Centric: ", robot.drive.isFieldCentric);
@@ -63,8 +50,9 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("y: ", pose.getY());
             telemetry.addData("heading: ", pose.getHeading());
 
-            telemetry.addData("rightLift: ", robot.lift.rightLift.motorEx.getCurrentPosition());
-            telemetry.addData("leftLift: ", robot.lift.leftLift.motorEx.getCurrentPosition());
+
+            telemetry.addData("rightLift: ", robot.lift.rightLift.getCurrentPosition());
+            telemetry.addData("leftLift: ", robot.lift.leftLift.getCurrentPosition());
 
             telemetry.update();
             robot.dashTelemetry.drawField(pose, dashboard);

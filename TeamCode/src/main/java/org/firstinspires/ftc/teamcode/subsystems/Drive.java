@@ -180,6 +180,12 @@ public class Drive extends MecanumDrive {
         // change to reflect starting field position
         odometry.updatePose(new com.arcrobotics.ftclib.geometry.Pose2d(0, 0, new Rotation2d(0)));
     }
+    public void auton() {
+        rightRear.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
+        leftRear.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
+        leftFront.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
+    }
 
     public Pose2d getPos() {
         return new Pose2d(odometry.getPose().getX(), odometry.getPose().getY(), odometry.getPose().getHeading());

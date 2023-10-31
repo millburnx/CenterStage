@@ -9,15 +9,15 @@ import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 public class Robot {
     public Drive drive;
     public Intake intake;
-    public Lift lift;
+    public Lift2 lift;
     public Odometry odom;
     public PID pid;
     public DashTelemetry dashTelemetry;
 
-    public Robot(HardwareMap hardwareMap) {
+    public Robot(HardwareMap hardwareMap, Gamepad gamepad) {
         drive = new Drive(hardwareMap);
         intake = new Intake(hardwareMap);
-        lift = new Lift(hardwareMap);
+        lift = new Lift2(hardwareMap, gamepad);
 //        odom = new Odometry(drive);
         dashTelemetry = new DashTelemetry();
     }

@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Robot;
 public class autonPlsWork extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot robot = new Robot(hardwareMap);
+        Robot robot = new Robot(hardwareMap, gamepad1);
         PID.Config translationConfig = new PID.Config(Config.translationP, Config.translationI, Config.translationD);
         PID.Config rotationConfig = new PID.Config(Config.rotationP, Config.rotationI, Config.rotationD);
         Movement movement = new Movement(robot.drive, this::opModeIsActive, translationConfig, rotationConfig, 1, telemetry);
