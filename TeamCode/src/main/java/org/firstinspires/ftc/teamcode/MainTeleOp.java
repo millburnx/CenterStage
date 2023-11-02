@@ -39,6 +39,22 @@ public class MainTeleOp extends LinearOpMode {
                 robot.intake.roll(rollPower);
             }
 
+            robot.lift.liftTeleOp(gamepad1);
+
+            if(gamepad1.dpad_down) {
+                robot.deposit.intakeDeposit();
+            }
+            else if(gamepad1.dpad_right){
+                robot.deposit.holdDeposit();
+            }
+            else if(gamepad1.dpad_down){
+                robot.deposit.outtakeDeposit();
+            }
+
+
+
+
+
             Pose2d pose = robot.drive.getPos();
 
             telemetry.addData("Field Centric: ", robot.drive.isFieldCentric);

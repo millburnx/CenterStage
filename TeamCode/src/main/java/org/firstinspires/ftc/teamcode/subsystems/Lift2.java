@@ -204,11 +204,12 @@ public class Lift2 {
         this.gamepad = gamepad;
         if(currentMode != LIFT_MODE.KILLED)
         {
-            if(gamepad.square || gamepad.circle || gamepad.left_bumper || gamepad.triangle || gamepad.right_bumper)
-            {
-                currentMode = LIFT_MODE.MACRO;
-                liftMacro();
-            }
+            //MACROS
+//            if(gamepad.square || gamepad.circle || gamepad.left_bumper || gamepad.triangle || gamepad.right_bumper)
+//            {
+//                currentMode = LIFT_MODE.MACRO;
+//                liftMacro();
+//            }
 
 
 

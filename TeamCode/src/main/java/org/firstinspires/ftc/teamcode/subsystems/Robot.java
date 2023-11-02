@@ -10,6 +10,7 @@ public class Robot {
     public Drive drive;
     public Intake intake;
     public Lift2 lift;
+    public Deposit deposit;
     public Odometry odom;
     public PID pid;
     public DashTelemetry dashTelemetry;
@@ -18,6 +19,7 @@ public class Robot {
         drive = new Drive(hardwareMap);
         intake = new Intake(hardwareMap);
         lift = new Lift2(hardwareMap, gamepad);
+        //deposit = new Deposit((hardwareMap));
 //        odom = new Odometry(drive);
         dashTelemetry = new DashTelemetry();
     }
