@@ -86,8 +86,8 @@ public class Lift2 {
     {
         leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftLift.setPower(power);
-        rightLift.setPower(power);
+        leftLift.setPower(power*0.1);
+        rightLift.setPower(power*0.1);
     }
 
     private void liftMacro()
@@ -224,10 +224,10 @@ public class Lift2 {
 
             // HOLDING
             else if (rightLift.getCurrentPosition() > 100 && currentMode == LIFT_MODE.MANUAL) { // hold after manual ends
-                currentMode = LIFT_MODE.HOLD;
-
-                holdingPosRight = rightLift.getCurrentPosition();
-                holdingPosLeft = leftLift.getCurrentPosition();
+//                currentMode = LIFT_MODE.HOLD;
+//
+//                holdingPosRight = rightLift.getCurrentPosition();
+//                holdingPosLeft = leftLift.getCurrentPosition();
             }
 
             //ANALYSIS OF MODE
