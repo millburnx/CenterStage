@@ -3,14 +3,11 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -20,16 +17,14 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
-import org.openftc.easyopencv.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 @Autonomous(name="Detect Red Beacon", group="Auto")
-public class DetectBeaconOpMode
-        extends LinearOpMode {
+public class DetectRedBeaconOpMode extends LinearOpMode {
     OpenCvWebcam webcam;
     DetectBeaconPipeline pipeline;
+    String section;
 
     @Override
     public void runOpMode() {
@@ -47,9 +42,6 @@ public class DetectBeaconOpMode
 
             @Override
             public void onError(int errorCode) {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
                 telemetry.addLine("Error lmao");
                 telemetry.update();
             }
@@ -58,25 +50,16 @@ public class DetectBeaconOpMode
         telemetry.addLine("Waiting for start");
         telemetry.update();
 
-        /*
-         * Wait for the user to press start on the Driver Station
-         */
         waitForStart();
 
-        while (opModeIsActive()) {
-            /*
-             * Send some stats to the telemetry
-             */
-            telemetry.addData("Frame Count", webcam.getFrameCount());
-            telemetry.addData("FPS", String.format("%.2f", webcam.getFps()));
-            telemetry.addData("Total frame time ms", webcam.getTotalFrameTimeMs());
-            telemetry.addData("Pipeline time ms", webcam.getPipelineTimeMs());
-            telemetry.addData("Overhead time ms", webcam.getOverheadTimeMs());
-            telemetry.addData("Theoretical max FPS", webcam.getCurrentPipelineMaxFps());
-            telemetry.update();
+        boolean autonRun = false;
 
-            if(gamepad1.a)
-            {
+        while (opModeIsActive()) {
+            if (!autonRun) {
+                // auton goes here
+            }
+
+            if (gamepad1.a) {
                 webcam.stopStreaming();
             }
 
@@ -87,6 +70,7 @@ public class DetectBeaconOpMode
     class DetectBeaconPipeline extends OpenCvPipeline {
         int latest_x, latest_y;
         boolean viewportPaused;
+        String region;
 
         public DetectBeaconPipeline() {}
 
@@ -134,7 +118,17 @@ public class DetectBeaconOpMode
                 int centerY = (int) (mu.get_m01() / mu.get_m00());
                 this.latest_x = centerX;
                 this.latest_y = centerY;
+                telemetry.addData("x: ", centerX);
+                telemetry.addData("y: ", centerY);
                 Imgproc.circle(res, new Point(centerX, centerY), 5, new Scalar(0, 0, 255), -1);
+            }
+
+            if (this.latest_x < 280) {
+                section = "left";
+            } else if (this.latest_x > 360) {
+                section = "right";
+            } else {
+                section = "middle";
             }
 
             return res;
@@ -144,12 +138,9 @@ public class DetectBeaconOpMode
         public void onViewportTapped() {
             viewportPaused = !viewportPaused;
 
-            if(viewportPaused)
-            {
+            if (viewportPaused) {
                 webcam.pauseViewport();
-            }
-            else
-            {
+            } else {
                 webcam.resumeViewport();
             }
         }
