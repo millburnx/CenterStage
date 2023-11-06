@@ -45,11 +45,11 @@ public class Lift2 {
         leftLift = hardwareMap.get(DcMotorEx.class, "leftLift");
         rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightLift.setDirection(DcMotor.Direction.FORWARD);
+        rightLift.setDirection(DcMotor.Direction.REVERSE);
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftLift.setDirection(DcMotor.Direction.REVERSE);
+        leftLift.setDirection(DcMotor.Direction.FORWARD);
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         this.gamepad = gamepad;
         newBotStart();
@@ -86,8 +86,8 @@ public class Lift2 {
     {
         leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftLift.setPower(power*0.1);
-        rightLift.setPower(power*0.1);
+        leftLift.setPower(power*-1);
+        rightLift.setPower(power*-1.15);
     }
 
     private void liftMacro()
@@ -117,21 +117,19 @@ public class Lift2 {
     private void liftManual()
     {
         if (gamepad.right_trigger > 0.5) { // move lift up
-            if (rightLift.getCurrentPosition() < liftLimit - 20) {
+            if (leftLift.getCurrentPosition() < liftLimit - 20 ) {
                 setLiftPower(gamepad.right_trigger*manualLiftPowerUp);
-
             }
-
-            if (rightLift.getCurrentPosition() > liftLimit) {
+            if (leftLift.getCurrentPosition() > liftLimit) {
                 setLiftPower(0);
             }
 
         }
         else if (gamepad.left_trigger > 0.5) { // move lift down
-            if (rightLift.getCurrentPosition() > 100) {
-                setLiftPower(gamepad.left_trigger * -manualLiftPowerDown);
-            } else if(rightLift.getCurrentPosition() > 0){
-                setLiftPower(gamepad.left_trigger * -manualLiftPowerDown * 0.2);
+            if (leftLift.getCurrentPosition() > 100) {
+                setLiftPower(gamepad.left_trigger * manualLiftPowerDown*-1);
+            } else if(leftLift.getCurrentPosition() > 0){
+                setLiftPower(gamepad.left_trigger * manualLiftPowerDown*-1);
             }
             else
             {
@@ -203,14 +201,14 @@ public class Lift2 {
     }
     public void liftTeleOp(Gamepad gamepad) {
         this.gamepad = gamepad;
-        if(currentMode != LIFT_MODE.KILLED)
+        if(currentMode != LIFT_MODE.KILLED )
         {
             //MACROS
-//            if(gamepad.square || gamepad.circle || gamepad.left_bumper || gamepad.triangle || gamepad.right_bumper)
-//            {
-//                currentMode = LIFT_MODE.MACRO;
-//                liftMacro();
-//            }
+            if(gamepad.square || gamepad.circle || gamepad.left_bumper || gamepad.triangle || gamepad.right_bumper)
+            {
+                currentMode = LIFT_MODE.MACRO;
+                liftMacro();
+            }
 
 
 
@@ -219,19 +217,21 @@ public class Lift2 {
             {
                 currentMode = LIFT_MODE.MANUAL;
                 liftManual();
-
+            }
+            else{
+                setLiftPower(0);
             }
 
             // HOLDING
-            else if (rightLift.getCurrentPosition() > 100 && currentMode == LIFT_MODE.MANUAL) { // hold after manual ends
+//            else if (rightLift.getCurrentPosition() > 100 && currentMode == LIFT_MODE.MANUAL) { // hold after manual ends
 //                currentMode = LIFT_MODE.HOLD;
 //
 //                holdingPosRight = rightLift.getCurrentPosition();
 //                holdingPosLeft = leftLift.getCurrentPosition();
-            }
+//            }
 
             //ANALYSIS OF MODE
-            liftAnalysis(false);
+            //liftAnalysis(false);
 
         }
         else

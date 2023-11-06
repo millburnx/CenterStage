@@ -21,7 +21,7 @@ public class MainTeleOp extends LinearOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         TelemetryPacket packet = new TelemetryPacket();
 
-        double rollPower = 0.8;
+        double rollPower = 0.9;
 
         waitForStart();
 
@@ -41,18 +41,14 @@ public class MainTeleOp extends LinearOpMode {
 
             robot.lift.liftTeleOp(gamepad1);
 
-            if(gamepad1.dpad_down) {
+            if(gamepad1.dpad_up) {
                 robot.deposit.rightDeposit.set(1);
                 robot.deposit.leftDeposit.set(1);
-            } else {
-                robot.deposit.rightDeposit.set(0);
-                robot.deposit.leftDeposit.set(0);
-            }
-
-            if(gamepad1.dpad_up) {
+            } else if (gamepad1.dpad_down) {
                 robot.deposit.rightDeposit.set(-1);
                 robot.deposit.leftDeposit.set(-1);
-            } else {
+            } else
+            {
                 robot.deposit.rightDeposit.set(0);
                 robot.deposit.leftDeposit.set(0);
             }
