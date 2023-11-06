@@ -44,8 +44,15 @@ public class MainTeleOp extends LinearOpMode {
             if(gamepad1.dpad_down) {
                 robot.deposit.rightDeposit.set(1);
                 robot.deposit.leftDeposit.set(1);
+            } else {
+                robot.deposit.rightDeposit.set(0);
+                robot.deposit.leftDeposit.set(0);
             }
-            else {
+
+            if(gamepad1.dpad_up) {
+                robot.deposit.rightDeposit.set(-1);
+                robot.deposit.leftDeposit.set(-1);
+            } else {
                 robot.deposit.rightDeposit.set(0);
                 robot.deposit.leftDeposit.set(0);
             }
