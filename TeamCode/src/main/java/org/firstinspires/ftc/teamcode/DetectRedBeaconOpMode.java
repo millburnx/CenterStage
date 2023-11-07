@@ -88,10 +88,59 @@ public class DetectRedBeaconOpMode extends LinearOpMode {
     class RedBeaconDetector extends OpenCvPipeline
     {
         boolean viewportPaused;
-        Mat mat = new Mat();
         int frameCount = 0;
-        final Rect ROI = new Rect(new Point(0, 0), new Point(320, 240));
 
+        public Mat processFrame(Mat input) {
+            // Convert the input Mat to the BGR color space (if it's not already)
+            Mat bgrMat = new Mat();
+            Imgproc.cvtColor(input, bgrMat, Imgproc.COLOR_RGBA2BGR);
+
+            // Define the lower and upper bounds for the red color in BGR format
+            Scalar lowerRed = new Scalar(0, 0, 100); // Adjust these values to match your specific red color
+            Scalar upperRed = new Scalar(100, 100, 255);
+
+            // Split the frame into three equal vertical strips
+            int width = bgrMat.width();
+            int height = bgrMat.height();
+            int stripWidth = width / 3;
+
+            int[] redPixelCounts = new int[3];
+
+            for (int i = 0; i < 3; i++) {
+                // Define the region of interest (ROI) for the current strip
+                Rect roi = new Rect(i * stripWidth, 0, stripWidth, height);
+                Mat redStrip = new Mat(bgrMat, roi);
+
+                // Create a mask that isolates the red pixels within the specified range
+                Mat redMask = new Mat();
+                Core.inRange(redStrip, lowerRed, upperRed, redMask);
+
+                // Find the total number of red pixels in the mask
+                redPixelCounts[i] = Core.countNonZero(redMask);
+
+                // Release Mats to prevent memory leaks
+                redStrip.release();
+                redMask.release();
+            }
+
+            // Find the section with the most red pixels
+            int maxRedPixelsIndex = 0;
+            for (int i = 1; i < 3; i++) {
+                if (redPixelCounts[i] > redPixelCounts[maxRedPixelsIndex]) {
+                    maxRedPixelsIndex = i;
+                }
+            }
+
+            // Release the bgrMat
+            bgrMat.release();
+
+            // You can use maxRedPixelsIndex to identify the section with the most red pixels
+            telemetry.addLine("Section with the most red pixels: " + maxRedPixelsIndex);
+
+            return input; // Return the original frame for display (you can modify this if needed)
+        }
+
+        /*
         @Override
         public Mat processFrame(Mat input) {
             // Make a copy of the input Mat to avoid modifying the original
@@ -162,6 +211,7 @@ public class DetectRedBeaconOpMode extends LinearOpMode {
 
             return input;
         }
+        */
 
         @Override
         public void onViewportTapped() {
