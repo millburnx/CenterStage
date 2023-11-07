@@ -8,8 +8,8 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -19,29 +19,37 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
+import java.util.List;
 
-@Autonomous(name="Detect Red Beacon", group="Auto")
+@Autonomous(name="Red Beacon Detector", group="Auto")
 public class DetectRedBeaconOpMode extends LinearOpMode {
     OpenCvWebcam webcam;
-    DetectBeaconPipeline pipeline;
-    String section;
+    RedBeaconDetector pipeline;
+
 
     @Override
-    public void runOpMode() {
+    public void runOpMode()
+    {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
-        pipeline = new DetectBeaconPipeline();
+        pipeline = new RedBeaconDetector();
         webcam.setPipeline(pipeline);
         webcam.setMillisecondsPermissionTimeout(2500);
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
             @Override
-            public void onOpened() {
+            public void onOpened()
+            {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
-            public void onError(int errorCode) {
+            public void onError(int errorCode)
+            {
+                /*
+                 * This will be called if the camera could not be opened
+                 */
                 telemetry.addLine("Error lmao");
                 telemetry.update();
             }
@@ -50,16 +58,26 @@ public class DetectRedBeaconOpMode extends LinearOpMode {
         telemetry.addLine("Waiting for start");
         telemetry.update();
 
+        /*
+         * Wait for the user to press start on the Driver Station
+         */
         waitForStart();
 
-        boolean autonRun = false;
+        while (opModeIsActive())
+        {
+            /*
+             * Send some stats to the telemetry
+             */
+            telemetry.addData("Frame Count", webcam.getFrameCount());
+            telemetry.addData("FPS", String.format("%.2f", webcam.getFps()));
+            telemetry.addData("Total frame time ms", webcam.getTotalFrameTimeMs());
+            telemetry.addData("Pipeline time ms", webcam.getPipelineTimeMs());
+            telemetry.addData("Overhead time ms", webcam.getOverheadTimeMs());
+            telemetry.addData("Theoretical max FPS", webcam.getCurrentPipelineMaxFps());
+            telemetry.update();
 
-        while (opModeIsActive()) {
-            if (!autonRun) {
-                // auton goes here
-            }
-
-            if (gamepad1.a) {
+            if(gamepad1.a)
+            {
                 webcam.stopStreaming();
             }
 
@@ -67,71 +85,82 @@ public class DetectRedBeaconOpMode extends LinearOpMode {
         }
     }
 
-    class DetectBeaconPipeline extends OpenCvPipeline {
-        int latest_x, latest_y;
+    class RedBeaconDetector extends OpenCvPipeline
+    {
         boolean viewportPaused;
-        String region;
+        Mat mat = new Mat();
+        int frameCount = 0;
+        final Rect ROI = new Rect(new Point(0, 0), new Point(320, 240));
 
-        public DetectBeaconPipeline() {}
-
-        public int[] getLatestCenter () {
-            return new int[]{this.latest_x, this.latest_y};
-        }
-        
         @Override
         public Mat processFrame(Mat input) {
-            Mat temp = new Mat();
+            // Make a copy of the input Mat to avoid modifying the original
+            Mat frame = new Mat();
+            input.copyTo(frame);
+
+            // Convert the frame to HSV color space
+            Mat hsv = new Mat();
+            Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_BGR2HSV);
+
+            // Define the lower and upper bounds of the red color in HSV
+            Scalar lowerRed = new Scalar(0, 100, 100);
+            Scalar upperRed = new Scalar(10, 255, 255);
+
+            // Create a binary mask for the red color
             Mat mask = new Mat();
-            Mat res = new Mat();
+            Core.inRange(hsv, lowerRed, upperRed, mask);
 
-            Scalar lowerVal = new Scalar(0, 0, 150);
-            Scalar upperVal = new Scalar(100, 100, 255);
+            // Find contours in the mask
+            List<MatOfPoint> contours = new ArrayList<>();
+            Imgproc.findContours(mask, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-            input.copyTo(temp);
+            // Initialize variables for screen thirds and largest contour center
+            int screenThirds = -1; // -1 for not found, 0 for left, 1 for middle, 2 for right
+            Point largestContourCenter = new Point(0, 0);
 
-            Core.inRange(temp, lowerVal, upperVal, mask);
-
-            Imgproc.erode(mask, mask, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5)));
-            Imgproc.dilate(mask, mask, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5)));
-
-            input.copyTo(res, mask);
-
-            ArrayList<MatOfPoint> contours = new ArrayList<>();
-            Mat hierarchy = new Mat();
-
-            Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-
-            double maxArea = -1;
-            int maxAreaIdx = -1;
-
+            // Find the largest contour
+            double maxArea = 0;
+            int maxAreaContourIdx = -1;
             for (int i = 0; i < contours.size(); i++) {
                 double area = Imgproc.contourArea(contours.get(i));
                 if (area > maxArea) {
                     maxArea = area;
-                    maxAreaIdx = i;
+                    maxAreaContourIdx = i;
                 }
             }
 
-            if (maxAreaIdx != -1) {
-                Moments mu = Imgproc.moments(contours.get(maxAreaIdx));
-                int centerX = (int) (mu.get_m10() / mu.get_m00());
-                int centerY = (int) (mu.get_m01() / mu.get_m00());
-                this.latest_x = centerX;
-                this.latest_y = centerY;
-                telemetry.addData("x: ", centerX);
-                telemetry.addData("y: ", centerY);
-                Imgproc.circle(res, new Point(centerX, centerY), 5, new Scalar(0, 0, 255), -1);
+            if (maxAreaContourIdx != -1) {
+                MatOfPoint largestContour = contours.get(maxAreaContourIdx);
+                // Calculate the center of mass of the largest contour
+                Moments moments = Imgproc.moments(largestContour);
+                double cx = moments.m10 / moments.m00;
+                double cy = moments.m01 / moments.m00;
+
+                // Update the largest contour center
+                largestContourCenter = new Point(cx, cy);
+
+                // Determine which third of the screen the object is in
+                int third = (int) (cx * 3 / frame.width());
+
+                if (third == 0) {
+                    screenThirds = 0; // Left
+                } else if (third == 1) {
+                    screenThirds = 1; // Middle
+                } else if (third == 2) {
+                    screenThirds = 2; // Right
+                }
             }
 
-            if (this.latest_x < 280) {
-                section = "left";
-            } else if (this.latest_x > 360) {
-                section = "right";
-            } else {
-                section = "middle";
-            }
+            // Release Mats to avoid memory leaks
+            frame.release();
+            hsv.release();
+            mask.release();
 
-            return res;
+            // Display the center and screen third where the red item is located
+            telemetry.addLine("Center of the largest contour: X=" + largestContourCenter.x + ", Y=" + largestContourCenter.y);
+            telemetry.addLine("Red item is in the " + (screenThirds == -1 ? "unknown" : (screenThirds == 0 ? "left" : (screenThirds == 1 ? "middle" : "right"))) + " third.");
+
+            return input;
         }
 
         @Override
