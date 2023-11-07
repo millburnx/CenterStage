@@ -55,6 +55,8 @@ public class MainTeleOp extends LinearOpMode {
 
             Pose2d pose = robot.drive.getPos();
 
+            telemetry.addLine("JACOB WUZ HERE");
+
             telemetry.addData("Field Centric: ", robot.drive.isFieldCentric);
             telemetry.addData("Power: ", power);
             telemetry.addData("Strafe: ", strafe);
