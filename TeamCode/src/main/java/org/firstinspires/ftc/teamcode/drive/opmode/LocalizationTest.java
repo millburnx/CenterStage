@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
@@ -19,14 +20,15 @@ import org.firstinspires.ftc.teamcode.subsystems.Robot;
 public class LocalizationTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
+        SampleMecanumDrive rrDrive = new SampleMecanumDrive(hardwareMap);
         Robot robot = new Robot(hardwareMap, gamepad1);
 
-        robot.drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rrDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
 
         while (!isStopRequested()) {
-            robot.drive.setWeightedDrivePower(
+            rrDrive.setWeightedDrivePower(
                     new Pose2d(
                             -gamepad1.left_stick_y,
                             -gamepad1.left_stick_x,
@@ -34,10 +36,9 @@ public class LocalizationTest extends LinearOpMode {
                     )
             );
 
-            robot.drive.update();
+            rrDrive.update();
 
-//            Pose2d poseEstimate = robot.drive.getPoseEstimate();
-            Pose2d poseEstimate = robot.drive.getPos();
+            Pose2d poseEstimate = rrDrive.getPoseEstimate();
             telemetry.addData("Left Pos: ", robot.drive.leftFront.encoder.getPosition());
             telemetry.addData("Right Pos: ", robot.drive.rightRear.encoder.getPosition());
             telemetry.addData("Middle Pos: ", robot.drive.leftRear.encoder.getPosition());

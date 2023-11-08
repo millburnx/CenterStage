@@ -21,7 +21,7 @@ public class MainTeleOp extends LinearOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         TelemetryPacket packet = new TelemetryPacket();
 
-        double rollPower = 0.9;
+        double rollPower = 1;
 
         waitForStart();
 
@@ -47,15 +47,12 @@ public class MainTeleOp extends LinearOpMode {
             } else if (gamepad1.dpad_down) {
                 robot.deposit.rightDeposit.set(-1);
                 robot.deposit.leftDeposit.set(-1);
-            } else
-            {
+            } else {
                 robot.deposit.rightDeposit.set(0);
                 robot.deposit.leftDeposit.set(0);
             }
 
             Pose2d pose = robot.drive.getPos();
-
-            telemetry.addLine("JACOB WUZ HERE");
 
             telemetry.addData("Field Centric: ", robot.drive.isFieldCentric);
             telemetry.addData("Power: ", power);
