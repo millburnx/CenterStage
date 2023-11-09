@@ -12,6 +12,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -21,12 +22,12 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
-import java.util.List;
 
-@Autonomous(name="Red Beacon Detector", group="Auto")
-public class DetectRedBeaconOpMode extends LinearOpMode {
+@Autonomous(name="ObjectDetector", group="Auto")
+public class ObjectDetector extends LinearOpMode {
     OpenCvWebcam webcam;
-    RedBeaconDetector pipeline;
+    ObjectDetectorPipeline pipeline;
+    String section;
 
 
     @Override
@@ -34,13 +35,13 @@ public class DetectRedBeaconOpMode extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
-        pipeline = new RedBeaconDetector();
+        pipeline = new ObjectDetectorPipeline();
         webcam.setPipeline(pipeline);
         webcam.setMillisecondsPermissionTimeout(2500);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
                 FtcDashboard.getInstance().startCameraStream(webcam, 0);
             }
 
@@ -62,6 +63,8 @@ public class DetectRedBeaconOpMode extends LinearOpMode {
          */
         waitForStart();
 
+        // create auton class here
+
         while (opModeIsActive()) {
             /*
              * Send some stats to the telemetry
@@ -82,70 +85,76 @@ public class DetectRedBeaconOpMode extends LinearOpMode {
         }
     }
 
-    class RedBeaconDetector extends OpenCvPipeline {
+    class ObjectDetectorPipeline extends OpenCvPipeline {
         boolean viewportPaused;
         int frameCount = 0;
+        int latest_x, latest_y;
 
         public Mat processFrame(Mat input) {
-            // Convert the input Mat to the BGR color space (if it's not already)
-            Mat bgrMat = new Mat();
-            Imgproc.cvtColor(input, bgrMat, Imgproc.COLOR_RGBA2BGR);
+            Mat temp = new Mat();
+            Imgproc.cvtColor(input, temp, Imgproc.COLOR_RGB2HSV);
+            Mat mask = new Mat();
+            Mat mask2 = new Mat();
+            Mat res = new Mat();
 
-            // Define the lower and upper bounds for the red color in BGR format
-            Scalar lowerRed = new Scalar(0, 0, 100); // Adjust these values to match your specific red color
-            Scalar upperRed = new Scalar(100, 100, 255);
+            Scalar lowerVal = new Scalar(0, 100, 100);
+            Scalar upperVal = new Scalar(10, 255, 255);
 
-            // Split the frame into three equal vertical strips
-            int width = bgrMat.width();
-            int height = bgrMat.height();
-            int stripWidth = width / 3;
+            Scalar lowerVal2 = new Scalar(100, 100, 100);
+            Scalar upperVal2 = new Scalar(255, 255, 255);
 
-            int[] redPixelCounts = new int[3];
+            Core.inRange(temp, lowerVal, upperVal, mask);
+            Core.inRange(temp, lowerVal2, upperVal2, mask2);
+            Mat finalMask = new Mat();
+            Core.bitwise_or(mask, mask2, finalMask);
 
-            for (int i = 0; i < 3; i++) {
-                // Define the region of interest (ROI) for the current strip
-                Rect roi = new Rect(i * stripWidth, 0, stripWidth, height);
-                Mat redStrip = new Mat(bgrMat, roi);
+            Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(6, 6));
+            Imgproc.erode(finalMask, finalMask, kernel);
+            Imgproc.dilate(finalMask, finalMask, kernel);
 
-                // Create a mask that isolates the red pixels within the specified range
-                Mat redMask = new Mat();
-                Core.inRange(redStrip, lowerRed, upperRed, redMask);
+            Core.bitwise_and(input, input, res, finalMask);
 
-                // Find the total number of red pixels in the mask
-                redPixelCounts[i] = Core.countNonZero(redMask);
+            ArrayList<MatOfPoint> contours = new ArrayList<>();
+            Mat hierarchy = new Mat();
 
-                // Release Mats to prevent memory leaks
-                redStrip.release();
-                redMask.release();
-            }
+            Imgproc.findContours(finalMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-            // Find the section with the most red pixels
-            int maxRedPixelsIndex = 0;
-            for (int i = 1; i < 3; i++) {
-                if (redPixelCounts[i] > redPixelCounts[maxRedPixelsIndex]) {
-                    maxRedPixelsIndex = i;
+            double maxArea = -1;
+            int maxAreaIdx = -1;
+
+            for (int i = 0; i < contours.size(); i++) {
+                double area = Imgproc.contourArea(contours.get(i));
+                if (area > maxArea) {
+                    maxArea = area;
+                    maxAreaIdx = i;
                 }
             }
 
-            // You can use maxRedPixelsIndex to identify the section with the most red pixels
-            telemetry.addLine("Section with the most red pixels: " + maxRedPixelsIndex);
+            if (maxAreaIdx != -1) {
+                Moments mu = Imgproc.moments(contours.get(maxAreaIdx));
+                int centerX = (int) (mu.get_m10() / mu.get_m00());
+                int centerY = (int) (mu.get_m01() / mu.get_m00());
+                this.latest_x = centerX;
+                this.latest_y = centerY;
+                Imgproc.circle(res, new Point(centerX, centerY), 5, new Scalar(0, 0, 255), -1);
+            }
 
-            // Create a binary mask that isolates the red pixels within the specified range
-            Mat redMask = new Mat();
-            Core.inRange(bgrMat, lowerRed, upperRed, redMask);
+            telemetry.addLine("x: " + this.latest_x);
+            telemetry.addLine("y: " + this.latest_y);
 
-            // Create a black image of the same size as the input
-            Mat blackImage = new Mat(input.size(), CvType.CV_8UC1, new Scalar(0));
+            int region = this.latest_x * 3 / res.width();
+            if (region == 2) {
+                section = "left";
+            } else if (region == 0) {
+                section = "right";
+            } else {
+                section = "middle";
+            }
 
-            // Copy the red regions from the input image to the black image
-            bgrMat.copyTo(blackImage, redMask);
+            telemetry.addLine("The beacon in in the: " + section);
+            telemetry.update();
 
-            // Release Mats to prevent memory leaks
-            bgrMat.release();
-            redMask.release();
-            input.release();
-
-            return blackImage; //
+            return res;
         }
 
         /*
