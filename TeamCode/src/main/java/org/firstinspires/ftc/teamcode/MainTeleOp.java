@@ -20,6 +20,7 @@ public class MainTeleOp extends LinearOpMode {
         Robot robot = new Robot(hardwareMap, gamepad1);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         TelemetryPacket packet = new TelemetryPacket();
+        boolean depositToggle = false;
 
         double rollPower = 1;
 
@@ -41,10 +42,14 @@ public class MainTeleOp extends LinearOpMode {
 
             robot.lift.liftTeleOp(gamepad1);
 
+            if(gamepad1.left_bumper){
+                depositToggle = !depositToggle;
+            }
+
             if(gamepad1.dpad_up) {
                 robot.deposit.rightDeposit.set(1);
                 robot.deposit.leftDeposit.set(1);
-            } else if (gamepad1.dpad_down) {
+            } else if (gamepad1.dpad_down || depositToggle) {
                 robot.deposit.rightDeposit.set(-1);
                 robot.deposit.leftDeposit.set(-1);
             } else {
