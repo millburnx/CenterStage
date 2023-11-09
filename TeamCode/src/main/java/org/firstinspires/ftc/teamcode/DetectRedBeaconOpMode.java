@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
@@ -28,25 +30,22 @@ public class DetectRedBeaconOpMode extends LinearOpMode {
 
 
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
         pipeline = new RedBeaconDetector();
         webcam.setPipeline(pipeline);
         webcam.setMillisecondsPermissionTimeout(2500);
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
+            public void onOpened() {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                FtcDashboard.getInstance().startCameraStream(webcam, 0);
             }
 
             @Override
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
                 /*
                  * This will be called if the camera could not be opened
                  */
@@ -63,8 +62,7 @@ public class DetectRedBeaconOpMode extends LinearOpMode {
          */
         waitForStart();
 
-        while (opModeIsActive())
-        {
+        while (opModeIsActive()) {
             /*
              * Send some stats to the telemetry
              */
@@ -76,8 +74,7 @@ public class DetectRedBeaconOpMode extends LinearOpMode {
             telemetry.addData("Theoretical max FPS", webcam.getCurrentPipelineMaxFps());
             telemetry.update();
 
-            if(gamepad1.a)
-            {
+            if(gamepad1.a) {
                 webcam.stopStreaming();
             }
 
@@ -85,8 +82,7 @@ public class DetectRedBeaconOpMode extends LinearOpMode {
         }
     }
 
-    class RedBeaconDetector extends OpenCvPipeline
-    {
+    class RedBeaconDetector extends OpenCvPipeline {
         boolean viewportPaused;
         int frameCount = 0;
 
@@ -131,13 +127,25 @@ public class DetectRedBeaconOpMode extends LinearOpMode {
                 }
             }
 
-            // Release the bgrMat
-            bgrMat.release();
-
             // You can use maxRedPixelsIndex to identify the section with the most red pixels
             telemetry.addLine("Section with the most red pixels: " + maxRedPixelsIndex);
 
-            return input; // Return the original frame for display (you can modify this if needed)
+            // Create a binary mask that isolates the red pixels within the specified range
+            Mat redMask = new Mat();
+            Core.inRange(bgrMat, lowerRed, upperRed, redMask);
+
+            // Create a black image of the same size as the input
+            Mat blackImage = new Mat(input.size(), CvType.CV_8UC1, new Scalar(0));
+
+            // Copy the red regions from the input image to the black image
+            bgrMat.copyTo(blackImage, redMask);
+
+            // Release Mats to prevent memory leaks
+            bgrMat.release();
+            redMask.release();
+            input.release();
+
+            return blackImage; //
         }
 
         /*
