@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -23,15 +25,14 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
 
-@Autonomous(name="ObjectDetector", group="Auto")
-public class ObjectDetector extends LinearOpMode {
+public class ObjectDetector{
     OpenCvWebcam webcam;
     ObjectDetectorPipeline pipeline;
-    String section;
+    int region;
+    private int latest_x, latest_y;
 
+    public ObjectDetector (HardwareMap hardwareMap, Telemetry telemetry) {
 
-    @Override
-    public void runOpMode() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
@@ -54,41 +55,14 @@ public class ObjectDetector extends LinearOpMode {
                 telemetry.update();
             }
         });
+    }
 
-        telemetry.addLine("Waiting for start");
-        telemetry.update();
-
-        /*
-         * Wait for the user to press start on the Driver Station
-         */
-        waitForStart();
-
-        // create auton class here
-
-        while (opModeIsActive()) {
-            /*
-             * Send some stats to the telemetry
-             */
-            telemetry.addData("Frame Count", webcam.getFrameCount());
-            telemetry.addData("FPS", String.format("%.2f", webcam.getFps()));
-            telemetry.addData("Total frame time ms", webcam.getTotalFrameTimeMs());
-            telemetry.addData("Pipeline time ms", webcam.getPipelineTimeMs());
-            telemetry.addData("Overhead time ms", webcam.getOverheadTimeMs());
-            telemetry.addData("Theoretical max FPS", webcam.getCurrentPipelineMaxFps());
-            telemetry.update();
-
-            if(gamepad1.a) {
-                webcam.stopStreaming();
-            }
-
-            sleep(100);
-        }
+    public int getRegion() {
+        return region;
     }
 
     class ObjectDetectorPipeline extends OpenCvPipeline {
         boolean viewportPaused;
-        int frameCount = 0;
-        int latest_x, latest_y;
 
         public Mat processFrame(Mat input) {
             Mat temp = new Mat();
@@ -134,25 +108,12 @@ public class ObjectDetector extends LinearOpMode {
                 Moments mu = Imgproc.moments(contours.get(maxAreaIdx));
                 int centerX = (int) (mu.get_m10() / mu.get_m00());
                 int centerY = (int) (mu.get_m01() / mu.get_m00());
-                this.latest_x = centerX;
-                this.latest_y = centerY;
+                latest_x = centerX;
+                latest_y = centerY;
                 Imgproc.circle(res, new Point(centerX, centerY), 5, new Scalar(0, 0, 255), -1);
             }
 
-            telemetry.addLine("x: " + this.latest_x);
-            telemetry.addLine("y: " + this.latest_y);
-
-            int region = this.latest_x * 3 / res.width();
-            if (region == 2) {
-                section = "left";
-            } else if (region == 0) {
-                section = "right";
-            } else {
-                section = "middle";
-            }
-
-            telemetry.addLine("The beacon in in the: " + section);
-            telemetry.update();
+            region = latest_x * 3 / res.width();
 
             return res;
         }
