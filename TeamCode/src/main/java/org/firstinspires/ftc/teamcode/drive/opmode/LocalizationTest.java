@@ -39,9 +39,9 @@ public class LocalizationTest extends LinearOpMode {
             rrDrive.update();
 
             Pose2d poseEstimate = rrDrive.getPoseEstimate();
-            telemetry.addData("Left Pos: ", robot.drive.leftFront.encoder.getPosition());
-            telemetry.addData("Right Pos: ", robot.drive.rightRear.encoder.getPosition());
-            telemetry.addData("Middle Pos: ", robot.drive.leftRear.encoder.getPosition());
+            telemetry.addData("Left Pos: ", rrDrive.leftFront.getCurrentPosition());
+            telemetry.addData("Right Pos: ", rrDrive.rightFront.getCurrentPosition());
+            telemetry.addData("Middle Pos: ", rrDrive.rightRear.getCurrentPosition());
 
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());

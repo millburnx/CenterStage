@@ -67,6 +67,7 @@ public class ObjectDetector{
         public Mat processFrame(Mat input) {
             Mat temp = new Mat();
             Imgproc.cvtColor(input, temp, Imgproc.COLOR_RGB2HSV);
+
             Mat mask = new Mat();
             Mat mask2 = new Mat();
             Mat res = new Mat();
@@ -79,6 +80,7 @@ public class ObjectDetector{
 
             Core.inRange(temp, lowerVal, upperVal, mask);
             Core.inRange(temp, lowerVal2, upperVal2, mask2);
+
             Mat finalMask = new Mat();
             Core.bitwise_or(mask, mask2, finalMask);
 
@@ -88,10 +90,18 @@ public class ObjectDetector{
 
             Core.bitwise_and(input, input, res, finalMask);
 
+            mask.release();
+            mask2.release();
+            temp.release();
+            finalMask.release();
+            kernel.release();
+
             ArrayList<MatOfPoint> contours = new ArrayList<>();
             Mat hierarchy = new Mat();
 
             Imgproc.findContours(finalMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+            hierarchy.release(); // Release hierarchy since it is no longer needed
 
             double maxArea = -1;
             int maxAreaIdx = -1;
@@ -102,6 +112,11 @@ public class ObjectDetector{
                     maxArea = area;
                     maxAreaIdx = i;
                 }
+            }
+
+            // Release individual contours
+            for (MatOfPoint contour : contours) {
+                contour.release();
             }
 
             if (maxAreaIdx != -1) {
@@ -117,79 +132,6 @@ public class ObjectDetector{
 
             return res;
         }
-
-        /*
-        @Override
-        public Mat processFrame(Mat input) {
-            // Make a copy of the input Mat to avoid modifying the original
-            Mat frame = new Mat();
-            input.copyTo(frame);
-
-            // Convert the frame to HSV color space
-            Mat hsv = new Mat();
-            Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_BGR2HSV);
-
-            // Define the lower and upper bounds of the red color in HSV
-            Scalar lowerRed = new Scalar(0, 100, 100);
-            Scalar upperRed = new Scalar(10, 255, 255);
-
-            // Create a binary mask for the red color
-            Mat mask = new Mat();
-            Core.inRange(hsv, lowerRed, upperRed, mask);
-
-            // Find contours in the mask
-            List<MatOfPoint> contours = new ArrayList<>();
-            Imgproc.findContours(mask, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-
-            // Initialize variables for screen thirds and largest contour center
-            int screenThirds = -1; // -1 for not found, 0 for left, 1 for middle, 2 for right
-            Point largestContourCenter = new Point(0, 0);
-
-            // Find the largest contour
-            double maxArea = 0;
-            int maxAreaContourIdx = -1;
-            for (int i = 0; i < contours.size(); i++) {
-                double area = Imgproc.contourArea(contours.get(i));
-                if (area > maxArea) {
-                    maxArea = area;
-                    maxAreaContourIdx = i;
-                }
-            }
-
-            if (maxAreaContourIdx != -1) {
-                MatOfPoint largestContour = contours.get(maxAreaContourIdx);
-                // Calculate the center of mass of the largest contour
-                Moments moments = Imgproc.moments(largestContour);
-                double cx = moments.m10 / moments.m00;
-                double cy = moments.m01 / moments.m00;
-
-                // Update the largest contour center
-                largestContourCenter = new Point(cx, cy);
-
-                // Determine which third of the screen the object is in
-                int third = (int) (cx * 3 / frame.width());
-
-                if (third == 0) {
-                    screenThirds = 0; // Left
-                } else if (third == 1) {
-                    screenThirds = 1; // Middle
-                } else if (third == 2) {
-                    screenThirds = 2; // Right
-                }
-            }
-
-            // Release Mats to avoid memory leaks
-            frame.release();
-            hsv.release();
-            mask.release();
-
-            // Display the center and screen third where the red item is located
-            telemetry.addLine("Center of the largest contour: X=" + largestContourCenter.x + ", Y=" + largestContourCenter.y);
-            telemetry.addLine("Red item is in the " + (screenThirds == -1 ? "unknown" : (screenThirds == 0 ? "left" : (screenThirds == 1 ? "middle" : "right"))) + " third.");
-
-            return input;
-        }
-        */
 
         @Override
         public void onViewportTapped() {

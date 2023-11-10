@@ -117,12 +117,14 @@ public class Lift2 {
     private void liftManual()
     {
         if (gamepad.right_trigger > 0.5) { // move lift up
-            if (leftLift.getCurrentPosition() < liftLimit - 20 ) {
-                setLiftPower(gamepad.right_trigger*manualLiftPowerUp);
-            }
-            if (leftLift.getCurrentPosition() > liftLimit) {
-                setLiftPower(0);
-            }
+//            if (leftLift.getCurrentPosition() < liftLimit - 20 ) {
+//                setLiftPower(gamepad.right_trigger*manualLiftPowerUp);
+//            }
+//            if (leftLift.getCurrentPosition() > liftLimit) {
+//                setLiftPower(0);
+//            }
+            setLiftPower(gamepad.right_trigger*manualLiftPowerUp);
+
 
         }
         else if (gamepad.left_trigger > 0.5) { // move lift down
