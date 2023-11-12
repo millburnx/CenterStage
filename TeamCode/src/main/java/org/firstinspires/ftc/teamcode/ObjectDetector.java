@@ -60,6 +60,9 @@ public class ObjectDetector{
     public int getRegion() {
         return region;
     }
+    public int getX() {
+        return latest_x;
+    }
 
     class ObjectDetectorPipeline extends OpenCvPipeline {
         boolean viewportPaused;
@@ -90,18 +93,10 @@ public class ObjectDetector{
 
             Core.bitwise_and(input, input, res, finalMask);
 
-            mask.release();
-            mask2.release();
-            temp.release();
-            finalMask.release();
-            kernel.release();
-
             ArrayList<MatOfPoint> contours = new ArrayList<>();
             Mat hierarchy = new Mat();
 
             Imgproc.findContours(finalMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-
-            hierarchy.release(); // Release hierarchy since it is no longer needed
 
             double maxArea = -1;
             int maxAreaIdx = -1;
@@ -112,11 +107,6 @@ public class ObjectDetector{
                     maxArea = area;
                     maxAreaIdx = i;
                 }
-            }
-
-            // Release individual contours
-            for (MatOfPoint contour : contours) {
-                contour.release();
             }
 
             if (maxAreaIdx != -1) {

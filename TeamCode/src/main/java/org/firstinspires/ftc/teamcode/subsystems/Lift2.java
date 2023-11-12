@@ -45,11 +45,11 @@ public class Lift2 {
         leftLift = hardwareMap.get(DcMotorEx.class, "leftLift");
         rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightLift.setDirection(DcMotor.Direction.REVERSE);
+        rightLift.setDirection(DcMotor.Direction.FORWARD);
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftLift.setDirection(DcMotor.Direction.FORWARD);
+        leftLift.setDirection(DcMotor.Direction.REVERSE);
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         this.gamepad = gamepad;
         newBotStart();
@@ -59,9 +59,7 @@ public class Lift2 {
     }
 
     public void liftToPosition(int posRequest, int posRequestLeft, double power) {
-        if (Math.abs(posRequest - rightLift.getCurrentPosition()) <= 20) {
-            currentMode = LIFT_MODE.HOLD;
-        }
+
         //DETERMINE VALIDITY OF POSITION
         if(posRequest > 10  && posRequest < liftLimit)
         {
@@ -86,8 +84,8 @@ public class Lift2 {
     {
         leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftLift.setPower(power*-1);
-        rightLift.setPower(power*-1.15);
+        leftLift.setPower(power*1);
+        rightLift.setPower(power*1.15);
     }
 
     private void liftMacro()
@@ -99,9 +97,9 @@ public class Lift2 {
         else
         {
             if (gamepad.square) { // medium goal macro
-                liftToMedium();
+                liftToBoard();
             } else if (gamepad.circle) { // low goal macro
-                liftToLow();
+                liftToBoard();
             } else if (gamepad.left_bumper) { // stack macro
                 liftToTopStack();
             } else if (gamepad.triangle) { // high goal macro
@@ -117,39 +115,25 @@ public class Lift2 {
     private void liftManual()
     {
         if (gamepad.right_trigger > 0.5) { // move lift up
-//            if (leftLift.getCurrentPosition() < liftLimit - 20 ) {
-//                setLiftPower(gamepad.right_trigger*manualLiftPowerUp);
-//            }
-//            if (leftLift.getCurrentPosition() > liftLimit) {
-//                setLiftPower(0);
-//            }
             setLiftPower(gamepad.right_trigger*manualLiftPowerUp);
 
 
         }
         else if (gamepad.left_trigger > 0.5) { // move lift down
-            if (leftLift.getCurrentPosition() > 100) {
-                setLiftPower(gamepad.left_trigger * manualLiftPowerDown*-1);
-            } else if(leftLift.getCurrentPosition() > 0){
-                setLiftPower(gamepad.left_trigger * manualLiftPowerDown*-1);
-            }
-            else
-            {
-                setLiftPower(0);
-            }
+            setLiftPower(gamepad.left_trigger * manualLiftPowerDown*-1);
         }
 
     }
     private void liftAnalysis(boolean isAuton)
     {
-        if (currentMode == LIFT_MODE.HOLD || currentMode == LIFT_MODE.MACRO) { // goes to position asked for if needed
-
-            if (currentMode == LIFT_MODE.HOLD){
-                liftToPosition(holdingPosRight, holdingPosLeft, holdLiftPower);
+        if (currentMode == LIFT_MODE.MACRO) { // goes to position asked for if needed
+            if(Math.abs(holdingPosRight-rightLift.getCurrentPosition()) <10){
+                currentMode = LIFT_MODE.MANUAL;
             }
-            else {
+            else{
                 liftToPosition(holdingPosRight, holdingPosLeft, macroLiftPower);
             }
+
         }
         else if(currentMode == LIFT_MODE.RESET)
         {
@@ -206,10 +190,13 @@ public class Lift2 {
         if(currentMode != LIFT_MODE.KILLED )
         {
             //MACROS
-            if(gamepad.square || gamepad.circle || gamepad.left_bumper || gamepad.triangle || gamepad.right_bumper)
+            if(gamepad.circle)
             {
                 currentMode = LIFT_MODE.MACRO;
                 liftMacro();
+            }
+            if(gamepad.circle){
+                liftToBoard();
             }
 
 
@@ -233,7 +220,7 @@ public class Lift2 {
 //            }
 
             //ANALYSIS OF MODE
-            //liftAnalysis(false);
+            liftAnalysis(false);
 
         }
         else
@@ -244,9 +231,9 @@ public class Lift2 {
     }
 
 
-    public void liftToMedium() {
-        holdingPosRight = 1725;
-        holdingPosLeft = 1725;
+    public void liftToBoard() {
+        holdingPosRight = 550;
+        holdingPosLeft = 550;
         currentMode = LIFT_MODE.MACRO;
     }
 
@@ -298,11 +285,11 @@ public class Lift2 {
 
 
     public void newBotStart() {
-        leftLift.setDirection(DcMotorEx.Direction.FORWARD);
+        leftLift.setDirection(DcMotorEx.Direction.REVERSE);
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        rightLift.setDirection(DcMotorEx.Direction.REVERSE);
+        rightLift.setDirection(DcMotorEx.Direction.FORWARD);
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }

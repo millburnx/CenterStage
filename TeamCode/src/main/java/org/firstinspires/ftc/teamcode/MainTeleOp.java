@@ -39,25 +39,38 @@ public class MainTeleOp extends LinearOpMode {
                 rollPower = -rollPower;
                 robot.intake.roll(rollPower);
             }
+            if(gamepad1.right_trigger>0.5){
+                depositToggle = false;
+            }
+
 
             robot.lift.liftTeleOp(gamepad1);
 
+
             if(gamepad1.left_bumper){
-                depositToggle = !depositToggle;
+                depositToggle = true;
             }
 
             if(gamepad1.dpad_up) {
-                robot.deposit.rightDeposit.set(1);
-                robot.deposit.leftDeposit.set(1);
-            } else if (gamepad1.dpad_down || depositToggle) {
-                robot.deposit.rightDeposit.set(-1);
-                robot.deposit.leftDeposit.set(-1);
-            } else {
+                depositToggle = false;
+                robot.deposit.rightDeposit.set(0.8);
+                robot.deposit.leftDeposit.set(0.8);
+            } else if (gamepad1.dpad_down) {
+                depositToggle = false;
+                robot.deposit.rightDeposit.set(-0.8);
+                robot.deposit.leftDeposit.set(-0.8);
+            } else if(depositToggle){
+                robot.deposit.rightDeposit.set(-0.8);
+                robot.deposit.leftDeposit.set(-0.8);
+            }
+            else {
                 robot.deposit.rightDeposit.set(0);
                 robot.deposit.leftDeposit.set(0);
             }
 
             Pose2d pose = robot.drive.getPos();
+
+            telemetry.addData("deposit toggle", depositToggle);
 
             telemetry.addData("Field Centric: ", robot.drive.isFieldCentric);
             telemetry.addData("Power: ", power);
