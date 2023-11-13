@@ -175,8 +175,9 @@ public class BackboardRightAuton extends OpMode {
         if(up){
             robot.lift.leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.lift.rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.lift.rightLift.setPower(0.8);
-            robot.lift.leftLift.setPower(0.8);
+            robot.lift.rightLift.setPower(1);
+            robot.lift.leftLift.setPower(1);
+
 
         }
         else{

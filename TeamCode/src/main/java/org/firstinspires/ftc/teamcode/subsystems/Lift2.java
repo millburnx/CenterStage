@@ -28,7 +28,7 @@ public class Lift2 {
 
     // -- LIFT CONSTANTS -- //
     public double rollingAverageCurrent = 0;
-    private final double manualLiftPowerUp = 0.8;
+    private final double manualLiftPowerUp = 1;
     private final double manualLiftPowerDown = 0.5;
     private final double holdLiftPower = 0.3;
     private final double macroLiftPower = 1;

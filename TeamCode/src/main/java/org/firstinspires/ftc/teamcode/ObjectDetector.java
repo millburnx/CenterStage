@@ -66,15 +66,18 @@ public class ObjectDetector{
 
     class ObjectDetectorPipeline extends OpenCvPipeline {
         boolean viewportPaused;
+        Mat mask, mask2, temp, res, finalMask, kernel, hierarchy;
+        ArrayList<MatOfPoint> contours;
 
         public Mat processFrame(Mat input) {
-            Mat temp = new Mat();
+            temp = new Mat();
             Imgproc.cvtColor(input, temp, Imgproc.COLOR_RGB2HSV);
 
-            Mat mask = new Mat();
-            Mat mask2 = new Mat();
-            Mat res = new Mat();
-
+            mask = new Mat();
+            mask2 = new Mat();
+            res = new Mat();
+            finalMask = new Mat();
+            hierarchy = new Mat();
             Scalar lowerVal = new Scalar(0, 100, 100);
             Scalar upperVal = new Scalar(10, 255, 255);
 
@@ -84,17 +87,16 @@ public class ObjectDetector{
             Core.inRange(temp, lowerVal, upperVal, mask);
             Core.inRange(temp, lowerVal2, upperVal2, mask2);
 
-            Mat finalMask = new Mat();
             Core.bitwise_or(mask, mask2, finalMask);
 
-            Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(6, 6));
+            kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(6, 6));
             Imgproc.erode(finalMask, finalMask, kernel);
             Imgproc.dilate(finalMask, finalMask, kernel);
 
             Core.bitwise_and(input, input, res, finalMask);
 
-            ArrayList<MatOfPoint> contours = new ArrayList<>();
-            Mat hierarchy = new Mat();
+            contours = new ArrayList<>();
+
 
             Imgproc.findContours(finalMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
@@ -120,6 +122,11 @@ public class ObjectDetector{
 
             region = latest_x * 3 / res.width();
 
+            mask.release();
+            mask2.release();
+            temp.release();
+            hierarchy.release();
+            finalMask.release();
             return res;
         }
 
