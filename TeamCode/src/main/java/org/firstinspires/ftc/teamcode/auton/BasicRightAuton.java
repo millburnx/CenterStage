@@ -91,20 +91,20 @@ public class BasicRightAuton extends OpMode {
 
     public void depositAsync(){
         if(deposit){
-            robot.deposit.rightDeposit.set(1);
-            robot.deposit.leftDeposit.set(1);
+            robot.deposit.rightDeposit.setPosition(0.9);
+            robot.deposit.leftDeposit.setPosition(0.9);
         }
         else{
-            robot.deposit.rightDeposit.set(0);
-            robot.deposit.leftDeposit.set(0);
+            robot.deposit.rightDeposit.setPosition(0.32);
+            robot.deposit.leftDeposit.setPosition(0.32);
         }
     }
     public void liftAsync(){
         if(up){
             robot.lift.leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.lift.rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.lift.rightLift.setPower(0.8);
-            robot.lift.leftLift.setPower(0.8);
+            robot.lift.rightLift.setPower(0.7);
+            robot.lift.leftLift.setPower(0.7);
 
         }
         else{

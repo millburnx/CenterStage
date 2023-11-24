@@ -45,70 +45,69 @@ public class BackboardLeftAuton extends OpMode {
         robot = new RR_Robot(hardwareMap, gamepad1);
 
         left_0 = robot.drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(26, -1, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(30, -1, Math.toRadians(-95)))
                 .addTemporalMarker(3, () -> {
                     outtaking = true;
                     robot.drive.followTrajectoryAsync(left_1);
                 })
                 .build();
         left_1 = robot.drive.trajectoryBuilder(left_0.end())
-                .lineToLinearHeading(new Pose2d(36,33, Math.toRadians(-90)))
-                .addTemporalMarker(9, ()->{
+                .lineToLinearHeading(new Pose2d(35,33, Math.toRadians(-95)))
+                .addTemporalMarker(2, ()->{
                     up = true;
                     deposit = true;
                     robot.drive.followTrajectoryAsync(left_2);
                 })
                 .build();
         left_2 = robot.drive.trajectoryBuilder(left_1.end())
-                .lineToLinearHeading(new Pose2d(36, 40, Math.toRadians(-90)),
+                .lineToLinearHeading(new Pose2d(31, 35.5, Math.toRadians(-95)),
                         SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .addTemporalMarker(9,()->{
+                .addTemporalMarker(1,()->{
                     up = false;
                     robot.drive.followTrajectoryAsync(left_3);
                 } )
                 .build();
         left_3 = robot.drive.trajectoryBuilder(left_2.end())
-                .forward(1)
-                .addTemporalMarker(9,()->{
+                .forward(4)
+                .addTemporalMarker(2,()->{
                     deposit = false;
                 } )
                 .build();
 
         middle_0 = robot.drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(25,4,0))
-                .addTemporalMarker(2, () -> {
+                .lineToLinearHeading(new Pose2d(26,4,0))
+                .addTemporalMarker(3, () -> {
                     outtaking = true;
                     robot.drive.followTrajectoryAsync(middle_1);
                 })
                 .build();
         middle_1 = robot.drive.trajectoryBuilder(middle_0.end())
                 .lineToLinearHeading(new Pose2d(27.25, 33 , Math.toRadians(-95)))
-                .addTemporalMarker(9, ()->{
+                .addTemporalMarker(3, ()->{
                     up = true;
                     deposit = true;
                     robot.drive.followTrajectoryAsync(middle_2);
                 })
                 .build();
         middle_2 = robot.drive.trajectoryBuilder(middle_1.end())
-                .lineToLinearHeading(new Pose2d(27.25, 40, Math.toRadians(-95)),
+                .lineToLinearHeading(new Pose2d(27.25, 35.5, Math.toRadians(-95)),
                         SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .addTemporalMarker(9,()->{
+                .addTemporalMarker(1,()->{
                     up = false;
                     robot.drive.followTrajectoryAsync(middle_3);
                 } )
                 .build();
         middle_3 = robot.drive.trajectoryBuilder(middle_2.end())
-                .forward(1)
-                .addTemporalMarker(9,()->{
+                .forward(4)
+                .addTemporalMarker(2,()->{
                     deposit = false;
                 } )
                 .build();
 
-
         right_0 = robot.drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(30, 22, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(30, 22, Math.toRadians(-95)))
                 .addTemporalMarker(3, () -> {
                     outtaking = true;
                     robot.drive.followTrajectoryAsync(right_1);
@@ -116,25 +115,25 @@ public class BackboardLeftAuton extends OpMode {
                 .build();
 
         right_1 = robot.drive.trajectoryBuilder(right_0.end())
-                .lineToLinearHeading(new Pose2d(22, 33, Math.toRadians(-90)))
-                .addTemporalMarker(9,()->{
+                .lineToLinearHeading(new Pose2d(22, 33, Math.toRadians(-95)))
+                .addTemporalMarker(2,()->{
                     up = true;
                     deposit = true;
                     robot.drive.followTrajectoryAsync(right_2);
                 } )
                 .build();
         right_2 = robot.drive.trajectoryBuilder(right_1.end())
-                .lineToLinearHeading(new Pose2d(22, 40, Math.toRadians(-90)),
+                .lineToLinearHeading(new Pose2d(22, 35.5, Math.toRadians(-95)),
                         SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .addTemporalMarker(9,()->{
+                .addTemporalMarker(1,()->{
                     up = false;
                     robot.drive.followTrajectoryAsync(right_3);
                 } )
                 .build();
         right_3 = robot.drive.trajectoryBuilder(right_1.end())
-                .forward(1)
-                .addTemporalMarker(9,()->{
+                .forward(4)
+                .addTemporalMarker(2,()->{
                     deposit = false;
                 } )
                 .build();
@@ -163,20 +162,20 @@ public class BackboardLeftAuton extends OpMode {
 
     public void depositAsync(){
         if(deposit){
-            robot.deposit.rightDeposit.set(0.9);
-            robot.deposit.leftDeposit.set(0.9);
+            robot.deposit.rightDeposit.setPosition(0.9);
+            robot.deposit.leftDeposit.setPosition(0.9);
         }
         else{
-            robot.deposit.rightDeposit.set(0);
-            robot.deposit.leftDeposit.set(0);
+            robot.deposit.rightDeposit.setPosition(0.32);
+            robot.deposit.leftDeposit.setPosition(0.32);
         }
     }
     public void liftAsync(){
         if(up){
             robot.lift.leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.lift.rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.lift.rightLift.setPower(1);
-            robot.lift.leftLift.setPower(1);
+            robot.lift.rightLift.setPower(0.8);
+            robot.lift.leftLift.setPower(0.8);
 
         }
         else{

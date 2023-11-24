@@ -120,7 +120,7 @@ public class ObjectDetector{
                 Imgproc.circle(res, new Point(centerX, centerY), 5, new Scalar(0, 0, 255), -1);
             }
 
-            region = latest_x * 3 / res.width();
+            region = 2 - latest_x * 3 / res.width();
 
             mask.release();
             mask2.release();

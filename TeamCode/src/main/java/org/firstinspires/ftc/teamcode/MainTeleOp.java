@@ -50,31 +50,16 @@ public class MainTeleOp extends LinearOpMode {
                 depositToggle = true;
             }
 
-            if(gamepad1.dpad_down) {
+            if (gamepad1.dpad_down) {
                 robot.servoDeposit.rightDeposit.setPosition(0.32);
                 robot.servoDeposit.leftDeposit.setPosition(0.32);
-            }
-            if(gamepad1.dpad_up) {
+            } else if (gamepad1.dpad_up) {
                 robot.servoDeposit.rightDeposit.setPosition(0.9);
                 robot.servoDeposit.leftDeposit.setPosition(0.9);
+            } else if (gamepad1.dpad_right) {
+                robot.servoDeposit.rightDeposit.setPosition(0.4);
+                robot.servoDeposit.leftDeposit.setPosition(0.4);
             }
-
-//            if(gamepad1.dpad_up) {
-//                depositToggle = false;
-//                robot.deposit.rightDeposit.set(0.8);
-//                robot.deposit.leftDeposit.set(0.8);
-//            } else if (gamepad1.dpad_down) {
-//                depositToggle = false;
-//                robot.deposit.rightDeposit.set(-0.8);
-//                robot.deposit.leftDeposit.set(-0.8);
-//            } else if(depositToggle){
-//                robot.deposit.rightDeposit.set(-0.8);
-//                robot.deposit.leftDeposit.set(-0.8);
-//            }
-//            else {
-//                robot.deposit.rightDeposit.set(0);
-//                robot.deposit.leftDeposit.set(0);
-//            }
 
             Pose2d pose = robot.drive.getPos();
 
