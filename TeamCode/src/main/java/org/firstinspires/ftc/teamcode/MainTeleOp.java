@@ -39,34 +39,42 @@ public class MainTeleOp extends LinearOpMode {
                 rollPower = -rollPower;
                 robot.intake.roll(rollPower);
             }
+
             if(gamepad1.right_trigger>0.5){
                 depositToggle = false;
             }
 
-
             robot.lift.liftTeleOp(gamepad1);
-
 
             if(gamepad1.left_bumper){
                 depositToggle = true;
             }
 
+            if(gamepad1.dpad_down) {
+                robot.servoDeposit.rightDeposit.setPosition(0.32);
+                robot.servoDeposit.leftDeposit.setPosition(0.32);
+            }
             if(gamepad1.dpad_up) {
-                depositToggle = false;
-                robot.deposit.rightDeposit.set(0.8);
-                robot.deposit.leftDeposit.set(0.8);
-            } else if (gamepad1.dpad_down) {
-                depositToggle = false;
-                robot.deposit.rightDeposit.set(-0.8);
-                robot.deposit.leftDeposit.set(-0.8);
-            } else if(depositToggle){
-                robot.deposit.rightDeposit.set(-0.8);
-                robot.deposit.leftDeposit.set(-0.8);
+                robot.servoDeposit.rightDeposit.setPosition(0.9);
+                robot.servoDeposit.leftDeposit.setPosition(0.9);
             }
-            else {
-                robot.deposit.rightDeposit.set(0);
-                robot.deposit.leftDeposit.set(0);
-            }
+
+//            if(gamepad1.dpad_up) {
+//                depositToggle = false;
+//                robot.deposit.rightDeposit.set(0.8);
+//                robot.deposit.leftDeposit.set(0.8);
+//            } else if (gamepad1.dpad_down) {
+//                depositToggle = false;
+//                robot.deposit.rightDeposit.set(-0.8);
+//                robot.deposit.leftDeposit.set(-0.8);
+//            } else if(depositToggle){
+//                robot.deposit.rightDeposit.set(-0.8);
+//                robot.deposit.leftDeposit.set(-0.8);
+//            }
+//            else {
+//                robot.deposit.rightDeposit.set(0);
+//                robot.deposit.leftDeposit.set(0);
+//            }
 
             Pose2d pose = robot.drive.getPos();
 
@@ -85,7 +93,9 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("rightLift: ", robot.lift.rightLift.getCurrentPosition());
             telemetry.addData("leftLift: ", robot.lift.leftLift.getCurrentPosition());
 
-            telemetry.addData("intakeTime: ", robot.deposit.time.milliseconds()-robot.deposit.time.startTime());
+//            telemetry.addData("intakeTime: ", robot.deposit.time.milliseconds()-robot.deposit.time.startTime());
+            telemetry.addData("leftDeposit: ", robot.servoDeposit.leftDeposit.getPosition());
+            telemetry.addData("rightDeposit: ", robot.servoDeposit.rightDeposit.getPosition());
 
             telemetry.update();
             robot.dashTelemetry.drawField(pose, dashboard);
