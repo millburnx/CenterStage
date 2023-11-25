@@ -28,6 +28,8 @@ public class MainTeleOp extends LinearOpMode {
 
         robot.intake.roll(rollPower);
 
+        boolean togglePressed = false;
+
         while (opModeIsActive()) {
             double power = -gamepad1.left_stick_y;
             double strafe = gamepad1.left_stick_x;
@@ -36,8 +38,17 @@ public class MainTeleOp extends LinearOpMode {
             robot.drive.moveTeleOp(power, strafe, turn);
 
             if(gamepad1.x) {
-                rollPower = -rollPower;
-                robot.intake.roll(rollPower);
+                if (!togglePressed) {
+                    togglePressed = true;
+                    rollPower = -rollPower;
+                    if (rollPower < 0) {
+                        robot.intake.roll(rollPower + 0.4);
+                    } else {
+                        robot.intake.roll(rollPower);
+                    }
+                }
+            } else {
+                togglePressed = false;
             }
 
             if(gamepad1.right_trigger>0.5){
