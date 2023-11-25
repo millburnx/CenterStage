@@ -22,7 +22,7 @@ public class MainTeleOp extends LinearOpMode {
         TelemetryPacket packet = new TelemetryPacket();
         boolean depositToggle = false;
 
-        double rollPower = 1;
+        double rollPower = 0.8;
 
         waitForStart();
 
@@ -57,8 +57,8 @@ public class MainTeleOp extends LinearOpMode {
                 robot.servoDeposit.rightDeposit.setPosition(0.9);
                 robot.servoDeposit.leftDeposit.setPosition(0.9);
             } else if (gamepad1.dpad_right) {
-                robot.servoDeposit.rightDeposit.setPosition(0.4);
-                robot.servoDeposit.leftDeposit.setPosition(0.4);
+                robot.servoDeposit.rightDeposit.setPosition(0.45);
+                robot.servoDeposit.leftDeposit.setPosition(0.45);
             }
 
             Pose2d pose = robot.drive.getPos();

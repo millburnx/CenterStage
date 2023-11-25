@@ -76,7 +76,7 @@ public class BackboardRightAuton extends OpMode {
                 .build();
 
         middle_0 = robot.drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(26,-4,0))
+                .lineToLinearHeading(new Pose2d(24,-4,0))
                 .addTemporalMarker(3, () -> {
                     outtaking = true;
                     robot.drive.followTrajectoryAsync(middle_1);
@@ -91,7 +91,7 @@ public class BackboardRightAuton extends OpMode {
                 })
                 .build();
         middle_2 = robot.drive.trajectoryBuilder(middle_1.end())
-                .lineToLinearHeading(new Pose2d(27.25, -35.5, Math.toRadians(95)),
+                .lineToLinearHeading(new Pose2d(27.25, -36.5, Math.toRadians(95)),
                         SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .addTemporalMarker(1,()->{

@@ -44,6 +44,7 @@ public class BackboardLeftAuton extends OpMode {
 
         robot = new RR_Robot(hardwareMap, gamepad1);
 
+        // actually right
         left_0 = robot.drive.trajectoryBuilder(new Pose2d())
                 .lineToLinearHeading(new Pose2d(30, -1, Math.toRadians(-95)))
                 .addTemporalMarker(3, () -> {
@@ -106,8 +107,9 @@ public class BackboardLeftAuton extends OpMode {
                 } )
                 .build();
 
+        // actually left
         right_0 = robot.drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(30, 22, Math.toRadians(-95)))
+                .lineToLinearHeading(new Pose2d(30, 24, Math.toRadians(-95)))
                 .addTemporalMarker(3, () -> {
                     outtaking = true;
                     robot.drive.followTrajectoryAsync(right_1);
@@ -123,10 +125,10 @@ public class BackboardLeftAuton extends OpMode {
                 } )
                 .build();
         right_2 = robot.drive.trajectoryBuilder(right_1.end())
-                .lineToLinearHeading(new Pose2d(22, 35.5, Math.toRadians(-95)),
+                .lineToLinearHeading(new Pose2d(22, 36.5, Math.toRadians(-95)),
                         SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .addTemporalMarker(1,()->{
+                .addTemporalMarker(2,()->{
                     up = false;
                     robot.drive.followTrajectoryAsync(right_3);
                 } )
