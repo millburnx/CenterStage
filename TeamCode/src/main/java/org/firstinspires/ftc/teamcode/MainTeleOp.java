@@ -24,6 +24,8 @@ public class MainTeleOp extends LinearOpMode {
 
         double rollPower = 0.8;
 
+        robot.lift.setTarget(0);
+
         waitForStart();
 
         robot.intake.roll(rollPower);
@@ -55,7 +57,21 @@ public class MainTeleOp extends LinearOpMode {
                 depositToggle = false;
             }
 
-            robot.lift.liftTeleOp(gamepad1);
+//            robot.lift.liftTeleOp(gamepad1);
+
+            robot.lift.run();
+
+            if(gamepad1.circle) {
+                robot.lift.setTarget(1000);
+                robot.servoDeposit.rightDeposit.setPosition(0.9);
+                robot.servoDeposit.leftDeposit.setPosition(0.9);
+            }
+
+            if(gamepad1.triangle) {
+                robot.lift.setTarget(0);
+                robot.servoDeposit.rightDeposit.setPosition(0.32);
+                robot.servoDeposit.leftDeposit.setPosition(0.32);
+            }
 
             if(gamepad1.left_bumper){
                 depositToggle = true;

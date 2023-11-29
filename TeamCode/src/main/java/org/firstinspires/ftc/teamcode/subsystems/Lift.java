@@ -30,7 +30,6 @@ public class Lift {
     private double startedHoldingTime = 0;
     private Gamepad gamepad;
 
-
     public Lift(HardwareMap hardwareMap, Gamepad gamepad) {
         currentMode = LIFT_MODE.NONE;
         rightLift = hardwareMap.get(DcMotorEx.class, "rightLift");
@@ -114,7 +113,6 @@ public class Lift {
         else if (gamepad.left_trigger > 0.5) { // move lift down
             setLiftPower(gamepad.left_trigger * manualLiftPowerDown*-1);
         }
-
     }
     private void liftAnalysis(boolean isAuton)
     {
@@ -159,8 +157,6 @@ public class Lift {
 
         }
 
-
-
         if(currentMode == LIFT_MODE.HOLD && !isAuton)
         {
             if(startedHoldingTime == 0)
@@ -177,6 +173,7 @@ public class Lift {
             startedHoldingTime = 0;
         }
     }
+
     public void liftTeleOp(Gamepad gamepad) {
         this.gamepad = gamepad;
         if(currentMode != LIFT_MODE.KILLED )
@@ -190,8 +187,6 @@ public class Lift {
             if(gamepad.circle){
                 liftToBoard();
             }
-
-
 
             // MANUAL
             if(gamepad.right_trigger > 0.5 || gamepad.left_trigger > 0.5)
@@ -213,7 +208,6 @@ public class Lift {
 
             //ANALYSIS OF MODE
             liftAnalysis(false);
-
         }
         else
         {
@@ -221,7 +215,6 @@ public class Lift {
             leftLift.setMotorDisable();
         }
     }
-
 
     public void liftToBoard() {
         holdingPosRight = 550;
@@ -269,12 +262,10 @@ public class Lift {
         currentMode = LIFT_MODE.MACRO;
     }
 
-
     public void autonRequest()
     {
         liftAnalysis(true);
     }
-
 
     public void newBotStart() {
         leftLift.setDirection(DcMotorEx.Direction.REVERSE);
