@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Robot;
 public class LocalizationTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive rrDrive= new SampleMecanumDrive(hardwareMap);
+        SampleMecanumDrive rrDrive = new SampleMecanumDrive(hardwareMap);
         Robot robot = new Robot(hardwareMap, gamepad1);
 
         rrDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

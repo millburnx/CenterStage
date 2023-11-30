@@ -18,6 +18,8 @@ public class MainTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap, gamepad1);
+        RR_Robot rr_robot = new RR_Robot(hardwareMap, gamepad1);
+        Pose2d pose = new Pose2d(rr_robot.drive.getPose().getX(), rr_robot.drive.getPose().getY(), rr_robot.drive.getPose().getHeading());
         FtcDashboard dashboard = FtcDashboard.getInstance();
         TelemetryPacket packet = new TelemetryPacket();
         boolean depositToggle = false;
@@ -88,7 +90,7 @@ public class MainTeleOp extends LinearOpMode {
                 robot.servoDeposit.leftDeposit.setPosition(0.45);
             }
 
-            Pose2d pose = robot.drive.getPos();
+            pose = new Pose2d(rr_robot.drive.getPoseEstimate().getX(), rr_robot.drive.getPoseEstimate().getY(), rr_robot.drive.getPoseEstimate().getHeading());
 
             telemetry.addData("deposit toggle", depositToggle);
 
@@ -97,15 +99,9 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("Strafe: ", strafe);
             telemetry.addData("Turn: ", turn);
 
-            telemetry.addData("x: ", pose.getX());
-            telemetry.addData("y: ", pose.getY());
-            telemetry.addData("heading: ", pose.getHeading());
-
-
             telemetry.addData("rightLift: ", robot.lift.rightLift.getCurrentPosition());
             telemetry.addData("leftLift: ", robot.lift.leftLift.getCurrentPosition());
 
-//            telemetry.addData("intakeTime: ", robot.deposit.time.milliseconds()-robot.deposit.time.startTime());
             telemetry.addData("leftDeposit: ", robot.servoDeposit.leftDeposit.getPosition());
             telemetry.addData("rightDeposit: ", robot.servoDeposit.rightDeposit.getPosition());
 
@@ -113,6 +109,7 @@ public class MainTeleOp extends LinearOpMode {
             robot.dashTelemetry.drawField(pose, dashboard);
 
             robot.drive.update();
+            rr_robot.drive.update();
         }
     }
 }

@@ -34,6 +34,25 @@ public class DashTelemetry {
         dash.sendTelemetryPacket(packet);
     }
 
+    public void drawFieldRed(Pose2d pose, FtcDashboard dash){
+        TelemetryPacket packet = new TelemetryPacket();
+        Canvas fieldOverlay = packet.fieldOverlay();
+
+        fieldOverlay.setStrokeWidth(1);
+        fieldOverlay.setStroke("#51B53F");
+        drawRobot(fieldOverlay, pose);
+//        fieldOverlay.setStroke("#51B53F");
+//        drawRobot(fieldOverlay,desiredPose);
+//        fieldOverlay.setStroke("#B53F51");
+//        drawRobot(fieldOverlay,startPose);
+
+        packet.put("x: ", pose.getX());
+        packet.put("y: ", pose.getY());
+        packet.put("heading (degrees):", Math.toDegrees(pose.getHeading()));
+
+        dash.sendTelemetryPacket(packet);
+    }
+
     public void drawFieldAuto(Pose2d pose, Pose2d desiredPose, Pose2d startPose, FtcDashboard dash){
         TelemetryPacket packet = new TelemetryPacket();
         Canvas fieldOverlay = packet.fieldOverlay();

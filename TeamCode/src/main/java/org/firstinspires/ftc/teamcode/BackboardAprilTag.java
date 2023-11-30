@@ -39,6 +39,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.teamcode.subsystems.DashTelemetry;
+import org.firstinspires.ftc.teamcode.subsystems.RR_Robot;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -70,7 +71,7 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Concept: AprilTag", group = "Concept")
+@TeleOp(name = "Backboard AprilTags", group = "TestMode")
 public class BackboardAprilTag extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -86,6 +87,8 @@ public class BackboardAprilTag extends LinearOpMode {
     private VisionPortal visionPortal;
 
     public DashTelemetry dashTelemetry;
+
+    RR_Robot rr_robot = new RR_Robot(hardwareMap, gamepad1);
 
     @Override
     public void runOpMode() {
@@ -109,6 +112,8 @@ public class BackboardAprilTag extends LinearOpMode {
 
                 // Push telemetry to the Driver Station.
                 telemetry.update();
+
+                rr_robot.drive.update();
 
                 // Save CPU resources; can resume streaming when needed.
                 if (gamepad1.dpad_down) {
@@ -210,10 +215,11 @@ public class BackboardAprilTag extends LinearOpMode {
                 double range = detection.ftcPose.range - 4;
                 double strafe = detection.ftcPose.bearing;
                 double heading = detection.ftcPose.yaw;
-                telemetry.addData("Range: ", String.valueOf(detection.ftcPose.range - 4));
-                telemetry.addData("Strafe: ", String.valueOf(-detection.ftcPose.bearing));
-                telemetry.addData("Heading: ", String.valueOf(detection.ftcPose.yaw));
-                dashTelemetry.drawField(new Pose2d(range, strafe, heading), FtcDashboard.getInstance());
+                telemetry.addData("Range: ", range);
+                telemetry.addData("Strafe: ", strafe);
+                telemetry.addData("Heading: ", heading);
+                dashTelemetry.drawFieldRed(new Pose2d(rr_robot.drive.getPoseEstimate().getX(), rr_robot.drive.getPoseEstimate().getY(), rr_robot.drive.getPoseEstimate().getHeading()), FtcDashboard.getInstance());
+                dashTelemetry.drawField(new Pose2d(range, 0, 0), FtcDashboard.getInstance());
                 telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
                 telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
                 telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
