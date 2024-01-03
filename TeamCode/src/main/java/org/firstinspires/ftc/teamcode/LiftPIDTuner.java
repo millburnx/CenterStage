@@ -16,8 +16,8 @@ public class LiftPIDTuner extends OpMode {
     public DcMotorEx rightLift;
 
     private PIDController controller;
-    public static double p = 0, i = 0, d = 0;
-    public static double f = 0;
+    public static double p = 0.01, i = 0, d = 0.001;
+    public static double f = 0.001;
 
     public static int target = 0;
 
