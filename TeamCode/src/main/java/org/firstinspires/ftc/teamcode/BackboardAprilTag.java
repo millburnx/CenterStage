@@ -32,6 +32,8 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -43,8 +45,10 @@ import org.firstinspires.ftc.teamcode.subsystems.RR_Robot;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -121,6 +125,7 @@ public class BackboardAprilTag extends LinearOpMode {
                 } else if (gamepad1.dpad_up) {
                     visionPortal.resumeStreaming();
                 }
+                centerRobot(0);
 
                 // Share the CPU.
                 sleep(20);
@@ -132,6 +137,15 @@ public class BackboardAprilTag extends LinearOpMode {
 
     }   // end method runOpMode()
 
+    public void centerRobot(int id){
+        double error = 0;
+        PIDController pid = new PIDController(0,0,0);
+        pid.setSetPoint(0);
+        while (!pid.atSetPoint()) {
+            double output = pid.calculate(getPosition(id)[1]);
+            //strafe right using velocity=output
+        }
+    }
     /**
      * Initialize the AprilTag processor.
      */
@@ -200,6 +214,17 @@ public class BackboardAprilTag extends LinearOpMode {
 
     }   // end method initAprilTag()
 
+    public double[] getPosition(int id) {
+        double[] stoof = new double[3];
+        for (AprilTagDetection detection : aprilTag.getDetections()) {
+            if(detection.id==id){
+                stoof[0] = detection.ftcPose.x;
+                stoof[1] = detection.ftcPose.y;
+                stoof[2] = detection.ftcPose.bearing;
+            }
+        }
+        return stoof;
+    }
 
     /**
      * Add telemetry about AprilTag detections.
