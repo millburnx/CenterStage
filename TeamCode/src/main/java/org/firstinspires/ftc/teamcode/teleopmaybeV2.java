@@ -64,7 +64,7 @@ public class teleopmaybeV2 extends OpMode {
         robot.servoDeposit.rightDeposit.setPosition(0.32);
         robot.servoDeposit.leftDeposit.setPosition(0.32);
         target = 0;
-
+        robot.drone.setPosition(Math.toRadians(90));
     }
 
     @Override
@@ -94,7 +94,7 @@ public class teleopmaybeV2 extends OpMode {
         }
 
         if(gamepad1.y){
-            robot.drone.setPosition(Math.toRadians(-50));
+            robot.drone.setPosition(Math.toRadians(30));
         }
 
         //movement
@@ -154,5 +154,6 @@ public class teleopmaybeV2 extends OpMode {
         telemetry.addData("rightPos: ", rightPos);
         telemetry.addData("leftPos: ", leftLift.getCurrentPosition());
         telemetry.addData("rightTarget: ", target);
+        telemetry.addData("drone: ", robot.drone.getPosition());
     }
 }

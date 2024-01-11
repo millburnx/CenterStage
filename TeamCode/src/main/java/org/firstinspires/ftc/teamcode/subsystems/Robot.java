@@ -28,7 +28,7 @@ public class Robot {
         servoDeposit = new Deposit(hardwareMap);
         dashTelemetry = new DashTelemetry();
         drone = new SimpleServo(
-                hardwareMap, "drone", 0, 120, AngleUnit.DEGREES
+                hardwareMap, "drone", -360, 360, AngleUnit.DEGREES
         );
     }
 }
