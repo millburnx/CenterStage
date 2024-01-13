@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.auton;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,25 +15,33 @@ import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.RR_Robot;
 
-@Autonomous(name="BackboardRightAuton", group="Autonomous")
-public class BackboardRightAuton extends OpMode {
+@Autonomous(name="BackboardRightAutonNew", group="Autonomous")
+public class BackBoardRightAutonNew extends OpMode {
     private int region;
     Trajectory left_0, left_1, left_2, left_3;
     Trajectory middle_0, middle_1, middle_2, middle_3;
-    Trajectory right_0, right_1, right_2, right_3, right_2_5;
+    Trajectory right_0, right_1, right_2, right_3;
     boolean activated = false;
     boolean outtaking = false;
     boolean up = false;
-    boolean down = false;
     boolean deposit = false;
 
     ObjectDetector detector;
 
     RR_Robot robot;
+    private PIDController controller;
+
+    public static double p = 0.01, i = 0, d = 0.001;
+    public static double f = 0.001;
+
+    public static int target = 0;
+    private final double ticks_in_degree = 8192/360.0;
 
     @Override
     public void init(){
         detector = new ObjectDetector(hardwareMap, telemetry);
+        controller = new PIDController(p, i, d);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
     @Override
@@ -56,7 +67,7 @@ public class BackboardRightAuton extends OpMode {
         left_1 = robot.drive.trajectoryBuilder(left_0.end())
                 .lineToLinearHeading(new Pose2d(35,-33, Math.toRadians(95)))
                 .addTemporalMarker(2, ()->{
-                    up = true;
+                    target = 1000;
                     deposit = true;
                     robot.drive.followTrajectoryAsync(left_2);
                 })
@@ -66,7 +77,7 @@ public class BackboardRightAuton extends OpMode {
                         SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .addTemporalMarker(1,()->{
-                    up = false;
+                    target = 0;
                     robot.drive.followTrajectoryAsync(left_3);
                 } )
                 .build();
@@ -87,7 +98,7 @@ public class BackboardRightAuton extends OpMode {
         middle_1 = robot.drive.trajectoryBuilder(middle_0.end())
                 .lineToLinearHeading(new Pose2d(27.25, -33 , Math.toRadians(95)))
                 .addTemporalMarker(3, ()->{
-                    up = true;
+                    target = 1000;
                     deposit = true;
                     robot.drive.followTrajectoryAsync(middle_2);
                 })
@@ -97,7 +108,7 @@ public class BackboardRightAuton extends OpMode {
                         SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .addTemporalMarker(1,()->{
-                    up = false;
+                    target = 0;
                     robot.drive.followTrajectoryAsync(middle_3);
                 } )
                 .build();
@@ -110,7 +121,7 @@ public class BackboardRightAuton extends OpMode {
 
 
         right_0 = robot.drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(30, -22, Math.toRadians(95)))
+                .lineToLinearHeading(new Pose2d(30, -22, Math.toRadians(90)))
                 .addTemporalMarker(3, () -> {
                     outtaking = true;
                     robot.drive.followTrajectoryAsync(right_1);
@@ -118,34 +129,26 @@ public class BackboardRightAuton extends OpMode {
                 .build();
 
         right_1 = robot.drive.trajectoryBuilder(right_0.end())
-                .lineToLinearHeading(new Pose2d(18, -33, Math.toRadians(95)))
+                .lineToLinearHeading(new Pose2d(22, -33, Math.toRadians(90)))
                 .addTemporalMarker(2,()->{
-                    up = true;
+                    target = 1000;
                     deposit = true;
                     robot.drive.followTrajectoryAsync(right_2);
                 } )
                 .build();
         right_2 = robot.drive.trajectoryBuilder(right_1.end())
-                .lineToLinearHeading(new Pose2d(18, -35.5, Math.toRadians(95)),
+                .lineToLinearHeading(new Pose2d(22, -35.5, Math.toRadians(90)),
                         SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .addTemporalMarker(1,()->{
-                    deposit = false;
-                    up = false;
-                    robot.drive.followTrajectoryAsync(right_2_5);
-                } )
-                .build();
-        right_2_5 = robot.drive.trajectoryBuilder(right_2.end())
-                .lineToLinearHeading(new Pose2d(18, -35.55, Math.toRadians(95)))
-                .addTemporalMarker(1,()->{
-                    down = true;
+                    target = 0;
                     robot.drive.followTrajectoryAsync(right_3);
                 } )
                 .build();
-        right_3 = robot.drive.trajectoryBuilder(right_2_5.end())
+        right_3 = robot.drive.trajectoryBuilder(right_1.end())
                 .forward(4)
                 .addTemporalMarker(2,()->{
-                    down = false;
+                    deposit = false;
                 } )
                 .build();
 
@@ -164,7 +167,7 @@ public class BackboardRightAuton extends OpMode {
 
     public void intakeAsync(){
         if(outtaking){
-            robot.intake.roll(-0.35);
+            robot.intake.roll(-0.3);
         }
         else{
             robot.intake.roll(0);
@@ -182,26 +185,15 @@ public class BackboardRightAuton extends OpMode {
         }
     }
     public void liftAsync(){
-        if(up){
-            robot.lift.leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.lift.rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.lift.rightLift.setPower(0.7);
-            robot.lift.leftLift.setPower(0.7);
+        controller.setPID(p, i, d);
+        int rightPos = robot.lift.rightLift.getCurrentPosition();
+        double pid = controller.calculate(rightPos, target);
+        double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
 
-        }
-        else if(down){
-            robot.lift.leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.lift.rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.lift.rightLift.setPower(-0.75);
-            robot.lift.leftLift.setPower(-0.75);
-        }
-        else{
-            robot.lift.leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.lift.rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.lift.leftLift.setPower(0);
-            robot.lift.rightLift.setPower(0);
+        double liftPower = pid + ff;
 
-        }
+        robot.lift.rightLift.setPower(liftPower);
+        robot.lift.leftLift.setPower(liftPower);
     }
     @Override
     public void loop(){
@@ -211,6 +203,8 @@ public class BackboardRightAuton extends OpMode {
             depositAsync();
             robot.drive.update();
             telemetry.addLine("loop");
+            telemetry.addData("target", target);
+            telemetry.addData("rightLift", robot.lift.rightLift.getCurrentPosition());
             telemetry.update();
         }
     }

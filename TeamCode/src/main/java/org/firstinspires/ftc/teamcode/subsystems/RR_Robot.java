@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.arcrobotics.ftclib.hardware.ServoEx;
+import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -15,6 +17,7 @@ public class RR_Robot {
     public Odometry odom;
     public PID pid;
     public DashTelemetry dashTelemetry;
+    public ServoEx drone;
 
 
     public RR_Robot(HardwareMap hardwareMap, Gamepad gamepad) {
@@ -23,6 +26,9 @@ public class RR_Robot {
         lift = new Lift(hardwareMap, gamepad);
         deposit = new Deposit(hardwareMap);
         dashTelemetry = new DashTelemetry();
+        drone = new SimpleServo(
+                hardwareMap, "drone", -360, 360, AngleUnit.DEGREES
+        );
 
     }
 }

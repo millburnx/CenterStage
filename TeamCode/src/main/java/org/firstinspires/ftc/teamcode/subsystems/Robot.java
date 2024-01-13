@@ -30,5 +30,6 @@ public class Robot {
         drone = new SimpleServo(
                 hardwareMap, "drone", -360, 360, AngleUnit.DEGREES
         );
+        drone.setPosition(Math.toRadians(90));
     }
 }
