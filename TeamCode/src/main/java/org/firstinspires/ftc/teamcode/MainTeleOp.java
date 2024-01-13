@@ -1,130 +1,159 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.arcrobotics.ftclib.hardware.motors.Motor.Encoder;
-import com.arcrobotics.ftclib.kinematics.HolonomicOdometry;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.*;
+import org.firstinspires.ftc.teamcode.subsystems.RR_Robot;
+import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
-@TeleOp(name="Main TeleOp")
-public class MainTeleOp extends LinearOpMode {
+@Config
+@TeleOp
+public class MainTeleOp extends OpMode {
+    Robot robot;
+    RR_Robot rr_robot;
+    Pose2d pose;
+    FtcDashboard dashboard;
+    TelemetryPacket packet;
+    boolean depositToggle;
+    double rollPower;
+
+    public DcMotorEx leftLift;
+    public DcMotorEx rightLift;
+
+    private PIDController controller;
+    public static double p = 0.01, i = 0, d = 0.001;
+    public static double f = 0.001;
+
+    public static int target = 0;
+
+    private final double ticks_in_degree = 8192/360.0;
+    private int liftIndex = 0;
+    private int[] liftHeights = {0,1130,1700,1720};
+    boolean left_bumper_pressed = false;
+    boolean right_bumper_pressed = false;
+
     @Override
-    public void runOpMode() throws InterruptedException {
-        Robot robot = new Robot(hardwareMap, gamepad1);
-        boolean hangSeq1 = false;
-        boolean hangSeq2 = false;
-        RR_Robot rr_robot = new RR_Robot(hardwareMap, gamepad1);
-        Pose2d pose = new Pose2d(rr_robot.drive.getPose().getX(), rr_robot.drive.getPose().getY(), rr_robot.drive.getPose().getHeading());
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        TelemetryPacket packet = new TelemetryPacket();
-        boolean depositToggle = false;
-
-        double rollPower = 0.6;
-
-        robot.lift.setTarget(300);
-
-        waitForStart();
-
+    public void init() {
+        robot = new Robot(hardwareMap, gamepad1);
+        rr_robot = new RR_Robot(hardwareMap, gamepad1);
+        pose = new com.acmerobotics.roadrunner.geometry.Pose2d(rr_robot.drive.getPose().getX(), rr_robot.drive.getPose().getY(), rr_robot.drive.getPose().getHeading());
+        dashboard = FtcDashboard.getInstance();
+        packet = new TelemetryPacket();
+        depositToggle = false;
+        rollPower = 1;
         robot.intake.roll(rollPower);
+        controller = new PIDController(p, i, d);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        rightLift = hardwareMap.get(DcMotorEx.class, "rightLift");
+        leftLift = hardwareMap.get(DcMotorEx.class, "leftLift");
+        rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftLift.setDirection(DcMotor.Direction.REVERSE);
+        left_bumper_pressed = false;
+        right_bumper_pressed = false;
+        robot.servoDeposit.rightDeposit.setPosition(0.32);
+        robot.servoDeposit.leftDeposit.setPosition(0.32);
+        target = 0;
+        robot.drone.setPosition(Math.toRadians(90));
+    }
 
+    @Override
+    public void loop() {
         boolean togglePressed = false;
 
-        while (opModeIsActive()) {
-            double power = -gamepad1.left_stick_y;
-            double strafe = gamepad1.left_stick_x;
-            double turn = gamepad1.right_stick_x;
-
-            robot.drive.moveTeleOp(power, strafe, turn);
-
-            if(gamepad1.x) {
-                if (!togglePressed) {
-                    togglePressed = true;
-                    rollPower = -rollPower;
-                    if (rollPower < 0) {
-                        robot.intake.roll(rollPower + 0.4);
-                    } else {
-                        robot.intake.roll(rollPower);
-                    }
+        //roller
+        if(gamepad1.x) {
+            if (!togglePressed) {
+                togglePressed = true;
+                rollPower = -rollPower;
+                if (rollPower < 0) {
+                    robot.intake.roll(rollPower );
+                } else {
+                    robot.intake.roll(rollPower);
                 }
-            } else {
-                togglePressed = false;
             }
-
-            if(gamepad1.right_trigger>0.5){
-                depositToggle = false;
-            }
-
-//            robot.lift.liftTeleOp(gamepad1);
-
-            robot.lift.run();
-
-            if(gamepad1.circle) {
-                robot.lift.setTarget(1000);
-                robot.servoDeposit.rightDeposit.setPosition(0.9);
-                robot.servoDeposit.leftDeposit.setPosition(0.9);
-            }
-
-            if(gamepad1.triangle) {
-                robot.lift.setTarget(0);
-                robot.servoDeposit.rightDeposit.setPosition(0.32);
-                robot.servoDeposit.leftDeposit.setPosition(0.32);
-            }
-            if(gamepad1.right_bumper){
-//                if(!hangSeq1){
-//                    hangSeq1 = true;
-//                    robot.lift.setTarget(1000);
-//                }
-//                else if(hangSeq1){
-//                    hangSeq1 = false;
-//                    robot.lift.setTarget(200);
-//                }
-                robot.lift.setTarget(1000);
-            }
-
-            if(gamepad1.left_bumper){
-                depositToggle = true;
-            }
-
-            if (gamepad1.dpad_down) {
-                robot.servoDeposit.rightDeposit.setPosition(0.32);
-                robot.servoDeposit.leftDeposit.setPosition(0.32);
-            } else if (gamepad1.dpad_up) {
-                robot.servoDeposit.rightDeposit.setPosition(0.9);
-                robot.servoDeposit.leftDeposit.setPosition(0.9);
-            } else if (gamepad1.dpad_right) {
-                robot.servoDeposit.rightDeposit.setPosition(0.45);
-                robot.servoDeposit.leftDeposit.setPosition(0.45);
-            }
-
-            pose = new Pose2d(rr_robot.drive.getPoseEstimate().getX(), rr_robot.drive.getPoseEstimate().getY(), rr_robot.drive.getPoseEstimate().getHeading());
-
-            telemetry.addData("deposit toggle", depositToggle);
-
-            telemetry.addData("Field Centric: ", robot.drive.isFieldCentric);
-            telemetry.addData("Power: ", power);
-            telemetry.addData("Strafe: ", strafe);
-            telemetry.addData("Turn: ", turn);
-
-            telemetry.addData("liftTarget: ", robot.lift.target);
-            telemetry.addData("rightLift: ", robot.lift.rightLift.getCurrentPosition());
-            telemetry.addData("leftLift: ", robot.lift.leftLift.getCurrentPosition());
-
-
-            telemetry.addData("leftDeposit: ", robot.servoDeposit.leftDeposit.getPosition());
-            telemetry.addData("rightDeposit: ", robot.servoDeposit.rightDeposit.getPosition());
-
-            telemetry.update();
-            robot.dashTelemetry.drawField(pose, dashboard);
-
-            robot.drive.update();
-            rr_robot.drive.update();
+        } else {
+            togglePressed = false;
         }
+
+        if (gamepad1.a) {
+            target = 0;
+            liftIndex = 0;
+        } else if (gamepad1.b) {
+            target = 400;
+        }
+
+        if(gamepad1.y){
+            robot.drone.setPosition(Math.toRadians(30));
+        }
+
+        //movement
+
+        double power = -gamepad1.left_stick_y;
+        double strafe = gamepad1.left_stick_x;
+        double turn = gamepad1.right_stick_x;
+        robot.drive.moveTeleOp(power, strafe, turn);
+
+        //lift
+        controller.setPID(p, i, d);
+        int rightPos = rightLift.getCurrentPosition();
+        double pid = controller.calculate(rightPos, target);
+        double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
+
+        double liftPower = pid + ff;
+
+        rightLift.setPower(liftPower);
+        leftLift.setPower(liftPower);
+
+        if(gamepad1.right_stick_button){
+            if (!right_bumper_pressed) {
+                if (liftIndex < 3) {
+                    liftIndex += 1;
+                    target = liftHeights[liftIndex];
+                }
+            }
+            right_bumper_pressed = true;
+        } else {
+            right_bumper_pressed = false;
+        }
+        if(gamepad1.left_stick_button){
+            if (!left_bumper_pressed) {
+                if (liftIndex > 0) {
+                    liftIndex -= 1;
+                    target = liftHeights[liftIndex];
+                }
+            }
+            left_bumper_pressed = true;
+        } else {
+            left_bumper_pressed = false;
+        }
+
+        //deposit
+
+        if (gamepad1.dpad_down) {
+            robot.servoDeposit.rightDeposit.setPosition(0.32);
+            robot.servoDeposit.leftDeposit.setPosition(0.32);
+        } else if (gamepad1.dpad_up) {
+            robot.servoDeposit.rightDeposit.setPosition(0.9);
+            robot.servoDeposit.leftDeposit.setPosition(0.9);
+        } else if (gamepad1.dpad_right) {
+            robot.servoDeposit.rightDeposit.setPosition(0.45);
+            robot.servoDeposit.leftDeposit.setPosition(0.45);
+        }
+
+        telemetry.addData("rightPos: ", rightPos);
+        telemetry.addData("leftPos: ", leftLift.getCurrentPosition());
+        telemetry.addData("rightTarget: ", target);
+        telemetry.addData("drone: ", robot.drone.getPosition());
     }
 }
