@@ -15,12 +15,13 @@ import org.firstinspires.ftc.teamcode.subsystems.RR_Robot;
 @Autonomous(name="BackboardLeftAuton", group="Autonomous")
 public class BackboardLeftAuton extends OpMode {
     private int region;
-    Trajectory left_0, left_1, left_2, left_3;
-    Trajectory middle_0, middle_1, middle_2, middle_3;
-    Trajectory right_0, right_1, right_2, right_3;
+    Trajectory left_0, left_1, left_2, left_2_5, left_3;
+    Trajectory middle_0, middle_1, middle_2, middle_2_5, middle_3;
+    Trajectory right_0, right_1, right_2, right_3, right_2_5, right_4;
     boolean activated = false;
     boolean outtaking = false;
     boolean up = false;
+    boolean down = false;
     boolean deposit = false;
 
     ObjectDetector detector;
@@ -45,72 +46,87 @@ public class BackboardLeftAuton extends OpMode {
 
         robot = new RR_Robot(hardwareMap, gamepad1);
 
-        // actually right
         left_0 = robot.drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(30, -1, Math.toRadians(-95)))
-                .addTemporalMarker(3, () -> {
+                .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(-90)))
+                .addTemporalMarker(4, () -> {
                     outtaking = true;
                     robot.drive.followTrajectoryAsync(left_1);
                 })
                 .build();
         left_1 = robot.drive.trajectoryBuilder(left_0.end())
-                .lineToLinearHeading(new Pose2d(35,33, Math.toRadians(-95)))
-                .addTemporalMarker(2, ()->{
+                .lineToLinearHeading(new Pose2d(33,33, Math.toRadians(-90)))
+                .addTemporalMarker(4, ()->{
                     up = true;
                     deposit = true;
                     robot.drive.followTrajectoryAsync(left_2);
                 })
                 .build();
         left_2 = robot.drive.trajectoryBuilder(left_1.end())
-                .lineToLinearHeading(new Pose2d(31, 35.5, Math.toRadians(-95)),
-                        SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(33, 36, Math.toRadians(-90)),
+                        SampleMecanumDrive.getVelocityConstraint(2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .addTemporalMarker(1,()->{
+                .addTemporalMarker(2,()->{
                     up = false;
+                    deposit = false;
+                    robot.drive.followTrajectoryAsync(left_2_5);
+                } )
+                .build();
+        left_2_5 = robot.drive.trajectoryBuilder(left_2.end())
+                .lineToLinearHeading(new Pose2d(33, 36.01, Math.toRadians(-90)))
+                .addTemporalMarker(2,()->{
+                    down = true;
                     robot.drive.followTrajectoryAsync(left_3);
                 } )
                 .build();
-        left_3 = robot.drive.trajectoryBuilder(left_2.end())
+        left_3 = robot.drive.trajectoryBuilder(left_2_5.end())
                 .forward(4)
-                .addTemporalMarker(2,()->{
-                    deposit = false;
+                .addTemporalMarker(3,()->{
+                    down = false;
                 } )
                 .build();
 
         middle_0 = robot.drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(26,4,0))
-                .addTemporalMarker(3, () -> {
+                .lineToLinearHeading(new Pose2d(26,0,0))
+                .addTemporalMarker(4, () -> {
                     outtaking = true;
                     robot.drive.followTrajectoryAsync(middle_1);
                 })
                 .build();
         middle_1 = robot.drive.trajectoryBuilder(middle_0.end())
-                .lineToLinearHeading(new Pose2d(27.25, 33 , Math.toRadians(-95)))
-                .addTemporalMarker(3, ()->{
+                .lineToLinearHeading(new Pose2d(26, 30 , Math.toRadians(-90)))
+                .addTemporalMarker(4, ()->{
                     up = true;
                     deposit = true;
                     robot.drive.followTrajectoryAsync(middle_2);
                 })
                 .build();
         middle_2 = robot.drive.trajectoryBuilder(middle_1.end())
-                .lineToLinearHeading(new Pose2d(27.25, 35.5, Math.toRadians(-95)),
-                        SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(26, 37.5, Math.toRadians(-90)),
+                        SampleMecanumDrive.getVelocityConstraint(4, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .addTemporalMarker(1,()->{
+                .addTemporalMarker(2,()->{
                     up = false;
+                    deposit = false;
+                    robot.drive.followTrajectoryAsync(middle_2_5);
+                } )
+                .build();
+        middle_2_5 = robot.drive.trajectoryBuilder(middle_2.end())
+                .lineToLinearHeading(new Pose2d(26, 37.51, Math.toRadians(-90)))
+                .addTemporalMarker(2,()->{
+                    down = true;
                     robot.drive.followTrajectoryAsync(middle_3);
                 } )
                 .build();
-        middle_3 = robot.drive.trajectoryBuilder(middle_2.end())
+        middle_3 = robot.drive.trajectoryBuilder(middle_2_5.end())
                 .forward(4)
-                .addTemporalMarker(2,()->{
-                    deposit = false;
+                .addTemporalMarker(3,()->{
+                    down = false;
                 } )
                 .build();
 
-        // actually left
+
         right_0 = robot.drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(30, 24, Math.toRadians(-95)))
+                .lineToLinearHeading(new Pose2d(30, 25, Math.toRadians(-80)))
                 .addTemporalMarker(3, () -> {
                     outtaking = true;
                     robot.drive.followTrajectoryAsync(right_1);
@@ -118,7 +134,7 @@ public class BackboardLeftAuton extends OpMode {
                 .build();
 
         right_1 = robot.drive.trajectoryBuilder(right_0.end())
-                .lineToLinearHeading(new Pose2d(22, 33, Math.toRadians(-95)))
+                .lineToLinearHeading(new Pose2d(18, 33, Math.toRadians(-85)))
                 .addTemporalMarker(2,()->{
                     up = true;
                     deposit = true;
@@ -126,28 +142,38 @@ public class BackboardLeftAuton extends OpMode {
                 } )
                 .build();
         right_2 = robot.drive.trajectoryBuilder(right_1.end())
-                .lineToLinearHeading(new Pose2d(22, 36.5, Math.toRadians(-95)),
-                        SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(18, 35.5, Math.toRadians(-85)),
+                        SampleMecanumDrive.getVelocityConstraint(5, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .addTemporalMarker(2,()->{
+                .addTemporalMarker(1,()->{
+                    deposit = false;
                     up = false;
+                    robot.drive.followTrajectoryAsync(right_2_5);
+                } )
+                .build();
+        right_2_5 = robot.drive.trajectoryBuilder(right_2.end())
+                .lineToLinearHeading(new Pose2d(18, 35.55, Math.toRadians(-85)),
+                        SampleMecanumDrive.getVelocityConstraint(0.5, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .addTemporalMarker(1,()->{
+                    down = true;
                     robot.drive.followTrajectoryAsync(right_3);
                 } )
                 .build();
-        right_3 = robot.drive.trajectoryBuilder(right_1.end())
+        right_3 = robot.drive.trajectoryBuilder(right_2_5.end())
                 .forward(4)
                 .addTemporalMarker(2,()->{
-                    deposit = false;
+                    down = false;
                 } )
                 .build();
 
         // auton goes here
-        if  (region == 2) {
-            robot.drive.followTrajectoryAsync(right_0);
+        if  (region == 0) {
+            robot.drive.followTrajectoryAsync(left_0);
         } else if (region == 1) {
             robot.drive.followTrajectoryAsync(middle_0);
         } else {
-            robot.drive.followTrajectoryAsync(left_0);
+            robot.drive.followTrajectoryAsync(right_0);
         }
 
         activated = true;
@@ -156,7 +182,7 @@ public class BackboardLeftAuton extends OpMode {
 
     public void intakeAsync(){
         if(outtaking){
-            robot.intake.roll(-0.3);
+            robot.intake.roll(-0.35);
         }
         else{
             robot.intake.roll(0);
@@ -177,9 +203,15 @@ public class BackboardLeftAuton extends OpMode {
         if(up){
             robot.lift.leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.lift.rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.lift.rightLift.setPower(0.8);
-            robot.lift.leftLift.setPower(0.8);
+            robot.lift.rightLift.setPower(0.45);
+            robot.lift.leftLift.setPower(0.45);
 
+        }
+        else if(down){
+            robot.lift.leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.lift.rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.lift.rightLift.setPower(-0.65);
+            robot.lift.leftLift.setPower(-0.65);
         }
         else{
             robot.lift.leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -189,7 +221,6 @@ public class BackboardLeftAuton extends OpMode {
 
         }
     }
-
     @Override
     public void loop(){
         if(activated){

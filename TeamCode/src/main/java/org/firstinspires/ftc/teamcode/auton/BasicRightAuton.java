@@ -46,7 +46,7 @@ public class BasicRightAuton extends OpMode {
         robot = new RR_Robot(hardwareMap, gamepad1);
 
         left_0 = robot.drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(30, 1, Math.toRadians(95)))
+                .lineToLinearHeading(new Pose2d(30, -1, Math.toRadians(95)))
                 .addTemporalMarker(3, () -> {
                     outtaking = true;
                 })
@@ -54,7 +54,9 @@ public class BasicRightAuton extends OpMode {
 
 
         middle_0 = robot.drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(25,-4,0))
+                .lineToLinearHeading(new Pose2d(26,-2,0),
+                        SampleMecanumDrive.getVelocityConstraint(12, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .addTemporalMarker(2, () -> {
                     outtaking = true;
                 })
@@ -83,7 +85,7 @@ public class BasicRightAuton extends OpMode {
 
     public void intakeAsync(){
         if(outtaking){
-            robot.intake.roll(-0.3);
+            robot.intake.roll(-0.35);
         }
         else{
             robot.intake.roll(0);

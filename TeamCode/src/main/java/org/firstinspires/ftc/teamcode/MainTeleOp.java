@@ -36,7 +36,7 @@ public class MainTeleOp extends OpMode {
 
     private final double ticks_in_degree = 8192/360.0;
     private int liftIndex = 0;
-    private int[] liftHeights = {0,1130,1700,1720};
+    private int[] liftHeights = {0,1130,1700,1750};
     boolean left_bumper_pressed = false;
     boolean right_bumper_pressed = false;
 
@@ -97,6 +97,16 @@ public class MainTeleOp extends OpMode {
             robot.drone.setPosition(Math.toRadians(30));
         }
 
+        if(gamepad1.right_bumper){
+            robot.intakeLLeft.setPosition(Math.toRadians(-90));
+            robot.intakeLRight.setPosition(Math.toRadians(90));
+
+        }
+        if(gamepad1.left_bumper){
+            robot.intakeLLeft.setPosition(Math.toRadians(0));
+            robot.intakeLRight.setPosition(Math.toRadians(0));
+        }
+
         //movement
 
         double power = -gamepad1.left_stick_y;
@@ -136,6 +146,12 @@ public class MainTeleOp extends OpMode {
             left_bumper_pressed = true;
         } else {
             left_bumper_pressed = false;
+        }
+
+        if (gamepad1.right_trigger > 0.3) {
+            target += 40;
+        } else if (gamepad1.left_trigger > 0.3) {
+            target -= 40;
         }
 
         //deposit

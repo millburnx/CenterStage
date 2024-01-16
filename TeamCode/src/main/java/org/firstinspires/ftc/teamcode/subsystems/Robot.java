@@ -19,6 +19,8 @@ public class Robot {
     public DashTelemetry dashTelemetry;
 
     public ServoEx drone;
+    public ServoEx intakeLLeft;
+    public ServoEx intakeLRight;
 
     public Robot(HardwareMap hardwareMap, Gamepad gamepad) {
         drive = new Drive(hardwareMap);
@@ -30,6 +32,12 @@ public class Robot {
         drone = new SimpleServo(
                 hardwareMap, "drone", -360, 360, AngleUnit.DEGREES
         );
-        drone.setPosition(Math.toRadians(90));
+//        drone.setPosition(Math.toRadians(90));
+        intakeLLeft = new SimpleServo(
+                hardwareMap, "intakeLeft", -360, 360, AngleUnit.DEGREES
+        );
+        intakeLRight = new SimpleServo(
+                hardwareMap, "intakeRight", -360, 360, AngleUnit.DEGREES
+        );
     }
 }

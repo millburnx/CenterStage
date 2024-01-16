@@ -46,7 +46,9 @@ public class BasicLeftAuton extends OpMode {
         robot = new RR_Robot(hardwareMap, gamepad1);
 
         left_0 = robot.drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(30, -1, Math.toRadians(-95)))
+                .lineToLinearHeading(new Pose2d(30, 1, Math.toRadians(-95)),
+                        SampleMecanumDrive.getVelocityConstraint(18, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .addTemporalMarker(3, () -> {
                     outtaking = true;
                 })
@@ -54,7 +56,9 @@ public class BasicLeftAuton extends OpMode {
 
 
         middle_0 = robot.drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(25,4,0))
+                .lineToLinearHeading(new Pose2d(26,2,0),
+                        SampleMecanumDrive.getVelocityConstraint(18, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .addTemporalMarker(2, () -> {
                     outtaking = true;
                 })
@@ -62,7 +66,9 @@ public class BasicLeftAuton extends OpMode {
 
 
         right_0 = robot.drive.trajectoryBuilder(new Pose2d())
-                .lineToLinearHeading(new Pose2d(28, 0, Math.toRadians(95)))
+                .lineToLinearHeading(new Pose2d(28, 0, Math.toRadians(90)),
+                        SampleMecanumDrive.getVelocityConstraint(18, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .addTemporalMarker(3, () -> {
                     outtaking = true;
                 })
@@ -83,45 +89,17 @@ public class BasicLeftAuton extends OpMode {
 
     public void intakeAsync(){
         if(outtaking){
-            robot.intake.roll(-0.3);
+            robot.intake.roll(-0.35);
         }
         else{
             robot.intake.roll(0);
         }
     }
 
-    public void depositAsync(){
-        if(deposit){
-            robot.deposit.rightDeposit.setPosition(0.9);
-            robot.deposit.leftDeposit.setPosition(0.9);
-        }
-        else{
-            robot.deposit.rightDeposit.setPosition(0.32);
-            robot.deposit.leftDeposit.setPosition(0.32);
-        }
-    }
-    public void liftAsync(){
-        if(up){
-            robot.lift.leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.lift.rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.lift.rightLift.setPower(0.7);
-            robot.lift.leftLift.setPower(0.7);
-
-        }
-        else{
-            robot.lift.leftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.lift.rightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.lift.leftLift.setPower(0);
-            robot.lift.rightLift.setPower(0);
-
-        }
-    }
     @Override
     public void loop(){
         if(activated){
             intakeAsync();
-            liftAsync();
-            depositAsync();
             robot.drive.update();
             telemetry.addLine("loop");
             telemetry.update();
