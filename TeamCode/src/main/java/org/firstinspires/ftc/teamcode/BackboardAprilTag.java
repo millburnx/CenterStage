@@ -75,8 +75,15 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
+
 @TeleOp(name = "Backboard AprilTags", group = "TestMode")
 public class BackboardAprilTag extends LinearOpMode {
+    private PIDController controller;
+    public static double p = 0.01, i = 0, d = 0.001;
+    public static double f = 0.001;
+
+    //TODO: UPDATE
+    private final double ticks_in_degree = 8192/360.0;
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -125,7 +132,16 @@ public class BackboardAprilTag extends LinearOpMode {
                 } else if (gamepad1.dpad_up) {
                     visionPortal.resumeStreaming();
                 }
-                centerRobot(0);
+                double[] positions = getPosition(0);
+                if(positions[0]>5 && positions[1]>5&&positions[2]>2){
+                    centerRobotBearing(0);
+                }
+                else if(positions[0]>5){
+                    centerRobotYaw(0);
+                }
+                else if(positions[2]>2){
+                    centerRange(0);
+                }
 
                 // Share the CPU.
                 sleep(20);
@@ -137,14 +153,41 @@ public class BackboardAprilTag extends LinearOpMode {
 
     }   // end method runOpMode()
 
-    public void centerRobot(int id){
-        double error = 0;
-        PIDController pid = new PIDController(0,0,0);
-        pid.setSetPoint(0);
-        while (!pid.atSetPoint()) {
-            double output = pid.calculate(getPosition(id)[1]);
-            //strafe right using velocity=output
-        }
+    public void centerRobotYaw(int id){
+        double yaw = getPosition(id)[0];
+        controller.setPID(p, i, d);
+        double pid = controller.calculate(yaw, 0);
+        double ff = Math.cos(Math.toRadians(0 / ticks_in_degree)) * f;
+
+        double velocity = pid + ff;
+        rr_robot.drive.leftFront.setVelocity(velocity);
+        rr_robot.drive.leftRear.setVelocity(-velocity);
+        rr_robot.drive.rightFront.setVelocity(-velocity);
+        rr_robot.drive.rightRear.setVelocity(velocity);
+    }
+    public void centerRange(int id){
+        double range = getPosition(id)[1];
+        controller.setPID(p, i, d);
+        double pid = controller.calculate(range, 0);
+        double ff = Math.cos(Math.toRadians(0 / ticks_in_degree)) * f;
+
+        double velocity = pid + ff;
+        rr_robot.drive.leftFront.setVelocity(velocity);
+        rr_robot.drive.leftRear.setVelocity(velocity);
+        rr_robot.drive.rightFront.setVelocity(velocity);
+        rr_robot.drive.rightRear.setVelocity(velocity);
+    }
+    public void centerRobotBearing(int id){
+        double bearing = getPosition(id)[2];
+        controller.setPID(p, i, d);
+        double pid = controller.calculate(bearing, 0);
+        double ff = Math.cos(Math.toRadians(0 / ticks_in_degree)) * f;
+
+        double velocity = pid + ff;
+        rr_robot.drive.leftFront.setVelocity(velocity);
+        rr_robot.drive.leftRear.setVelocity(velocity);
+        rr_robot.drive.rightFront.setVelocity(-velocity);
+        rr_robot.drive.rightRear.setVelocity(-velocity);
     }
     /**
      * Initialize the AprilTag processor.
@@ -218,8 +261,8 @@ public class BackboardAprilTag extends LinearOpMode {
         double[] stoof = new double[3];
         for (AprilTagDetection detection : aprilTag.getDetections()) {
             if(detection.id==id){
-                stoof[0] = detection.ftcPose.x;
-                stoof[1] = detection.ftcPose.y;
+                stoof[0] = detection.ftcPose.yaw;
+                stoof[1] = detection.ftcPose.range;
                 stoof[2] = detection.ftcPose.bearing;
             }
         }
