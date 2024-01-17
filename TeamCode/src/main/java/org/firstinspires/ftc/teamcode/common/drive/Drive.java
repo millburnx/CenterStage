@@ -173,7 +173,7 @@ public class Drive extends MecanumDrive {
     }
 
     public void moveTeleOp(double power, double strafe, double turn) {
-        if(isFieldCentric) {
+        if (isFieldCentric) {
             fieldCentric(power, strafe, turn);
         } else {
             robotCentric(power, strafe, turn);

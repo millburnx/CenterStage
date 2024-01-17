@@ -76,7 +76,7 @@ public class OpenCVOpMode extends LinearOpMode {
             telemetry.addData("Theoretical max FPS", webcam.getCurrentPipelineMaxFps());
             telemetry.update();
 
-            if(gamepad1.a)
+            if (gamepad1.a)
             {
                 webcam.stopStreaming();
             }
@@ -180,7 +180,7 @@ public class OpenCVOpMode extends LinearOpMode {
         {
             viewportPaused = !viewportPaused;
 
-            if(viewportPaused)
+            if (viewportPaused)
             {
                 webcam.pauseViewport();
             }

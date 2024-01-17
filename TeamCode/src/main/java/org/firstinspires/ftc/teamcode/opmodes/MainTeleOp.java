@@ -46,15 +46,21 @@ public class MainTeleOp extends CommandOpMode {
         subsystems.drone.setPosition(Math.toRadians(90));
         intake.update(Intake.IntakeState.IN);
         deposit.update(Deposit.DepositState.INTAKE);
+        lift.update(Lift.LiftStates.DOWN);
     }
 
     @Override
     public void run() {
         super.run();
 
-        if(gamepad1.right_stick_button) {
+        if (gamepad1.right_stick_button) {
             schedule(new IncrementLiftCommand(lift, 1));
             schedule(new IncrementDepositCommand(deposit, 1));
+            telemetry.addLine("inside");
+        }
+        if (gamepad1.left_stick_button) {
+            schedule(new IncrementLiftCommand(lift, -1));
+            schedule(new IncrementDepositCommand(deposit, -1));
             telemetry.addLine("inside");
         }
         lift.loop();

@@ -32,6 +32,7 @@ public class Lift extends SubsystemBase {
     public Lift(SubsystemsHardware subsystems) {
         this.subsystems = subsystems;
         this.controller = new PIDController(p, i, d);
+        rowPos = 0;
 
         target = getStatePos(LiftStates.DOWN);
     }
@@ -42,18 +43,22 @@ public class Lift extends SubsystemBase {
             case DOWN:
                 target = DOWN_POS;
                 liftStates = state;
+                rowPos = 0;
                 break;
             case POS1:
                 target = POS1_POS;
                 liftStates = state;
+                rowPos = 1;
                 break;
             case POS2:
                 target = POS2_POS;
                 liftStates = state;
+                rowPos = 2;
                 break;
             case POS3:
                 target = POS3_POS;
                 liftStates = state;
+                rowPos = 3;
                 break;
             case CLIMB:
                 target = CLIMB_POS;
@@ -63,6 +68,8 @@ public class Lift extends SubsystemBase {
 
     public void updatePos(int index) {
         switch (index) {
+            case 0:
+                this.update(LiftStates.DOWN);
             case 1:
                 this.update(LiftStates.POS1);
                 break;
@@ -74,14 +81,14 @@ public class Lift extends SubsystemBase {
     }
 
     public void changeIndex(int amount) {
-        if (isUp) {
-            rowPos += amount;
-        }
-        if (rowPos > 3) {
+
+
+        if (amount==0) {
+            rowPos = 0;
+        } else if (amount ==3) {
             rowPos = 3;
-        }
-        if (rowPos < 1) {
-            rowPos = 1;
+        } else {
+            rowPos+=amount;
         }
 
         updatePos(rowPos);
@@ -95,7 +102,7 @@ public class Lift extends SubsystemBase {
         double power = pid + ff;
 
         subsystems.rightLift.setPower(power);
-        subsystems.rightLift.setPower(power);
+        subsystems.leftLift.setPower(power);
     }
 
     public int getStatePos(LiftStates state) {

@@ -32,20 +32,27 @@ public class Deposit extends SubsystemBase {
             case INTAKE:
                 subsystems.rightDeposit.setPosition(intakePos);
                 subsystems.leftDeposit.setPosition(intakePos);
+                rowPos = 0;
                 break;
             case DEPOSIT1:
                 subsystems.rightDeposit.setPosition(deposit1Pos);
                 subsystems.leftDeposit.setPosition(deposit1Pos);
+                rowPos = 1;
                 break;
             case DEPOSIT2:
                 subsystems.rightDeposit.setPosition(deposit2Pos);
                 subsystems.leftDeposit.setPosition(deposit2Pos);
+                rowPos = 2;
             case DEPOSIT3:
                 subsystems.rightDeposit.setPosition(deposit3Pos);
                 subsystems.leftDeposit.setPosition(deposit3Pos);
+                rowPos = 3;
         }
     }public void updatePos(int index) {
         switch (index) {
+            case 0:
+                this.update(DepositState.INTAKE);
+                break;
             case 1:
                 this.update(DepositState.DEPOSIT1);
                 break;
@@ -57,17 +64,18 @@ public class Deposit extends SubsystemBase {
     }
 
     public void changeIndex(int amount) {
-        if (isUp) {
-            rowPos += amount;
-        }
-        if (rowPos > 3) {
-            rowPos = 3;
-        }
-        if (rowPos < 1) {
-            rowPos = 1;
-        }
 
-        updatePos(rowPos);
-    }
+            if (amount==0) {
+                rowPos = 0;
+            }
+            else if (amount ==3) {
+                rowPos = 3;
+            }
+            else{
+                rowPos+=amount;
+            }
+
+            updatePos(rowPos);
+        }
 
 }
