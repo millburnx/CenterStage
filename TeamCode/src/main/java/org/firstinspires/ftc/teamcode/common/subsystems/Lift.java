@@ -41,18 +41,23 @@ public class Lift extends SubsystemBase {
         switch (state) {
             case DOWN:
                 target = DOWN_POS;
+                liftStates = state;
                 break;
             case POS1:
                 target = POS1_POS;
+                liftStates = state;
                 break;
             case POS2:
                 target = POS2_POS;
+                liftStates = state;
                 break;
             case POS3:
                 target = POS3_POS;
+                liftStates = state;
                 break;
             case CLIMB:
                 target = CLIMB_POS;
+                liftStates = state;
         }
     }
 
@@ -107,5 +112,9 @@ public class Lift extends SubsystemBase {
                 return CLIMB_POS;
         }
         return 0;
+    }
+
+    public LiftStates getLiftStates() {
+        return liftStates;
     }
 }

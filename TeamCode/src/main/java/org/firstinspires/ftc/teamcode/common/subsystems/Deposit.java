@@ -6,6 +6,9 @@ import org.firstinspires.ftc.teamcode.common.utils.SubsystemsHardware;
 
 public class Deposit extends SubsystemBase {
     private SubsystemsHardware subsystems;
+    public static int rowPos = 1;
+    public static boolean isUp = false;
+
     public DepositState depositState = DepositState.INTAKE;
 
     public static double intakePos = 0.32, deposit1Pos = 0.7, deposit2Pos = 0.8, deposit3Pos = 0.9;
@@ -24,6 +27,7 @@ public class Deposit extends SubsystemBase {
 
     public void update(DepositState state) {
         depositState = state;
+        isUp = state != DepositState.INTAKE;
         switch (state) {
             case INTAKE:
                 subsystems.rightDeposit.setPosition(intakePos);
@@ -40,5 +44,30 @@ public class Deposit extends SubsystemBase {
                 subsystems.rightDeposit.setPosition(deposit3Pos);
                 subsystems.leftDeposit.setPosition(deposit3Pos);
         }
+    }public void updatePos(int index) {
+        switch (index) {
+            case 1:
+                this.update(DepositState.DEPOSIT1);
+                break;
+            case 2:
+                this.update(DepositState.DEPOSIT2);
+            case 3:
+                this.update(DepositState.DEPOSIT3);
+        }
     }
+
+    public void changeIndex(int amount) {
+        if (isUp) {
+            rowPos += amount;
+        }
+        if (rowPos > 3) {
+            rowPos = 3;
+        }
+        if (rowPos < 1) {
+            rowPos = 1;
+        }
+
+        updatePos(rowPos);
+    }
+
 }

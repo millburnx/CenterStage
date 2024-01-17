@@ -20,7 +20,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.common.utils.trajectorysequence.sequencesegment.SequenceSegment;
 import org.firstinspires.ftc.teamcode.common.utils.trajectorysequence.sequencesegment.TrajectorySegment;
 import org.firstinspires.ftc.teamcode.common.utils.trajectorysequence.sequencesegment.TurnSegment;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.common.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.common.utils.trajectorysequence.sequencesegment.WaitSegment;
 import org.firstinspires.ftc.teamcode.common.utils.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.common.utils.util.LogFiles;

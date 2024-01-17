@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.common.utils.SubsystemsHardware;
 @Config
 public class Intake {
     private SubsystemsHardware subsystems;
-    public IntakeState intakeState = IntakeState.OFF;
+    public IntakeState intakeState = IntakeState.IN;
 
     public static double intakeMaxSpeed = 1;
     public static double intakeInSpeed = 0.8;
