@@ -5,6 +5,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -52,15 +54,19 @@ public class MainTeleOp extends CommandOpMode {
     @Override
     public void run() {
         super.run();
+        int jacob = 4;
 
         if (gamepad1.right_stick_button) {
-            schedule(new IncrementLiftCommand(lift, 1));
-            schedule(new IncrementDepositCommand(deposit, 1));
+            schedule(new LiftCommand
+                    (lift, Lift.LiftStates.POS3));
+            schedule(new DepositCommand(deposit, Deposit.DepositState.DEPOSIT3));
             telemetry.addLine("inside");
         }
         if (gamepad1.left_stick_button) {
-            schedule(new IncrementLiftCommand(lift, -1));
-            schedule(new IncrementDepositCommand(deposit, -1));
+            DepositCommand depositCommand = new DepositCommand(deposit, Deposit.DepositState.INTAKE);
+            schedule(depositCommand);
+            schedule(new WaitCommand(1000));
+            schedule(new LiftCommand(lift, Lift.LiftStates.DOWN));
             telemetry.addLine("inside");
         }
         lift.loop();
@@ -82,6 +88,7 @@ public class MainTeleOp extends CommandOpMode {
 
         telemetry.addData("Lift State: ", lift.getLiftStates());
         telemetry.addData("target: ", Lift.target);
+        telemetry.addData("Intake state: ", deposit.getDepositState());
         telemetry.update();
     }
 }

@@ -78,4 +78,7 @@ public class Deposit extends SubsystemBase {
             updatePos(rowPos);
         }
 
+    public DepositState getDepositState() {
+        return depositState;
+    }
 }
