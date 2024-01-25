@@ -17,7 +17,7 @@ public class Lift extends SubsystemBase {
     private final double ticks_in_degree = 8192/360.0;
 
     public static boolean isUp = false;
-    public static int rowPos = 1;
+    public static int rowPos = 0;
 
     public static int DOWN_POS = 0, POS1_POS = 400, POS2_POS = 800, POS3_POS = 1500, CLIMB_POS = 1700;
 
@@ -81,16 +81,14 @@ public class Lift extends SubsystemBase {
     }
 
     public void changeIndex(int amount) {
+        rowPos+=amount;
 
 
-        if (amount==0) {
+        if (rowPos<0) {
             rowPos = 0;
-        } else if (amount ==3) {
+        } else if (rowPos >3) {
             rowPos = 3;
-        } else {
-            rowPos+=amount;
         }
-
         updatePos(rowPos);
     }
 
@@ -104,6 +102,15 @@ public class Lift extends SubsystemBase {
         subsystems.rightLift.setPower(power);
         subsystems.leftLift.setPower(power);
     }
+
+
+    public boolean isFinished() {
+        if(Math.abs(subsystems.rightLift.getCurrentPosition()-target)<100){
+            return true;
+        }
+        return false;
+    }
+
 
     public int getStatePos(LiftStates state) {
         switch (state) {

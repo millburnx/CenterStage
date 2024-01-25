@@ -6,11 +6,11 @@ import org.firstinspires.ftc.teamcode.common.utils.SubsystemsHardware;
 
 public class Deposit extends SubsystemBase {
     private SubsystemsHardware subsystems;
-    public static int rowPos = 1;
+    public static int rowPos = 0;
     public static boolean isUp = false;
 
     public DepositState depositState = DepositState.INTAKE;
-
+    public int ticks = 0;
     public static double intakePos = 0.32, deposit1Pos = 0.7, deposit2Pos = 0.8, deposit3Pos = 0.9;
 
     public enum DepositState {
@@ -21,8 +21,10 @@ public class Deposit extends SubsystemBase {
     }
 
     public Deposit(SubsystemsHardware subsystems) {
+        ticks = 0;
         this.subsystems = subsystems;
         update(DepositState.INTAKE);
+        rowPos = 0;
     }
 
     public void update(DepositState state) {
@@ -64,15 +66,12 @@ public class Deposit extends SubsystemBase {
     }
 
     public void changeIndex(int amount) {
-
-            if (amount==0) {
+            rowPos += amount;
+            if (rowPos<0) {
                 rowPos = 0;
             }
-            else if (amount ==3) {
+            else if (rowPos>3) {
                 rowPos = 3;
-            }
-            else{
-                rowPos+=amount;
             }
 
             updatePos(rowPos);
@@ -80,5 +79,8 @@ public class Deposit extends SubsystemBase {
 
     public DepositState getDepositState() {
         return depositState;
+    }
+    public void loop(){
+        ticks+=1;
     }
 }
