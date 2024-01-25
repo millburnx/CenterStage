@@ -86,7 +86,7 @@ public class AprilTagsInit {
                     break;
                 }
             }
-            if (!tagFound){
+            if (!tagFound) {
                 tm.addLine("Tag of interest not in sight, but there has been a tag spotted!");
 
                 if (tagOfInterest == null) {
