@@ -122,7 +122,7 @@ public class SensorHuskyLens extends LinearOpMode {
          *
          * Note again that the device only recognizes the 36h11 family of tags out of the box.
          */
-        while (opModeIsActive()) {
+        while(opModeIsActive()) {
             if (!rateLimit.hasExpired()) {
                 continue;
             }
