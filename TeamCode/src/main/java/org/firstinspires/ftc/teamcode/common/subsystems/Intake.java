@@ -13,9 +13,9 @@ public class Intake {
     public static double intakeInSpeed = 0.8;
     public static double intakeOutSpeed = -0.6;
     public static double intakeOutSpeedAuton = -0.2;
-    public static double secondMaxSpeed = 1;
-    public static double secondInSpeed = 0.6;
-    public static double secondOutSpeed = -0.6;
+    public static double secondMaxSpeed = -1;
+    public static double secondInSpeed = -0.6;
+    public static double secondOutSpeed = 0.6;
 
     public enum IntakeState {
         OFF,
