@@ -49,10 +49,10 @@ public class MainTeleOp extends CommandOpMode {
     public void run() {
         super.run();
 
-        if (gamepad1.a) {
+        if (gamepad1.triangle) {
             schedule(new UpAndDeposit(lift, deposit, 0));
         }
-        else if (gamepad1.b) {
+        else if (gamepad1.circle) {
             schedule(new UpAndDeposit(lift, deposit, 1));
         }
 
@@ -60,7 +60,7 @@ public class MainTeleOp extends CommandOpMode {
             schedule(new UpAndDeposit(lift, deposit, 2));
 
         }
-        else if (gamepad1.y) {
+        else if (gamepad1.square) {
             schedule(new UpAndDeposit(lift, deposit, 3));
 
         }
@@ -87,6 +87,18 @@ public class MainTeleOp extends CommandOpMode {
             schedule(new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2));
         } else if (gamepad1.dpad_left) {
             schedule(new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT3));
+        }
+
+        if(gamepad1.right_stick_button){
+            telemetry.addLine("0.5");
+            subsystems.intakeRight.setPosition(0.10);
+            subsystems.intakeLeft.setPosition(0.10);
+
+        }
+        else if(gamepad1.left_stick_button){
+            telemetry.addLine("0");
+            subsystems.intakeLeft.setPosition(0);
+            subsystems.intakeRight.setPosition(0);
         }
 
         telemetry.addData("Lift State: ", lift.getLiftStates());
