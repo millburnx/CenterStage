@@ -31,9 +31,11 @@ public class BackBoardBlueAuton extends CommandOpMode {
     ObjectDetector detector;
     GamepadEx gamepadEx;
     int region = 0;
+    boolean end;
 
     @Override
     public void initialize() {
+        end = true;
         CommandScheduler.getInstance().reset();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -55,6 +57,17 @@ public class BackBoardBlueAuton extends CommandOpMode {
     }
     @Override
     public void run() {
-        schedule(new BackBoardBlue(lift, deposit, intake, drive, region));
+        if(end){
+            schedule(new BackBoardBlue(lift, deposit, intake, drive, region));
+            end = false;
+        }
     }
+
+
+
+
+
+
+
+
 }

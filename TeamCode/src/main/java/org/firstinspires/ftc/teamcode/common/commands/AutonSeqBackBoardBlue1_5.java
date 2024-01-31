@@ -16,6 +16,8 @@ public class AutonSeqBackBoardBlue1_5 extends CommandBase {
     public Trajectory middle_0, middle_1;
     public Trajectory right_0, right_1;
 
+    double x;
+    double y;
 
 
 
@@ -25,33 +27,46 @@ public class AutonSeqBackBoardBlue1_5 extends CommandBase {
     public AutonSeqBackBoardBlue1_5(SampleMecanumDrive robot, int position){
 
         pos = position;
-        SampleMecanumDrive robotobj = robot;
+        robotobj = robot;
 
     }
 
     @Override
     public void initialize(){
+        x = 1000;
+        y = 1000;
         if(pos==0){
             left_1 = robotobj.trajectoryBuilder(new Pose2d())
                     .lineToLinearHeading(new Pose2d(-33,4, Math.toRadians(0)))
                     .build();
-            robotobj.followTrajectoryAsync(left_1);
+            x = -33;
+            y = 4;
+            robotobj.followTrajectory(left_1);
         }
         else if(pos==1){
             middle_1 = robotobj.trajectoryBuilder(new Pose2d())
                     .lineToLinearHeading(new Pose2d(0, 30 , Math.toRadians(-90)))
                     .build();
-            robotobj.followTrajectoryAsync(middle_1);
+            x = 0;
+            y = 30;
+            robotobj.followTrajectory(middle_1);
         }
         else{
             right_1 = robotobj.trajectoryBuilder(right_0.end())
                     .lineToLinearHeading(new Pose2d(-8, -12, Math.toRadians(0)))
-                    .addTemporalMarker(2,()->{
-                    } )
                     .build();
-            robotobj.followTrajectoryAsync(right_1);
+            x = -8;
+            y = -12;
+            robotobj.followTrajectory(right_1);
         }
 
+    }
+    @Override
+    public boolean isFinished(){
+        if(Math.abs(robotobj.getPose().getX()-x) <1 && Math.abs(robotobj.getPose().getY()-y)<1){
+            return true;
+        }
+        return false;
     }
 
 

@@ -18,5 +18,6 @@ public class BackBoardBlue extends SequentialCommandGroup {
                 new AutonSeqBackBoardBlue2(robot, position),
                 new UpAndDeposit(lift, deposit, 0)
         );
+        addRequirements(lift, deposit);
     }
 }

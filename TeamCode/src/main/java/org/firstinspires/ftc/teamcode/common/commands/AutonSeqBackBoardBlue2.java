@@ -15,35 +15,29 @@ public class AutonSeqBackBoardBlue2 extends CommandBase {
     Trajectory left_2, left_3;
     Trajectory middle_2, middle_3;
 
+    double x;
+    double y;
+
     Trajectory right_2, right_3;
     private SampleMecanumDrive robotobj;
     int pos;
     public AutonSeqBackBoardBlue2(SampleMecanumDrive robot, int position){
-        SampleMecanumDrive robotobj = robot;
+        robotobj = robot;
         pos = position;
 
     }
 
     @Override
     public void initialize(){
-        if(pos == 0){
-            left_3 = robotobj.trajectoryBuilder(new Pose2d())
-                    .forward(4)
-                    .build();
-            robotobj.followTrajectoryAsync(left_3);
-        }
-        else if(pos==1){
-            middle_3 = robotobj.trajectoryBuilder(new Pose2d())
-                    .forward(4)
-                    .build();
-            robotobj.followTrajectoryAsync(middle_3);
-        }
-        else{
-            right_3 = robotobj.trajectoryBuilder(new Pose2d())
-                    .forward(4)
-                    .build();
-            robotobj.followTrajectoryAsync(right_3);
-        }
+        x = 1000;
+        y = 1000;
+        left_3 = robotobj.trajectoryBuilder(new Pose2d())
+                .forward(4)
+                .build();
+        x =4;
+        y = 0;
+        robotobj.followTrajectory(left_3);
+
     }
 
 
