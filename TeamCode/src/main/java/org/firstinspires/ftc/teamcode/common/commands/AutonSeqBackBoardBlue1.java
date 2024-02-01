@@ -22,17 +22,19 @@ public class AutonSeqBackBoardBlue1 extends CommandBase {
     double y;
 
 
-
+    Telemetry telemetry;
     private SampleMecanumDrive robotobj;
+
     private int pos;
-    public AutonSeqBackBoardBlue1(SampleMecanumDrive robot, int position){
+    public AutonSeqBackBoardBlue1(SampleMecanumDrive robot, int position,Telemetry t){
         pos = position;
         robotobj = robot;
+        telemetry = t;
     }
 
     @Override
     public void initialize(){
-        System.out.println("AutonSeqBackBoardBlue1 started!");
+        //telemetry.addLine("started");
         x = 10000;
         y = 10000;
         if(pos==0){
@@ -59,14 +61,22 @@ public class AutonSeqBackBoardBlue1 extends CommandBase {
             y = 25;
             robotobj.followTrajectory(right_0);
         }
+        //telemetry.update();
+
+    }
+    @Override
+    public void execute(){
+        robotobj.update();
     }
 
     @Override
+    public void end(boolean interrupted) {
+        telemetry.addLine("end");
+        telemetry.update();
+    }
+    @Override
     public boolean isFinished(){
-        if(Math.abs(robotobj.getPose().getX()-x) <3 && Math.abs(robotobj.getPose().getY()-y)<3){
-            return true;
-        }
-        return false;
+        return !robotobj.isBusy();
     }
 
 

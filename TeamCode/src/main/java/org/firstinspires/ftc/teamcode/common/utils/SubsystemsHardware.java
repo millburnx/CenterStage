@@ -77,7 +77,7 @@ public class SubsystemsHardware {
         leftDeposit = new SimpleServo(
                 hardwareMap, "leftDeposit", 0, 120, AngleUnit.DEGREES
         );
-        leftDeposit.setInverted(true);
+        rightDeposit.setInverted(true);
         rightDeposit.setPosition(0);
         leftDeposit.setPosition(0);
 

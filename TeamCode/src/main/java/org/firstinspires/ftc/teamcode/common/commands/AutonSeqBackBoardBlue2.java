@@ -39,6 +39,10 @@ public class AutonSeqBackBoardBlue2 extends CommandBase {
         robotobj.followTrajectory(left_3);
 
     }
+    @Override
+    public void execute(){
+        robotobj.update();
+    }
 
 
 }

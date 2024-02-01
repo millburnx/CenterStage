@@ -50,18 +50,18 @@ public class MainTeleOp extends CommandOpMode {
         super.run();
 
         if (gamepad1.triangle) {
-            schedule(new UpAndDeposit(lift, deposit, 0));
+            schedule(new UpAndDeposit(lift, deposit, 0, telemetry));
         }
         else if (gamepad1.circle) {
-            schedule(new UpAndDeposit(lift, deposit, 1));
+            schedule(new UpAndDeposit(lift, deposit, 1, telemetry));
         }
 
         else if (gamepad1.x) {
-            schedule(new UpAndDeposit(lift, deposit, 2));
+            schedule(new UpAndDeposit(lift, deposit, 2, telemetry));
 
         }
         else if (gamepad1.square) {
-            schedule(new UpAndDeposit(lift, deposit, 3));
+            schedule(new UpAndDeposit(lift, deposit, 3, telemetry));
 
         }
         lift.loop();
@@ -80,13 +80,13 @@ public class MainTeleOp extends CommandOpMode {
         }
 
         if (gamepad1.dpad_down) {
-            schedule(new DepositCommandBase(deposit, Deposit.DepositState.INTAKE));
+            schedule(new DepositCommandBase(deposit, Deposit.DepositState.INTAKE, telemetry));
         } else if (gamepad1.dpad_up) {
-            schedule(new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT1));
+            schedule(new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT1, telemetry));
         } else if (gamepad1.dpad_right) {
-            schedule(new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2));
+            schedule(new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2, telemetry));
         } else if (gamepad1.dpad_left) {
-            schedule(new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT3));
+            schedule(new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT3, telemetry));
         }
 
         if(gamepad1.right_stick_button){

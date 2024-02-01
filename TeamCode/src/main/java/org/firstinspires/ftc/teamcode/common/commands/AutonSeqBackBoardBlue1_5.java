@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.commands;
 import com.arcrobotics.ftclib.command.CommandBase;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.subsystems.Deposit;
 import org.firstinspires.ftc.teamcode.common.subsystems.Lift;
 
@@ -23,11 +24,13 @@ public class AutonSeqBackBoardBlue1_5 extends CommandBase {
 
     private SampleMecanumDrive robotobj;
     private Deposit depositobj;
+    Telemetry telemetry;
     private int pos;
-    public AutonSeqBackBoardBlue1_5(SampleMecanumDrive robot, int position){
+    public AutonSeqBackBoardBlue1_5(SampleMecanumDrive robot, int position, Telemetry t){
 
         pos = position;
         robotobj = robot;
+        telemetry = t;
 
     }
 
@@ -35,6 +38,7 @@ public class AutonSeqBackBoardBlue1_5 extends CommandBase {
     public void initialize(){
         x = 1000;
         y = 1000;
+        telemetry.addLine("started2");
         if(pos==0){
             left_1 = robotobj.trajectoryBuilder(new Pose2d())
                     .lineToLinearHeading(new Pose2d(-33,4, Math.toRadians(0)))
@@ -59,8 +63,14 @@ public class AutonSeqBackBoardBlue1_5 extends CommandBase {
             y = -12;
             robotobj.followTrajectory(right_1);
         }
+        telemetry.update();
 
     }
+    @Override
+    public void execute(){
+        robotobj.update();
+    }
+
     @Override
     public boolean isFinished(){
         if(Math.abs(robotobj.getPose().getX()-x) <1 && Math.abs(robotobj.getPose().getY()-y)<1){

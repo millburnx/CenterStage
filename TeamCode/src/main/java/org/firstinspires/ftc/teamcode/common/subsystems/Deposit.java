@@ -11,7 +11,7 @@ public class Deposit extends SubsystemBase {
 
     public DepositState depositState = DepositState.INTAKE;
     public int ticks = 0;
-    public static double intakePos = 0.32, deposit1Pos = 0.7, deposit2Pos = 0.8, deposit3Pos = 0.9;
+    public static double intakePos = 0.15, deposit1Pos = 0.7, deposit2Pos = 0.8, deposit3Pos = 0.9;
 
     public enum DepositState {
         INTAKE,
