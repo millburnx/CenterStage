@@ -54,10 +54,10 @@ public class SubsystemsHardware {
         stageTwo.motorEx.setMode((DcMotor.RunMode.RUN_WITHOUT_ENCODER));
 
         intakeLeft = new SimpleServo(
-                hardwareMap, "intakeLeft", 0, 120, AngleUnit.DEGREES
+                hardwareMap, "intakeLeft", 0, 180, AngleUnit.DEGREES
         );
         intakeRight = new SimpleServo(
-                hardwareMap, "intakeRight", 0, 120, AngleUnit.DEGREES
+                hardwareMap, "intakeRight", 0, 180, AngleUnit.DEGREES
         );
         intakeLeft.setInverted(true);
         intakeLeft.setPosition(0);
