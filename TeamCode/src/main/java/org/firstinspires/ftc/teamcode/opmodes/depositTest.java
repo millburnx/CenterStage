@@ -29,8 +29,8 @@ public class depositTest extends OpMode {
         packet = new TelemetryPacket();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        leftDeposit = new SimpleServo(hardwareMap,"leftDeposit", 0, 120, AngleUnit.DEGREES);
-        rightDeposit = new SimpleServo(hardwareMap,"rightDeposit", 0, 120, AngleUnit.DEGREES);
+        leftDeposit = new SimpleServo(hardwareMap,"leftDeposit", 0, 180, AngleUnit.DEGREES);
+        rightDeposit = new SimpleServo(hardwareMap,"rightDeposit", 0, 180, AngleUnit.DEGREES);
 
         rightDeposit.setInverted(true);
         rightDeposit.setPosition(0);
