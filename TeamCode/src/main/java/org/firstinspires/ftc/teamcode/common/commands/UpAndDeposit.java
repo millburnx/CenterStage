@@ -2,16 +2,18 @@ package org.firstinspires.ftc.teamcode.common.commands;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.common.subsystems.Blocker;
 import org.firstinspires.ftc.teamcode.common.subsystems.Deposit;
 import org.firstinspires.ftc.teamcode.common.subsystems.Lift;
 
 public class UpAndDeposit extends SequentialCommandGroup{
 
-    public UpAndDeposit(Lift lift, Deposit deposit, int pos, Telemetry t){
+    public UpAndDeposit(Lift lift, Deposit deposit, Blocker blocker, int pos, Telemetry t){
         if(pos==0){
             addCommands(
                     new DepositCommandBase(deposit, Deposit.DepositState.INTAKE, t),
-                    new LiftCommandBase(lift, Lift.LiftStates.DOWN)
+                    new LiftCommandBase(lift, Lift.LiftStates.DOWN),
+                    new BlockerCommand(blocker, Blocker.BlockerState.REST, t)
 
 
             );

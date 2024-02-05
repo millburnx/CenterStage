@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class SubsystemsHardware {
 //    intake
     public MotorEx stageOne;
-    public MotorEx stageTwo;
+    //public MotorEx stageTwo;
     public ServoEx intakeLeft;
     public ServoEx intakeRight;
 
@@ -27,6 +27,8 @@ public class SubsystemsHardware {
 
 //    drone
     public ServoEx drone;
+
+    public ServoEx blocker;
 
     private static SubsystemsHardware instance = null;
     public boolean enabled;
@@ -48,10 +50,10 @@ public class SubsystemsHardware {
         stageOne.set(0);
         stageOne.motorEx.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        stageTwo = new MotorEx(hardwareMap, "stageTwo", Motor.GoBILDA.RPM_435);
-        stageTwo.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
-        stageTwo.set(0);
-        stageTwo.motorEx.setMode((DcMotor.RunMode.RUN_WITHOUT_ENCODER));
+//        stageTwo = new MotorEx(hardwareMap, "stageTwo", Motor.GoBILDA.RPM_435);
+//        stageTwo.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
+//        stageTwo.set(0);
+//        stageTwo.motorEx.setMode((DcMotor.RunMode.RUN_WITHOUT_ENCODER));
 
         intakeLeft = new SimpleServo(
                 hardwareMap, "intakeLeft", 0, 120, AngleUnit.DEGREES
@@ -84,5 +86,10 @@ public class SubsystemsHardware {
         drone = new SimpleServo(
                 hardwareMap, "drone", -360, 360, AngleUnit.DEGREES
         );
+
+        blocker = new SimpleServo(
+                hardwareMap, "blocker", 0, 360, AngleUnit.DEGREES
+        );
+        blocker.setPosition(0);
     }
 }

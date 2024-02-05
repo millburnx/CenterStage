@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.common.commands.UpAndDeposit;
 import org.firstinspires.ftc.teamcode.common.commands.DepositCommandBase;
 import org.firstinspires.ftc.teamcode.common.drive.Drive;
 import org.firstinspires.ftc.teamcode.common.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.common.subsystems.Blocker;
 import org.firstinspires.ftc.teamcode.common.subsystems.Deposit;
 import org.firstinspires.ftc.teamcode.common.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.common.subsystems.Lift;
@@ -37,6 +38,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
     private Intake intake;
     private Lift lift;
     private Deposit deposit;
+    private Blocker blocker;
 
     ObjectDetector detector;
     GamepadEx gamepadEx;
@@ -95,7 +97,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
                     .build();
 
             drive.followTrajectory(traj2);
-            schedule(new UpAndDeposit(lift, deposit, 1, telemetry));
+            schedule(new UpAndDeposit(lift, deposit,blocker, 1, telemetry));
 
             traj3 = drive.trajectoryBuilder(traj2.end())
                     .forward(4)

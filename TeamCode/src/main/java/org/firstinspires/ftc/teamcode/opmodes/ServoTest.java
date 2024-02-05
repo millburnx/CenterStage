@@ -18,20 +18,24 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @TeleOp
 public class ServoTest extends OpMode {
     SimpleServo servo;
+    public static double pos;
     TelemetryPacket packet;
 
 
     @Override
     public void init() {
+        pos = 0;
         packet = new TelemetryPacket();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        servo = new SimpleServo(hardwareMap,"servoTest", 0, 20, AngleUnit.DEGREES);
+        servo = new SimpleServo(hardwareMap,"servoTest", 0, 360, AngleUnit.DEGREES);
         servo.setPosition(100);
     }
 
     @Override
+
     public void loop() {
+        servo.setPosition(pos);
         if(gamepad1.a){
             telemetry.addLine("90");
             servo.setPosition(0.5);

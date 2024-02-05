@@ -34,23 +34,23 @@ public class Intake {
         switch (state) {
             case OFF:
                 subsystems.stageOne.set(0);
-                subsystems.stageTwo.set(0);
+                //subsystems.stageTwo.set(0);
                 break;
             case IN:
                 subsystems.stageOne.set(intakeInSpeed);
-                subsystems.stageTwo.set(secondInSpeed);
+                //subsystems.stageTwo.set(secondInSpeed);
                 break;
             case MAX:
                 subsystems.stageOne.set(intakeMaxSpeed);
-                subsystems.stageTwo.set(secondMaxSpeed);
+                //subsystems.stageTwo.set(secondMaxSpeed);
                 break;
             case OUT:
                 subsystems.stageOne.set(intakeOutSpeed);
-                subsystems.stageTwo.set(secondOutSpeed);
+                //subsystems.stageTwo.set(secondOutSpeed);
                 break;
             case AUTON_OUT:
                 subsystems.stageOne.set(intakeOutSpeedAuton);
-                subsystems.stageTwo.set(0);
+                //subsystems.stageTwo.set(0);
         }
     }
 }

@@ -8,9 +8,11 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.common.commands.BlockerCommand;
 import org.firstinspires.ftc.teamcode.common.commands.UpAndDeposit;
 import org.firstinspires.ftc.teamcode.common.commands.DepositCommandBase;
 import org.firstinspires.ftc.teamcode.common.drive.Drive;
+import org.firstinspires.ftc.teamcode.common.subsystems.Blocker;
 import org.firstinspires.ftc.teamcode.common.subsystems.Deposit;
 import org.firstinspires.ftc.teamcode.common.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.common.subsystems.Lift;
@@ -24,6 +26,7 @@ public class MainTeleOp extends CommandOpMode {
     private Intake intake;
     private Lift lift;
     private Deposit deposit;
+    private Blocker blocker;
 
     GamepadEx gamepadEx;
 
@@ -37,6 +40,8 @@ public class MainTeleOp extends CommandOpMode {
         intake = new Intake(subsystems);
         lift = new Lift(subsystems);
         deposit = new Deposit(subsystems);
+        blocker = new Blocker(subsystems);
+
 
         subsystems.enabled = true;
         subsystems.drone.setPosition(Math.toRadians(90));
@@ -50,20 +55,20 @@ public class MainTeleOp extends CommandOpMode {
         super.run();
 
         if (gamepad1.triangle) {
-            schedule(new UpAndDeposit(lift, deposit, 0, telemetry));
+            schedule(new UpAndDeposit(lift, deposit, blocker, 0, telemetry));
         }
         else if (gamepad1.circle) {
-            schedule(new UpAndDeposit(lift, deposit, 1, telemetry));
+            schedule(new UpAndDeposit(lift, deposit,blocker, 1, telemetry));
         }
 
         else if (gamepad1.x) {
-            schedule(new UpAndDeposit(lift, deposit, 2, telemetry));
+            schedule(new UpAndDeposit(lift, deposit,blocker, 2, telemetry));
 
         }
-        else if (gamepad1.square) {
-            schedule(new UpAndDeposit(lift, deposit, 3, telemetry));
-
-        }
+//        else if (gamepad1.square) {
+//            schedule(new UpAndDeposit(lift, deposit, 3, telemetry));
+//
+//        }
         lift.loop();
         deposit.loop();
 
@@ -99,6 +104,15 @@ public class MainTeleOp extends CommandOpMode {
             telemetry.addLine("0");
             subsystems.intakeLeft.setPosition(0);
             subsystems.intakeRight.setPosition(0);
+        }
+
+        if(gamepad1.right_bumper){
+            telemetry.addLine("rest");
+            schedule(new BlockerCommand(blocker, Blocker.BlockerState.REST, telemetry));
+        }
+        else if(gamepad1.left_bumper){
+            telemetry.addLine("release");
+            schedule(new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry));
         }
 
         telemetry.addData("Lift State: ", lift.getLiftStates());
