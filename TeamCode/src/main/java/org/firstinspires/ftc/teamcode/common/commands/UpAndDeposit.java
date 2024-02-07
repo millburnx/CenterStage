@@ -21,7 +21,7 @@ public class UpAndDeposit extends SequentialCommandGroup{
         else if(pos ==1){
             addCommands(
                     new LiftCommandBase(lift, Lift.LiftStates.POS1),
-            new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT1, t)
+                new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT1, t)
             );
 
         }

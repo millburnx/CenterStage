@@ -65,6 +65,8 @@ public class MainTeleOp extends CommandOpMode {
             schedule(new UpAndDeposit(lift, deposit,blocker, 2, telemetry));
 
         }
+
+
 //        else if (gamepad1.square) {
 //            schedule(new UpAndDeposit(lift, deposit, 3, telemetry));
 //
@@ -125,6 +127,8 @@ public class MainTeleOp extends CommandOpMode {
         telemetry.addData("Intake state: ", deposit.getDepositState());
 
         telemetry.addData("deposit ticks", deposit.ticks);
+        telemetry.addData("deposit encoder", deposit.getPosition());
+
         telemetry.update();
     }
 }

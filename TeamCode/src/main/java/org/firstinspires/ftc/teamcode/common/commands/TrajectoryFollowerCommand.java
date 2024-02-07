@@ -12,22 +12,33 @@ public class TrajectoryFollowerCommand extends CommandBase {
 
     private final MecanumDriveSubsystem drive;
     private final Trajectory trajectory;
+    public int ticker;
 
     public TrajectoryFollowerCommand(MecanumDriveSubsystem drive, Trajectory trajectory, Telemetry t) {
         this.drive = drive;
         this.trajectory = trajectory;
+        ticker = 0;
         telemetry = t;
 
         addRequirements(drive);
     }
 
+    public void loop(){
+        ticker += 1;
+    }
+
     @Override
     public void initialize() {
+        telemetry.addLine("initialize");
         drive.followTrajectory(trajectory);
+        telemetry.addLine("initialize done");
+        telemetry.update();
     }
 
     @Override
     public void execute() {
+        telemetry.addLine("execute");
+        telemetry.update();
         drive.update();
     }
 
@@ -42,6 +53,7 @@ public class TrajectoryFollowerCommand extends CommandBase {
     public boolean isFinished() {
         telemetry.addLine("finished");
         telemetry.update();
+        //return true;
         return Thread.currentThread().isInterrupted() || !drive.isBusy();
     }
 

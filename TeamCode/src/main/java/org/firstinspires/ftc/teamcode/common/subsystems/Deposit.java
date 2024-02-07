@@ -8,6 +8,7 @@ public class Deposit extends SubsystemBase {
     private SubsystemsHardware subsystems;
     public static int rowPos = 0;
     public static boolean isUp = false;
+    public double target;
 
     public DepositState depositState = DepositState.INTAKE;
     public int ticks = 0;
@@ -22,9 +23,14 @@ public class Deposit extends SubsystemBase {
 
     public Deposit(SubsystemsHardware subsystems) {
         ticks = 0;
+        target = 1000;
         this.subsystems = subsystems;
         update(DepositState.INTAKE);
         rowPos = 0;
+    }
+
+    public double getPosition(){
+        return subsystems.leftDeposit.getPosition();
     }
 
     public void update(DepositState state) {
@@ -34,20 +40,24 @@ public class Deposit extends SubsystemBase {
             case INTAKE:
                 subsystems.rightDeposit.setPosition(intakePos);
                 subsystems.leftDeposit.setPosition(intakePos);
+                target = intakePos;
                 rowPos = 0;
                 break;
             case DEPOSIT1:
                 subsystems.rightDeposit.setPosition(deposit1Pos);
                 subsystems.leftDeposit.setPosition(deposit1Pos);
+                target = deposit1Pos;
                 rowPos = 1;
                 break;
             case DEPOSIT2:
                 subsystems.rightDeposit.setPosition(deposit2Pos);
                 subsystems.leftDeposit.setPosition(deposit2Pos);
+                target = deposit2Pos;
                 rowPos = 2;
             case DEPOSIT3:
                 subsystems.rightDeposit.setPosition(deposit3Pos);
                 subsystems.leftDeposit.setPosition(deposit3Pos);
+                target = deposit3Pos;
                 rowPos = 3;
         }
     }public void updatePos(int index) {
@@ -82,5 +92,9 @@ public class Deposit extends SubsystemBase {
     }
     public void loop(){
         ticks+=1;
+    }
+
+    public double getTarget(){
+        return target;
     }
 }

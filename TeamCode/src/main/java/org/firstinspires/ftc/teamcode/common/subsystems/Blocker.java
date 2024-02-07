@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.common.utils.SubsystemsHardware;
 public class Blocker extends SubsystemBase {
     private SubsystemsHardware subsystems;
     public static boolean isUp = false;
-    public int ticks;
+    public double target;
 
     public BlockerState blockerState = BlockerState.REST;
     public static double rest = 0, release = 0.4;
@@ -18,20 +18,21 @@ public class Blocker extends SubsystemBase {
     }
 
     public Blocker(SubsystemsHardware subsystems) {
-
+        target = 1000;
         this.subsystems = subsystems;
         update(BlockerState.REST);
     }
 
     public void update(BlockerState state) {
-        ticks = 0;
         blockerState = state;
         isUp = state != BlockerState.REST;
         switch (state) {
             case REST:
+                target = rest;
                 subsystems.blocker.setPosition(rest);
                 break;
             case RELEASE:
+                target = release;
                 subsystems.blocker.setPosition(release);
                 break;
         }
@@ -49,7 +50,13 @@ public class Blocker extends SubsystemBase {
     public BlockerState getDepositState() {
         return blockerState;
     }
-    public void loop(){
-        ticks+=1;
+    public double getTarget(){
+        return target;
     }
+    public double getPosition(){
+        return subsystems.blocker.getPosition();
+    }
+
+
+
 }

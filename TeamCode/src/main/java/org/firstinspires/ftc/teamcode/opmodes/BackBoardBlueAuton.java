@@ -9,15 +9,19 @@ import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.ObjectDetector;
 import org.firstinspires.ftc.teamcode.common.commands.AutonSeqBackBoardBlue1;
 import org.firstinspires.ftc.teamcode.common.commands.AutonSeqBackBoardBlue1_5;
 import org.firstinspires.ftc.teamcode.common.commands.AutonSeqBackBoardBlue2;
 import org.firstinspires.ftc.teamcode.common.commands.BackBoardBlue;
+import org.firstinspires.ftc.teamcode.common.commands.BlockerCommand;
 import org.firstinspires.ftc.teamcode.common.commands.IntakeCommand;
+import org.firstinspires.ftc.teamcode.common.commands.LiftCommandBase;
 import org.firstinspires.ftc.teamcode.common.commands.TrajectoryFollowerCommand;
 import org.firstinspires.ftc.teamcode.common.commands.UpAndDeposit;
 import org.firstinspires.ftc.teamcode.common.commands.DepositCommandBase;
@@ -69,43 +73,66 @@ public class BackBoardBlueAuton extends CommandOpMode {
 //            telemetry.addLine(Integer.toString(region));
 //            telemetry.update();
         }
+
     }
-    public Command getAutonomousCommand(Trajectory trajj1, Trajectory trajj2) {
+    public SequentialCommandGroup getAutonomousCommand(Trajectory trajj1, Trajectory trajj2, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
 
         return new SequentialCommandGroup( //
 //                new AutonSeqBackBoardBlue1(drive, region, telemetry),
-//                new AutonSeqBackBoardBlue2(drive, region)
+//                new AutonSeqBackBoardBlue2(drive, region),
+                //new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
-                new TrajectoryFollowerCommand(robot, trajj2, telemetry)
-
-
+                //new LiftCommandBase(lift,Lift.LiftStates.POS2),
+                new TrajectoryFollowerCommand(robot, trajj2, telemetry),
+                new UpAndDeposit(lift, deposit,blocker, 1, telemetry),
+                new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry)
                 );
     }
 
+
+
     @Override
     public void run() {
-        drive.update();
-        if(end){
+        super.run();
+        robot.update();
+        lift.loop();
+        deposit.loop();
+        telemetry.addData("target depo", deposit.getTarget());
+        telemetry.addData("curr depo", deposit.getPosition());
+        telemetry.addData("cond",  Math.abs(deposit.getTarget()-deposit.getPosition())<0.01);
+
+        if (end) {
+            end = false;
             traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(-90)))
-                        .build();
-            drive.followTrajectory(traj1);
-
-            schedule(new IntakeCommand(intake, Intake.IntakeState.AUTON_OUT));
-            traj2 = drive.trajectoryBuilder(traj1.end())
-                    .lineToLinearHeading(new Pose2d(33,36, Math.toRadians(-90)))
+                    .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(-90)))
+//                    .addDisplacementMarker(() -> {
+//                        schedule(new IntakeCommand(intake, Intake.IntakeState.AUTON_OUT));
+//                        schedule(new UpAndDeposit(lift, deposit, blocker, 1, telemetry));
+//                    })
                     .build();
+            //drive.followTrajectory(traj1);
 
-            drive.followTrajectory(traj2);
-            schedule(new UpAndDeposit(lift, deposit,blocker, 1, telemetry));
+            traj2 = drive.trajectoryBuilder(traj1.end())
+                    .lineToLinearHeading(new Pose2d(33, 36, Math.toRadians(-90)))
+//                    .addDisplacementMarker(() -> {
+//                        schedule(new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT1, telemetry));
+//                    })
+                    .build();
+            //drive.followTrajectory(traj2);
 
-            traj3 = drive.trajectoryBuilder(traj2.end())
+
+            traj3 = drive.trajectoryBuilder(traj1.end())
                     .forward(4)
                     .build();
-            drive.followTrajectory(traj3);
-            end = false;
+            //schedule( new TrajectoryFollowerCommand(robot, traj1, telemetry)c);
+            //schedule(getAutonomousCommand(traj1, traj2));
+            schedule(getAutonomousCommand(traj1, traj2, deposit, blocker, lift, telemetry));
+            //drive.followTrajectory(traj3);
         }
     }
+
+
+
 
 
 
