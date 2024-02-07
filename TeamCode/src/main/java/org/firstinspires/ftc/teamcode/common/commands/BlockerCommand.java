@@ -20,8 +20,9 @@ public class BlockerCommand extends CommandBase {
     }
     @Override
     public void initialize(){
-
+        blockerobj.ticks = 0;
         blockerobj.update(stateobj);
+
     }
 
     @Override
@@ -29,7 +30,8 @@ public class BlockerCommand extends CommandBase {
         telemetry.addLine("finished");
         telemetry.update();
 
-        return Math.abs(blockerobj.getTarget()-blockerobj.getPosition())<0.01;
+//        return Math.abs(blockerobj.getTarget()-blockerobj.getPosition())<0.01;
+        return blockerobj.ticks>150;
     }
 
 }

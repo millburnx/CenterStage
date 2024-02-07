@@ -8,6 +8,7 @@ public class Blocker extends SubsystemBase {
     private SubsystemsHardware subsystems;
     public static boolean isUp = false;
     public double target;
+    public int ticks;
 
     public BlockerState blockerState = BlockerState.REST;
     public static double rest = 0, release = 0.4;
@@ -18,12 +19,14 @@ public class Blocker extends SubsystemBase {
     }
 
     public Blocker(SubsystemsHardware subsystems) {
+        ticks = 0;
         target = 1000;
         this.subsystems = subsystems;
         update(BlockerState.REST);
     }
 
     public void update(BlockerState state) {
+        ticks = 0;
         blockerState = state;
         isUp = state != BlockerState.REST;
         switch (state) {
@@ -49,6 +52,9 @@ public class Blocker extends SubsystemBase {
 
     public BlockerState getDepositState() {
         return blockerState;
+    }
+    public void loop(){
+        ticks+=1;
     }
     public double getTarget(){
         return target;

@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.common.commands.BlockerCommand;
+import org.firstinspires.ftc.teamcode.common.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commands.UpAndDeposit;
 import org.firstinspires.ftc.teamcode.common.commands.DepositCommandBase;
 import org.firstinspires.ftc.teamcode.common.drive.Drive;
@@ -45,7 +46,7 @@ public class MainTeleOp extends CommandOpMode {
 
         subsystems.enabled = true;
         subsystems.drone.setPosition(Math.toRadians(90));
-        intake.update(Intake.IntakeState.IN);
+//        intake.update(Intake.IntakeState.IN);
         deposit.update(Deposit.DepositState.INTAKE);
         lift.update(Lift.LiftStates.DOWN);
     }
@@ -61,7 +62,7 @@ public class MainTeleOp extends CommandOpMode {
             schedule(new UpAndDeposit(lift, deposit,blocker, 1, telemetry));
         }
 
-        else if (gamepad1.x) {
+        else if (gamepad1.square) {
             schedule(new UpAndDeposit(lift, deposit,blocker, 2, telemetry));
 
         }
@@ -73,6 +74,7 @@ public class MainTeleOp extends CommandOpMode {
 //        }
         lift.loop();
         deposit.loop();
+        blocker.loop();
 
         double power = -gamepad1.left_stick_y;
         double strafe = gamepad1.left_stick_x;
@@ -80,20 +82,30 @@ public class MainTeleOp extends CommandOpMode {
         drive.moveTeleOp(power, strafe, turn);
 
         if(gamepad1.right_trigger>0.3){
-            lift.target +=10;
+            subsystems.leftLift.setPower(10);
+            subsystems.rightLift.setPower(10);
+
         }
-        if(gamepad1.left_trigger>0.3){
-            lift.target -=10;
+        else if(gamepad1.left_trigger>0.3){
+            subsystems.leftLift.setPower(-10);
+            subsystems.rightLift.setPower(-10);
+        }
+        else{
+            subsystems.leftLift.setPower(0);
+            subsystems.rightLift.setPower(0);
         }
 
         if (gamepad1.dpad_down) {
             schedule(new DepositCommandBase(deposit, Deposit.DepositState.INTAKE, telemetry));
         } else if (gamepad1.dpad_up) {
             schedule(new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT1, telemetry));
-        } else if (gamepad1.dpad_right) {
-            schedule(new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2, telemetry));
-        } else if (gamepad1.dpad_left) {
-            schedule(new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT3, telemetry));
+        }
+        if (gamepad2.right_bumper) {
+            schedule(new IntakeCommand(intake, Intake.IntakeState.IN));
+        }
+        else if(gamepad2.left_bumper){
+            schedule(new IntakeCommand(intake, Intake.IntakeState.OFF));
+
         }
 
         if(gamepad1.right_stick_button){
@@ -128,6 +140,9 @@ public class MainTeleOp extends CommandOpMode {
 
         telemetry.addData("deposit ticks", deposit.ticks);
         telemetry.addData("deposit encoder", deposit.getPosition());
+
+        telemetry.addData("blocker ticks", blocker.ticks);
+        telemetry.addData("cond",  blocker.ticks>150);
 
         telemetry.update();
     }
