@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -40,7 +40,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
-import org.firstinspires.ftc.teamcode.common.subsystems.DashTelemetry;
 import org.firstinspires.ftc.teamcode.common.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -95,18 +94,13 @@ public class BackboardAprilTag extends LinearOpMode {
      * The variable to store our instance of the vision portal.
      */
     private VisionPortal visionPortal;
-
-    public DashTelemetry dashTelemetry;
-
-    SampleMecanumDrive rr_robot = new SampleMecanumDrive(hardwareMap);
+    SampleMecanumDrive rr_robot;
 
     @Override
     public void runOpMode() {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
-        dashTelemetry = new DashTelemetry();
-
+        rr_robot = new SampleMecanumDrive(hardwareMap);
         initAprilTag();
 
         // Wait for the DS start button to be touched.
@@ -122,26 +116,13 @@ public class BackboardAprilTag extends LinearOpMode {
 
                 // Push telemetry to the Driver Station.
                 telemetry.update();
-
                 rr_robot.update();
-
                 // Save CPU resources; can resume streaming when needed.
                 if (gamepad1.dpad_down) {
                     visionPortal.stopStreaming();
                 } else if (gamepad1.dpad_up) {
                     visionPortal.resumeStreaming();
                 }
-                double[] positions = getPosition(0);
-                if(positions[0]>5){
-                    centerRobotBearing(0);
-                }
-                else if(positions[1] > 5){
-                    centerRobotYaw(0);
-                }
-                else if(positions[2]>2){
-                    centerRange(0);
-                }
-
                 // Share the CPU.
                 sleep(20);
             }
@@ -151,7 +132,6 @@ public class BackboardAprilTag extends LinearOpMode {
         visionPortal.close();
 
     }   // end method runOpMode()
-
     public void centerRobotYaw(int id){
         double yaw = getPosition(id)[0];
         controller.setPID(p, i, d);
@@ -257,15 +237,15 @@ public class BackboardAprilTag extends LinearOpMode {
     }   // end method initAprilTag()
 
     public double[] getPosition(int id) {
-        double[] result = new double[3];
+        double[] stoof = new double[3];
         for (AprilTagDetection detection : aprilTag.getDetections()) {
             if(detection.id==id){
-                result[0] = detection.ftcPose.yaw;
-                result[1] = detection.ftcPose.range;
-                result[2] = detection.ftcPose.bearing;
+                stoof[0] = detection.ftcPose.yaw;
+                stoof[1] = detection.ftcPose.range;
+                stoof[2] = detection.ftcPose.bearing;
             }
         }
-        return result;
+        return stoof;
     }
 
     /**
@@ -285,8 +265,6 @@ public class BackboardAprilTag extends LinearOpMode {
                 telemetry.addData("Range: ", range);
                 telemetry.addData("Strafe: ", strafe);
                 telemetry.addData("Heading: ", heading);
-                dashTelemetry.drawFieldRed(new Pose2d(rr_robot.getPoseEstimate().getX(), rr_robot.getPoseEstimate().getY(), rr_robot.getPoseEstimate().getHeading()), FtcDashboard.getInstance());
-                dashTelemetry.drawField(new Pose2d(range, 0, 0), FtcDashboard.getInstance());
                 telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
                 telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
                 telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));

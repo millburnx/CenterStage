@@ -56,6 +56,7 @@ public class MainTeleOp extends CommandOpMode {
         super.run();
 
         if (gamepad1.triangle) {
+            blocker.target = 0;
             schedule(new UpAndDeposit(lift, deposit, blocker, 0, telemetry));
         }
         else if (gamepad1.circle) {
@@ -82,17 +83,11 @@ public class MainTeleOp extends CommandOpMode {
         drive.moveTeleOp(power, strafe, turn);
 
         if(gamepad1.right_trigger>0.3){
-            subsystems.leftLift.setPower(10);
-            subsystems.rightLift.setPower(10);
+            lift.target += 5;
 
         }
         else if(gamepad1.left_trigger>0.3){
-            subsystems.leftLift.setPower(-10);
-            subsystems.rightLift.setPower(-10);
-        }
-        else{
-            subsystems.leftLift.setPower(0);
-            subsystems.rightLift.setPower(0);
+            lift.target -= 5;
         }
 
         if (gamepad1.dpad_down) {
