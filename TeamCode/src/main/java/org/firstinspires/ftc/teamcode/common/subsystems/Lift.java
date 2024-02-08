@@ -98,9 +98,15 @@ public class Lift extends SubsystemBase {
         double pid = controller.calculate(rightPos, target);
         double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
         double power = pid + ff;
+        if(target == DOWN_POS && subsystems.rightLift.getCurrentPosition()<=1){
+            subsystems.rightLift.setPower(0);
+            subsystems.leftLift.setPower(0);
+        }
+        else{
+            subsystems.rightLift.setPower(power);
+            subsystems.leftLift.setPower(power);
+        }
 
-        subsystems.rightLift.setPower(power);
-        subsystems.leftLift.setPower(power);
     }
 
 
