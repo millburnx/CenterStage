@@ -68,8 +68,8 @@ public class PixelDetector{
             mask = new Mat();
             res = new Mat();
             hierarchy = new Mat();
-            Scalar lowerVal = new Scalar(225, 225, 225);
-            Scalar upperVal = new Scalar(255, 255, 255);
+            Scalar lowerVal = new Scalar(0, 0, 205);
+            Scalar upperVal = new Scalar(255, 50, 255);
 
             Core.inRange(temp, lowerVal, upperVal, mask);
 
