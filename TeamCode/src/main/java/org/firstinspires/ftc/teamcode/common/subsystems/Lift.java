@@ -12,7 +12,7 @@ public class Lift extends SubsystemBase {
     public LiftStates liftStates = LiftStates.DOWN;
     public PIDController controller;
     public static double p = 0.01, i = 0, d = 0.001;
-    public static double f = 0.001;
+    public static double f = 0.01;
     public static int target = 0;
     private final double ticks_in_degree = 8192/360.0;
 
@@ -98,7 +98,7 @@ public class Lift extends SubsystemBase {
         double pid = controller.calculate(rightPos, target);
         double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
         double power = pid + ff;
-        if(target == DOWN_POS && subsystems.rightLift.getCurrentPosition()<=1){
+        if(target == DOWN_POS && subsystems.rightLift.getCurrentPosition()<=5){
             subsystems.rightLift.setPower(0);
             subsystems.leftLift.setPower(0);
         }

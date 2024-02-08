@@ -128,7 +128,7 @@ public class MainTeleOp extends CommandOpMode {
         telemetry.addData("Lift pos: ", lift.rowPos);
 
         telemetry.addData("Deposit State: ", deposit.getDepositState());
-        telemetry.addData("Deposit pos: ", deposit.rowPos);
+        telemetry.addData("Deposit pos: ", subsystems.rightLift.getCurrentPosition());
 
         telemetry.addData("target: ", Lift.target);
         telemetry.addData("Intake state: ", deposit.getDepositState());
