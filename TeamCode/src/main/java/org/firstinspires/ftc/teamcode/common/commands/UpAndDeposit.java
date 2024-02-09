@@ -9,7 +9,13 @@ import org.firstinspires.ftc.teamcode.common.subsystems.Lift;
 public class UpAndDeposit extends SequentialCommandGroup{
 
     public UpAndDeposit(Lift lift, Deposit deposit, Blocker blocker, int pos, Telemetry t){
-        if(pos==0){
+        if(pos ==-1){
+            addCommands(
+                    new LiftCommandBase(lift, Lift.LiftStates.AUTON),
+                    new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2, t)
+            );
+        }
+        else if(pos==0){
             addCommands(
                     new DepositCommandBase(deposit, Deposit.DepositState.INTAKE, t),
                     new LiftCommandBase(lift, Lift.LiftStates.DOWN),

@@ -27,22 +27,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
-import org.firstinspires.ftc.teamcode.common.subsystems.DashTelemetry;
+import org.firstinspires.ftc.teamcode.ObjectDetector;
+import org.firstinspires.ftc.teamcode.common.commands.BlockerCommand;
+import org.firstinspires.ftc.teamcode.common.commands.IntakeUpCommand;
+import org.firstinspires.ftc.teamcode.common.commands.TrajectoryFollowerCommand;
+import org.firstinspires.ftc.teamcode.common.commands.UpAndDeposit;
 import org.firstinspires.ftc.teamcode.common.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.common.subsystems.Blocker;
+import org.firstinspires.ftc.teamcode.common.subsystems.Deposit;
+import org.firstinspires.ftc.teamcode.common.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.common.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.common.subsystems.MecanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.common.utils.SubsystemsHardware;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
@@ -75,16 +91,31 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-
+@Config
 @TeleOp(name = "Backboard AprilTags rr", group = "TestMode")
-public class BackboardAprilTagRoadrunner extends LinearOpMode {
-    Trajectory traj1, traj2, traj3, traj4;
+public class BackboardAprilTagRoadrunner extends CommandOpMode {
     private PIDController controller;
     public static double p = 0.01, i = 0, d = 0.001;
     public static double f = 0.001;
+    private final SubsystemsHardware subsystems = SubsystemsHardware.getInstance();
+    MecanumDriveSubsystem robot;
+
+    private SampleMecanumDrive drive;
+    private Intake intake;
+    private Lift lift;
+    private Deposit deposit;
+    private Blocker blocker;
+
+    public static int id = 1;
+
+
+    double[] positions;
+    boolean end;
 
     //TODO: UPDATE
     private final double ticks_in_degree = 8192/360.0;
+
+    Trajectory traj1, traj2;
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -97,64 +128,104 @@ public class BackboardAprilTagRoadrunner extends LinearOpMode {
      * The variable to store our instance of the vision portal.
      */
     private VisionPortal visionPortal;
-
-    public DashTelemetry dashTelemetry;
-
-    SampleMecanumDrive rr_robot = new SampleMecanumDrive(hardwareMap);
-    SampleMecanumDrive drive;
+    SampleMecanumDrive rr_robot;
 
     @Override
-    public void runOpMode() {
-
+    public void initialize() {
+        CommandScheduler.getInstance().reset();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        dashTelemetry = new DashTelemetry();
+        subsystems.init(hardwareMap);
         drive = new SampleMecanumDrive(hardwareMap);
+        robot = new MecanumDriveSubsystem(drive, false);
+        intake = new Intake(subsystems);
+        lift = new Lift(subsystems);
+        deposit = new Deposit(subsystems);
+        blocker = new Blocker(subsystems);
 
-
+        subsystems.enabled = true;
+        deposit.update(Deposit.DepositState.INTAKE);
+        lift.update(Lift.LiftStates.DOWN);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        rr_robot = new SampleMecanumDrive(hardwareMap);
         initAprilTag();
-
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
-        waitForStart();
-        double[] positions = new double[3];
+        controller = new PIDController(p, i, d);
+        while(opModeInInit()){
+            positions = getPosition(id);
+            telemetry.addData("Positions(x) : ",positions[0]);
+            telemetry.addData("Positions(y) : ",positions[1]);
+            telemetry.addData("Positions(yaw): ",positions[2]);
+            telemetry.update();
+        }
+        end = true;
+    }
+    public SequentialCommandGroup getAutonomousCommand(Trajectory trajj1, Trajectory trajj2, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
+        return new SequentialCommandGroup( //
+//                new AutonSeqBackBoardBlue1(drive, region, telemetry),
+//                new AutonSeqBackBoardBlue2(drive, region),
+                //new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2, telemetry),
+                new TrajectoryFollowerCommand(robot, trajj1, telemetry),
+                new UpAndDeposit(lift, deposit,blocker, -1, telemetry),
+                new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry),
+                new TrajectoryFollowerCommand(robot, trajj2, telemetry),
+                new UpAndDeposit(lift, deposit,blocker, 0, telemetry)
 
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
 
-                telemetryAprilTag();
+        );
+    }
+
+
+    @Override
+    public void run() {
+
+        super.run();
+        robot.update();
+        lift.loop();
+        deposit.loop();
+        blocker.loop();
+
+                //telemetryAprilTag();
 
                 // Push telemetry to the Driver Station.
-                telemetry.update();
-
-                rr_robot.update();
-
+                //telemetry.update();
                 // Save CPU resources; can resume streaming when needed.
                 if (gamepad1.dpad_down) {
                     visionPortal.stopStreaming();
                 } else if (gamepad1.dpad_up) {
                     visionPortal.resumeStreaming();
                 }
-                positions = getPosition(0);
-                if(positions.length>0){
-                    break;
+                positions = getPosition(id);
+                if(end){
+                    telemetry.addData("Positions(x) Terminal: ",positions[0]);
+                    telemetry.addData("Positions(y) Terminal: ",positions[1]);
+                    telemetry.addData("Positions(yaw) Terminal: ",positions[2]);
+                    telemetry.update();
+                    if(positions.length>0 && positions[0]!=0){
+                        traj1 = drive.trajectoryBuilder(new Pose2d())
+                                .lineToLinearHeading(new Pose2d(-positions[1]+10, positions[0]+3, Math.toRadians(positions[2])))
+                                .build();
+                        traj2 = drive.trajectoryBuilder(traj1.end())
+                                .forward(4)
+                                .build();
+                        schedule(getAutonomousCommand(traj1, traj2, deposit, blocker, lift, telemetry));
+                        end = false;
+                    }
+
+                    // Share the CPU.
                 }
-                // Share the CPU.
                 sleep(20);
-            }
-            traj1 = drive.trajectoryBuilder(new Pose2d())
-                    .lineToLinearHeading(new Pose2d(positions[0], positions[1], Math.toRadians(positions[2])))
-                    .build();
-            drive.followTrajectory(traj1);
-        }
+
+
+
 
         // Save more CPU resources when camera is no longer needed.
         visionPortal.close();
 
     }   // end method runOpMode()
-
     /**
      * Initialize the AprilTag processor.
      */
@@ -224,15 +295,15 @@ public class BackboardAprilTagRoadrunner extends LinearOpMode {
     }   // end method initAprilTag()
 
     public double[] getPosition(int id) {
-        double[] result = new double[3];
+        double[] stoof = new double[3];
         for (AprilTagDetection detection : aprilTag.getDetections()) {
             if(detection.id==id){
-                result[0] = detection.ftcPose.x;
-                result[1] = detection.ftcPose.y;
-                result[2] = detection.ftcPose.bearing;
+                stoof[0] = detection.ftcPose.x;
+                stoof[1] = detection.ftcPose.y;
+                stoof[2] = detection.ftcPose.yaw;
             }
         }
-        return result;
+        return stoof;
     }
 
     /**
@@ -252,8 +323,6 @@ public class BackboardAprilTagRoadrunner extends LinearOpMode {
                 telemetry.addData("Range: ", range);
                 telemetry.addData("Strafe: ", strafe);
                 telemetry.addData("Heading: ", heading);
-                dashTelemetry.drawFieldRed(new Pose2d(rr_robot.getPoseEstimate().getX(), rr_robot.getPoseEstimate().getY(), rr_robot.getPoseEstimate().getHeading()), FtcDashboard.getInstance());
-                dashTelemetry.drawField(new Pose2d(range, 0, 0), FtcDashboard.getInstance());
                 telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
                 telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
                 telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
@@ -272,3 +341,5 @@ public class BackboardAprilTagRoadrunner extends LinearOpMode {
     }   // end method telemetryAprilTag()
 
 }   // end class
+
+

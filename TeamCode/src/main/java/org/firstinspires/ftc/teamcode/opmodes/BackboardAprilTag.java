@@ -107,6 +107,7 @@ public class BackboardAprilTag extends LinearOpMode {
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
+        controller = new PIDController(p, i, d);
         waitForStart();
 
         if (opModeIsActive()) {
@@ -117,6 +118,7 @@ public class BackboardAprilTag extends LinearOpMode {
                 // Push telemetry to the Driver Station.
                 telemetry.update();
                 rr_robot.update();
+                centerRobotYaw(0);
                 // Save CPU resources; can resume streaming when needed.
                 if (gamepad1.dpad_down) {
                     visionPortal.stopStreaming();
@@ -138,11 +140,11 @@ public class BackboardAprilTag extends LinearOpMode {
         double pid = controller.calculate(yaw, 0);
         double ff = Math.cos(Math.toRadians(0 / ticks_in_degree)) * f;
 
-        double velocity = pid + ff;
-        rr_robot.leftFront.setVelocity(velocity);
-        rr_robot.leftRear.setVelocity(-velocity);
-        rr_robot.rightFront.setVelocity(-velocity);
-        rr_robot.rightRear.setVelocity(velocity);
+        double power = pid + ff;
+        rr_robot.leftFront.setPower(power);
+        rr_robot.leftRear.setPower(-power);
+        rr_robot.rightFront.setPower(-power);
+        rr_robot.rightRear.setPower(power);
     }
     public void centerRange(int id){
         double range = getPosition(id)[1];

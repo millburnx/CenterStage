@@ -87,7 +87,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
                 new IntakeUpCommand(intake, 1).withTimeout(1000),
                 //new LiftCommandBase(lift,Lift.LiftStates.POS2),
                 new TrajectoryFollowerCommand(robot, trajj2, telemetry),
-                new UpAndDeposit(lift, deposit,blocker, 1, telemetry),
+                new UpAndDeposit(lift, deposit,blocker, -1, telemetry),
                 new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj3, telemetry),
                 new UpAndDeposit(lift, deposit,blocker, 0, telemetry)

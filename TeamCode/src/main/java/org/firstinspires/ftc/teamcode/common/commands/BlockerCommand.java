@@ -31,7 +31,7 @@ public class BlockerCommand extends CommandBase {
         telemetry.update();
 
 //        return Math.abs(blockerobj.getTarget()-blockerobj.getPosition())<0.01;
-        return blockerobj.ticks>150;
+        return blockerobj.ticks>80;
     }
 
 }

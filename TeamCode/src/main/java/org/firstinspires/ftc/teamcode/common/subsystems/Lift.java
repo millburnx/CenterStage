@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.common.subsystems;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.utils.SubsystemsHardware;
 
 @Config
@@ -14,15 +16,18 @@ public class Lift extends SubsystemBase {
     public static double p = 0.01, i = 0, d = 0.001;
     public static double f = 0.01;
     public static int target = 0;
+
+    public boolean switcher;
     private final double ticks_in_degree = 8192/360.0;
 
     public static boolean isUp = false;
     public static int rowPos = 0;
 
-    public static int DOWN_POS = 0, POS1_POS = 1200, POS2_POS = 1750, POS3_POS = 1500, CLIMB_POS = 1700;
+    public static int DOWN_POS = 0, AUTON_POS = 900, POS1_POS = 1200, POS2_POS = 1750, POS3_POS = 1500, CLIMB_POS = 1700;
 
     public enum LiftStates {
         DOWN,
+        AUTON,
         POS1,
         POS2,
         POS3,
@@ -30,6 +35,7 @@ public class Lift extends SubsystemBase {
     }
 
     public Lift(SubsystemsHardware subsystems) {
+        switcher = false;
         this.subsystems = subsystems;
         this.controller = new PIDController(p, i, d);
         rowPos = 0;
@@ -41,9 +47,14 @@ public class Lift extends SubsystemBase {
         isUp = state != LiftStates.DOWN;
         switch (state) {
             case DOWN:
+                switcher = true;
                 target = DOWN_POS;
                 liftStates = state;
                 rowPos = 0;
+                break;
+            case AUTON:
+                target = AUTON_POS;
+                liftStates = state;
                 break;
             case POS1:
                 target = POS1_POS;
@@ -98,20 +109,29 @@ public class Lift extends SubsystemBase {
         double pid = controller.calculate(rightPos, target);
         double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
         double power = pid + ff;
-        if(target == DOWN_POS && subsystems.rightLift.getCurrentPosition()<=5){
-            subsystems.rightLift.setPower(0);
-            subsystems.leftLift.setPower(0);
-        }
-        else{
-            subsystems.rightLift.setPower(power);
-            subsystems.leftLift.setPower(power);
-        }
+//        if(target == DOWN_POS && subsystems.rightLift.getCurrentPosition()<=10){
+//            subsystems.rightLift.setPower(0);
+//            subsystems.leftLift.setPower(0);
+//        }
+//        else{
+//            subsystems.rightLift.setPower(power);
+//            subsystems.leftLift.setPower(power);
+//        }
+        subsystems.rightLift.setPower(power);
+        subsystems.leftLift.setPower(power);
 
     }
 
 
     public boolean isFinished() {
         if(Math.abs(subsystems.rightLift.getCurrentPosition()-target)<100){
+//            if(target == DOWN_POS){
+//                subsystems.rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                subsystems.leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                subsystems.rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//                subsystems.leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//                controller.reset();
+//            }
             return true;
         }
         return false;

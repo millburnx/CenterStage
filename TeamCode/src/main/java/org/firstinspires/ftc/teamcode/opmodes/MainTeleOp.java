@@ -83,11 +83,11 @@ public class MainTeleOp extends CommandOpMode {
         drive.moveTeleOp(power, strafe, turn);
 
         if(subsystems.rightLift.getCurrentPosition() <1800 && gamepad1.right_trigger>0.3){
-            lift.target += 5;
+            lift.target += 10;
 
         }
         else if(gamepad1.left_trigger>0.3){
-            lift.target -= 5;
+            lift.target -= 10;
         }
 
         if (gamepad1.dpad_down) {
@@ -124,17 +124,8 @@ public class MainTeleOp extends CommandOpMode {
             schedule(new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry));
         }
 
-        telemetry.addData("Lift State: ", lift.getLiftStates());
-        telemetry.addData("Lift pos: ", lift.rowPos);
-
-        telemetry.addData("Deposit State: ", deposit.getDepositState());
-        telemetry.addData("Deposit pos: ", subsystems.rightLift.getCurrentPosition());
-
-        telemetry.addData("target: ", Lift.target);
-        telemetry.addData("Intake state: ", deposit.getDepositState());
-
-        telemetry.addData("deposit ticks", deposit.ticks);
-        telemetry.addData("deposit encoder", deposit.getPosition());
+        telemetry.addData("Lift target: ", lift.target);
+        telemetry.addData("Lift pos: ", subsystems.rightLift.getCurrentPosition());
 
         telemetry.addData("blocker ticks", blocker.ticks);
         telemetry.addData("cond",  blocker.ticks>150);
