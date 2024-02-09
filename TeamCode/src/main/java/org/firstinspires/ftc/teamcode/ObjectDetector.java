@@ -64,6 +64,10 @@ public class ObjectDetector{
         return latest_x;
     }
 
+    public void close(){
+        webcam.stopStreaming();
+    }
+
     class ObjectDetectorPipeline extends OpenCvPipeline {
         boolean viewportPaused;
         Mat mask, mask2, temp, res, finalMask, kernel, hierarchy;
@@ -140,5 +144,6 @@ public class ObjectDetector{
                 webcam.resumeViewport();
             }
         }
+
     }
 }
