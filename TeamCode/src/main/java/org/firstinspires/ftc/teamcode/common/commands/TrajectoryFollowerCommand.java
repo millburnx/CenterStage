@@ -37,8 +37,6 @@ public class TrajectoryFollowerCommand extends CommandBase {
 
     @Override
     public void execute() {
-        telemetry.addLine("execute");
-        telemetry.update();
         drive.update();
     }
 
@@ -51,9 +49,6 @@ public class TrajectoryFollowerCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        telemetry.addLine("finished");
-        telemetry.update();
-        //return true;
         return Thread.currentThread().isInterrupted() || !drive.isBusy();
     }
 

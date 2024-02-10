@@ -66,6 +66,8 @@ public class ObjectDetector{
 
     public void close(){
         webcam.stopStreaming();
+        webcam.closeCameraDevice();
+        webcam.stopRecordingPipeline();
     }
 
     class ObjectDetectorPipeline extends OpenCvPipeline {

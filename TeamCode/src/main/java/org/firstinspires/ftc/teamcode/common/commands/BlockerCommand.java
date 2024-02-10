@@ -27,10 +27,6 @@ public class BlockerCommand extends CommandBase {
 
     @Override
     public boolean isFinished(){
-        telemetry.addLine("finished");
-        telemetry.update();
-
-//        return Math.abs(blockerobj.getTarget()-blockerobj.getPosition())<0.01;
         return blockerobj.ticks>80;
     }
 

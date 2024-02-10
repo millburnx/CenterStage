@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.common.commands.BlockerCommand;
 import org.firstinspires.ftc.teamcode.common.commands.IntakeCommand;
+import org.firstinspires.ftc.teamcode.common.commands.LiftCommandBase;
 import org.firstinspires.ftc.teamcode.common.commands.UpAndDeposit;
 import org.firstinspires.ftc.teamcode.common.commands.DepositCommandBase;
 import org.firstinspires.ftc.teamcode.common.drive.Drive;
@@ -82,11 +83,11 @@ public class MainTeleOp extends CommandOpMode {
         double turn = gamepad1.right_stick_x;
         drive.moveTeleOp(power, strafe, turn);
 
-        if(subsystems.rightLift.getCurrentPosition() <1800 && gamepad1.right_trigger>0.3){
+        if(subsystems.rightLift.getCurrentPosition() <1800 && gamepad1.right_trigger>0.8){
             lift.target += 10;
 
         }
-        else if(gamepad1.left_trigger>0.3){
+        else if(gamepad1.left_trigger>0.8){
             lift.target -= 10;
         }
 
@@ -101,6 +102,10 @@ public class MainTeleOp extends CommandOpMode {
         else if(gamepad2.left_bumper){
             schedule(new IntakeCommand(intake, Intake.IntakeState.OFF));
 
+        }
+
+        if(gamepad2.b){
+            schedule(new LiftCommandBase(lift, Lift.LiftStates.DOWN, true));
         }
 
         if(gamepad1.right_stick_button){
@@ -124,8 +129,14 @@ public class MainTeleOp extends CommandOpMode {
             schedule(new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry));
         }
 
+        if(gamepad2.dpad_down) {
+            subsystems.drone.setPosition(Math.toRadians(30));
+        }
+
         telemetry.addData("Lift target: ", lift.target);
         telemetry.addData("Lift pos: ", subsystems.rightLift.getCurrentPosition());
+        telemetry.addData("Lift ticks: ", lift.ticker);
+
 
         telemetry.addData("blocker ticks", blocker.ticks);
         telemetry.addData("cond",  blocker.ticks>150);

@@ -88,17 +88,19 @@ public class BackBoardBlueAuton extends CommandOpMode {
         lift = new Lift(subsystems);
         deposit = new Deposit(subsystems);
         blocker = new Blocker(subsystems);
-        detector = new ObjectDetector(hardwareMap, telemetry);
+        //detector = new ObjectDetector(hardwareMap, telemetry);
 
 
         subsystems.enabled = true;
         deposit.update(Deposit.DepositState.INTAKE);
         lift.update(Lift.LiftStates.DOWN);
+        initAprilTag();
 
         while(opModeInInit()){
-            region = detector.getRegion();
+            //region = detector.getRegion();
 //            telemetry.addLine(Integer.toString(region));
 //            telemetry.update();
+            region = 0;
         }
 
     }
@@ -110,14 +112,9 @@ public class BackBoardBlueAuton extends CommandOpMode {
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
                 new IntakeUpCommand(intake, 1).withTimeout(1000),
                 //new LiftCommandBase(lift,Lift.LiftStates.POS2),
-                new TrajectoryFollowerCommand(robot, trajj2, telemetry),
-                new UpAndDeposit(lift, deposit,blocker, -1, telemetry),
-                new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry),
-                new TrajectoryFollowerCommand(robot, trajj3, telemetry),
-                new UpAndDeposit(lift, deposit,blocker, 0, telemetry)
+                new TrajectoryFollowerCommand(robot, trajj2, telemetry).withTimeout(5000)
 
-
-                );
+        );
     }
     public SequentialCommandGroup getAutonomousCommand2(Trajectory trajj1, Trajectory trajj2, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
         return new SequentialCommandGroup( //
@@ -129,8 +126,6 @@ public class BackBoardBlueAuton extends CommandOpMode {
                 new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj2, telemetry),
                 new UpAndDeposit(lift, deposit,blocker, 0, telemetry)
-
-
         );
     }
 
@@ -143,30 +138,20 @@ public class BackBoardBlueAuton extends CommandOpMode {
         lift.loop();
         deposit.loop();
         blocker.loop();
-        telemetry.addData("target depo", deposit.getTarget());
-        telemetry.addData("curr depo", deposit.getPosition());
-        telemetry.addData("cond",  Math.abs(deposit.getTarget()-deposit.getPosition())<0.01);
-
-        positions = getPosition(region);
+        positions = getPosition(6);
+        telemetry.addData("x: ", positions[0]);
+        telemetry.addData("y: ", positions[1]);
+        telemetry.addData("heading: ", positions[2]);
 
         if (end) {
             end = false;
             traj1 = drive.trajectoryBuilder(new Pose2d())
                     .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(-90)))
-//                    .addDisplacementMarker(() -> {
-//                        schedule(new IntakeCommand(intake, Intake.IntakeState.AUTON_OUT));
-//                        schedule(new UpAndDeposit(lift, deposit, blocker, 1, telemetry));
-//                    })
                     .build();
-            //drive.followTrajectory(traj1);
 
             traj2 = drive.trajectoryBuilder(traj1.end())
-                    .lineToLinearHeading(new Pose2d(33, 33, Math.toRadians(-90)))
-//                    .addDisplacementMarker(() -> {
-//                        schedule(new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT1, telemetry));
-//                    })
+                    .lineToLinearHeading(new Pose2d(33, 28, Math.toRadians(-90)))
                     .build();
-            //drive.followTrajectory(traj2);
 
 
             traj3 = drive.trajectoryBuilder(traj2.end())
@@ -176,11 +161,13 @@ public class BackBoardBlueAuton extends CommandOpMode {
             auton1=getAutonomousCommand1(traj1, traj2, traj3, deposit, blocker, lift, telemetry);
             schedule(auton1);
             end2 = true;
-            initAprilTag();
+//            detector.close();
         }
-
+        telemetry.addData("auton1 finished: ", auton1.isFinished());
         if(end2 && auton1.isFinished()) {
+            telemetry.addLine("STARTED SECOND STAGE");
             if (positions.length > 0 && positions[0] != 0) {
+                telemetry.addLine("in SECOND STAGE");
                 traj1 = robot.trajectoryBuilder(new Pose2d())
                         .lineToLinearHeading(new Pose2d(-positions[1] + 10, positions[0] + 3, Math.toRadians(positions[2])))
                         .build();
@@ -189,17 +176,15 @@ public class BackBoardBlueAuton extends CommandOpMode {
                         .build();
                 schedule(getAutonomousCommand2(traj1, traj2, deposit, blocker, lift, telemetry));
                 end2 = false;
-
-
+                // Save more CPU resources when camera is no longer needed.
+                visionPortal.close();
             }
         }
         sleep(20);
 
+        telemetry.update();
 
 
-
-        // Save more CPU resources when camera is no longer needed.
-        visionPortal.close();
     }
 
 

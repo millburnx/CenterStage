@@ -20,8 +20,11 @@ public class Lift extends SubsystemBase {
     public boolean switcher;
     private final double ticks_in_degree = 8192/360.0;
 
+
     public static boolean isUp = false;
     public static int rowPos = 0;
+
+    public int ticker;
 
     public static int DOWN_POS = 0, AUTON_POS = 900, POS1_POS = 1200, POS2_POS = 1750, POS3_POS = 1500, CLIMB_POS = 1700;
 
@@ -41,6 +44,7 @@ public class Lift extends SubsystemBase {
         rowPos = 0;
 
         target = getStatePos(LiftStates.DOWN);
+        ticker = 0;
     }
 
     public void update(LiftStates state) {
@@ -109,28 +113,30 @@ public class Lift extends SubsystemBase {
         double pid = controller.calculate(rightPos, target);
         double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
         double power = pid + ff;
-//        if(target == DOWN_POS && subsystems.rightLift.getCurrentPosition()<=10){
-//            subsystems.rightLift.setPower(0);
-//            subsystems.leftLift.setPower(0);
-//        }
-//        else{
-//            subsystems.rightLift.setPower(power);
-//            subsystems.leftLift.setPower(power);
-//        }
-        subsystems.rightLift.setPower(power);
-        subsystems.leftLift.setPower(power);
+        if(switcher && target == DOWN_POS && ticker>200){
+            subsystems.rightLift.setPower(0);
+            subsystems.leftLift.setPower(0);
+        }
+        else{
+            subsystems.rightLift.setPower(power);
+            subsystems.leftLift.setPower(power);
+        }
+//        subsystems.rightLift.setPower(power);
+//        subsystems.leftLift.setPower(power);
+        ticker += 1;
 
     }
 
 
     public boolean isFinished() {
         if(Math.abs(subsystems.rightLift.getCurrentPosition()-target)<100){
-//            if(target == DOWN_POS){
+//            if(switcher && target == DOWN_POS){
 //                subsystems.rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //                subsystems.leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //                subsystems.rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //                subsystems.leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//                controller.reset();
+//                //controller.reset();
+//                switcher = false;
 //            }
             return true;
         }

@@ -26,8 +26,6 @@ public class DepositCommandBase extends CommandBase {
 
     @Override
     public boolean isFinished(){
-        telemetry.addLine("finished");
-        telemetry.update();
         return depositobj.ticks>25;
 //        return Math.abs(depositobj.getTarget()-depositobj.getPosition())<0.01;
     }

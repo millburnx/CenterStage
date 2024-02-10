@@ -11,7 +11,7 @@ public class Blocker extends SubsystemBase {
     public int ticks;
 
     public BlockerState blockerState = BlockerState.REST;
-    public static double rest = 0, release = 0.4;
+    public static double rest = 1, release = 0.8;
 
     public enum BlockerState {
         REST,

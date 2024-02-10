@@ -28,7 +28,7 @@ public class ServoTest extends OpMode {
         packet = new TelemetryPacket();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        servo = new SimpleServo(hardwareMap,"servoTest", 0, 360, AngleUnit.DEGREES);
+        servo = new SimpleServo(hardwareMap,"blocker", 0, 360, AngleUnit.DEGREES);
         servo.setPosition(100);
     }
 
