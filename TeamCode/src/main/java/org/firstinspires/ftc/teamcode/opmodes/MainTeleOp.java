@@ -81,6 +81,18 @@ public class MainTeleOp extends CommandOpMode {
         double power = -gamepad1.left_stick_y;
         double strafe = gamepad1.left_stick_x;
         double turn = gamepad1.right_stick_x;
+
+        if(gamepad1.dpad_left){
+            strafe = 0.5;
+            power = 0;
+            turn = 0;
+        }
+        else if(gamepad1.dpad_right){
+            strafe = -0.5;
+            power = 0;
+            turn = 0;
+
+        }
         drive.moveTeleOp(power, strafe, turn);
 
         if(subsystems.rightLift.getCurrentPosition() <1800 && gamepad1.right_trigger>0.8){
