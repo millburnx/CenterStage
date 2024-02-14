@@ -67,6 +67,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
     int region = 0;
     boolean end;
     boolean end2;
+    boolean inEnd;
     Trajectory traj1, traj2, traj3, traj1pt2, traj2pt2;
     MecanumDriveSubsystem robot;
 
@@ -89,6 +90,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
         deposit = new Deposit(subsystems);
         blocker = new Blocker(subsystems);
         detector = new ObjectDetector(hardwareMap, telemetry);
+        inEnd = false;
 
 
         subsystems.enabled = true;
@@ -99,7 +101,6 @@ public class BackBoardBlueAuton extends CommandOpMode {
             region = detector.getRegion();
             telemetry.addLine(Integer.toString(region));
             telemetry.update();
-            region = 0;
         }
 
     }
@@ -137,10 +138,6 @@ public class BackBoardBlueAuton extends CommandOpMode {
         lift.loop();
         deposit.loop();
         blocker.loop();
-        positions = getPosition(6-region);
-        telemetry.addData("apriltag x: ", positions[0]);
-        telemetry.addData("apriltag y: ", positions[1]);
-        telemetry.addData("apriltag heading: ", positions[2]);
         telemetry.addData("robot x: ", robot.getPoseEstimate().getX());
         telemetry.addData("robot y: ", robot.getPoseEstimate().getY());
         telemetry.addData("robot heading: ", robot.getPoseEstimate().getHeading());
@@ -153,19 +150,26 @@ public class BackBoardBlueAuton extends CommandOpMode {
                     .build();
 
             traj2 = drive.trajectoryBuilder(traj1.end())
-                    .lineToLinearHeading(new Pose2d(31, 25, Math.toRadians(-90)))
+                    .lineToLinearHeading(new Pose2d(29, 25, Math.toRadians(-90)))
                     .build();
 
 
             auton1=getAutonomousCommand1(traj1, traj2, deposit, blocker, lift, telemetry);
             schedule(auton1);
-            end2 = true;
             detector.close();
             initAprilTag();
+            end2 = true;
         }
         telemetry.addData("auton1 finished: ", robot.isBusy());
-        if(end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-31)<1 && Math.abs(robot.getPoseEstimate().getY()-25)<1) {
+        telemetry.addData("region: ", region);
+        telemetry.addData("end cond: ", (end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-29)<2 && Math.abs(robot.getPoseEstimate().getY()-25)<2)||inEnd);
+        if((end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-29)<2 && Math.abs(robot.getPoseEstimate().getY()-25)<2)||inEnd) {
+            inEnd = true;
             telemetry.addLine("STARTED SECOND STAGE");
+            positions = getPosition(3-region);
+            telemetry.addData("apriltag x: ", positions[0]);
+            telemetry.addData("apriltag y: ", positions[1]);
+            telemetry.addData("apriltag heading: ", positions[2]);
             if (positions.length > 0 && positions[0] != 0) {
                 telemetry.addLine("in SECOND STAGE");
                 telemetry.addData("apriltag x terminal: ", positions[0]);
@@ -180,6 +184,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
                         .build();
                 schedule(getAutonomousCommand2(traj1pt2, traj2pt2, deposit, blocker, lift, telemetry));
                 end2 = false;
+                inEnd = false;
                 // Save more CPU resources when camera is no longer needed.
                 visionPortal.close();
             }

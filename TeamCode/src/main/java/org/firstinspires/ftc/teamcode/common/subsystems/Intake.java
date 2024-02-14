@@ -10,7 +10,7 @@ public class Intake {
     public IntakeState intakeState = IntakeState.IN;
 
     public static double intakeMaxSpeed = 1;
-    public static double intakeInSpeed = 0.8;
+    public static double intakeInSpeed = 1;
     public static double intakeOutSpeed = -0.6;
     public static double intakeOutSpeedAuton = -0.2;
     public static double secondMaxSpeed = -1;
