@@ -88,18 +88,17 @@ public class BackBoardBlueAuton extends CommandOpMode {
         lift = new Lift(subsystems);
         deposit = new Deposit(subsystems);
         blocker = new Blocker(subsystems);
-        //detector = new ObjectDetector(hardwareMap, telemetry);
+        detector = new ObjectDetector(hardwareMap, telemetry);
 
 
         subsystems.enabled = true;
         deposit.update(Deposit.DepositState.INTAKE);
         lift.update(Lift.LiftStates.DOWN);
-        initAprilTag();
 
         while(opModeInInit()){
-            //region = detector.getRegion();
-//            telemetry.addLine(Integer.toString(region));
-//            telemetry.update();
+            region = detector.getRegion();
+            telemetry.addLine(Integer.toString(region));
+            telemetry.update();
             region = 0;
         }
 
@@ -138,7 +137,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
         lift.loop();
         deposit.loop();
         blocker.loop();
-        positions = getPosition(6);
+        positions = getPosition(6-region);
         telemetry.addData("apriltag x: ", positions[0]);
         telemetry.addData("apriltag y: ", positions[1]);
         telemetry.addData("apriltag heading: ", positions[2]);
@@ -161,7 +160,8 @@ public class BackBoardBlueAuton extends CommandOpMode {
             auton1=getAutonomousCommand1(traj1, traj2, deposit, blocker, lift, telemetry);
             schedule(auton1);
             end2 = true;
-//            detector.close();
+            detector.close();
+            initAprilTag();
         }
         telemetry.addData("auton1 finished: ", robot.isBusy());
         if(end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-31)<1 && Math.abs(robot.getPoseEstimate().getY()-25)<1) {
