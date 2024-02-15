@@ -5,8 +5,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import org.firstinspires.ftc.teamcode.common.drive.DriveConstants;
-
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -43,8 +41,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @Config
-@TeleOp(name = "BackBoardBlueAuton")
-public class BackBoardBlueAuton extends CommandOpMode {
+@TeleOp(name = "BackBoardRedAuton")
+public class BackBoardRedAuton extends CommandOpMode {
     private final SubsystemsHardware subsystems = SubsystemsHardware.getInstance();
     private SampleMecanumDrive drive;
     private Intake intake;
@@ -75,9 +73,6 @@ public class BackBoardBlueAuton extends CommandOpMode {
 
     double[] positions;
     SequentialCommandGroup auton1;
-    double xEnd;
-    double yEnd;
-
 
 
     @Override
@@ -152,26 +147,23 @@ public class BackBoardBlueAuton extends CommandOpMode {
             end = false;
             if(region==0){
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(-87)))
+                        .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(90)))
                         .build();
-                xEnd = 26;
             }
             else if(region ==1){
                 traj1 = drive.trajectoryBuilder(new Pose2d())
                         .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(0)))
                         .build();
-                xEnd = 24;
             }
             else{
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(30, 20, Math.toRadians(-87)))
+                        .lineToLinearHeading(new Pose2d(30, -25, Math.toRadians(90)))
                         .build();
-                xEnd = 22;
             }
 
 
             traj2 = drive.trajectoryBuilder(traj1.end())
-                    .lineToLinearHeading(new Pose2d(xEnd, 28, Math.toRadians(-87)))
+                    .lineToLinearHeading(new Pose2d(25, -27, Math.toRadians(90)))
                     .build();
 
 
@@ -183,7 +175,8 @@ public class BackBoardBlueAuton extends CommandOpMode {
         }
         telemetry.addData("auton1 finished: ", robot.isBusy());
         telemetry.addData("region: ", region);
-        if((end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-xEnd)<2 && Math.abs(robot.getPoseEstimate().getY()-28)<2)||inEnd) {
+        telemetry.addData("end cond: ", (end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-25)<2 && Math.abs(robot.getPoseEstimate().getY()-25)<2)||inEnd);
+        if((end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-25)<2 && Math.abs(robot.getPoseEstimate().getY()-(-27))<2)||inEnd) {
             inEnd = true;
             telemetry.addLine("STARTED SECOND STAGE");
             positions = getPosition(3-region);
@@ -197,10 +190,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
                 telemetry.addData("apriltag heading terminal: ", positions[2]);
                 telemetry.update();
                 traj1pt2 = robot.trajectoryBuilder(traj2.end())
-                        .lineToLinearHeading(new Pose2d(xEnd+positions[0]+3, 28+positions[1] -10.2, Math.toRadians(-87+positions[2])),
-                                SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                                SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
-                        )
+                        .lineToLinearHeading(new Pose2d(31+positions[0], -25-positions[1] +10.2, Math.toRadians(90-positions[2])))
                         .build();
                 traj2pt2 = robot.trajectoryBuilder(traj1pt2.end())
                         .forward(4)
