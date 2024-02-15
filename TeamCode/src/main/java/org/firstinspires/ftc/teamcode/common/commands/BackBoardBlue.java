@@ -17,7 +17,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
 
 public class BackBoardBlue extends SequentialCommandGroup {
-    public BackBoardBlue(Lift lift, Deposit deposit, Intake intake, MecanumDriveSubsystem robot, Trajectory traj, Telemetry telemetry){
+    public BackBoardBlue(Lift lift, Deposit deposit, Intake intake, MecanumDriveSubsystem robot, Trajectory traj, Telemetry telemetry) {
 
         addCommands(
                 new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2, telemetry),

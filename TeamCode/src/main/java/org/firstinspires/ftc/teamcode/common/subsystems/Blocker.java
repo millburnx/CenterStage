@@ -53,13 +53,13 @@ public class Blocker extends SubsystemBase {
     public BlockerState getDepositState() {
         return blockerState;
     }
-    public void loop(){
+    public void loop() {
         ticks+=1;
     }
-    public double getTarget(){
+    public double getTarget() {
         return target;
     }
-    public double getPosition(){
+    public double getPosition() {
         return subsystems.blocker.getPosition();
     }
 

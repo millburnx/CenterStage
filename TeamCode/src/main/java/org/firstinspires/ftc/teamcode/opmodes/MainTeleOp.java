@@ -82,12 +82,12 @@ public class MainTeleOp extends CommandOpMode {
         double strafe = gamepad1.left_stick_x;
         double turn = gamepad1.right_stick_x;
 
-        if(gamepad1.dpad_left){
+        if (gamepad1.dpad_left) {
             strafe = 0.5;
             power = 0;
             turn = 0;
         }
-        else if(gamepad1.dpad_right){
+        else if (gamepad1.dpad_right) {
             strafe = -0.5;
             power = 0;
             turn = 0;
@@ -95,11 +95,11 @@ public class MainTeleOp extends CommandOpMode {
         }
         drive.moveTeleOp(power, strafe, turn);
 
-        if(subsystems.rightLift.getCurrentPosition() <1800 && gamepad1.right_trigger>0.8){
+        if (subsystems.rightLift.getCurrentPosition() <1800 && gamepad1.right_trigger>0.8) {
             lift.target += 10;
 
         }
-        else if(gamepad1.left_trigger>0.8){
+        else if (gamepad1.left_trigger>0.8) {
             lift.target -= 10;
         }
 
@@ -111,37 +111,37 @@ public class MainTeleOp extends CommandOpMode {
         if (gamepad2.right_bumper) {
             schedule(new IntakeCommand(intake, Intake.IntakeState.IN));
         }
-        else if(gamepad2.left_bumper){
+        else if (gamepad2.left_bumper) {
             schedule(new IntakeCommand(intake, Intake.IntakeState.OFF));
 
         }
 
-        if(gamepad2.b){
+        if (gamepad2.b) {
             schedule(new LiftCommandBase(lift, Lift.LiftStates.DOWN, true));
         }
 
-        if(gamepad1.right_stick_button){
+        if (gamepad1.right_stick_button) {
             telemetry.addLine("0.5");
             subsystems.intakeRight.setPosition(0.10);
             subsystems.intakeLeft.setPosition(0.10);
 
         }
-        else if(gamepad1.left_stick_button){
+        else if (gamepad1.left_stick_button) {
             telemetry.addLine("0");
             subsystems.intakeLeft.setPosition(0);
             subsystems.intakeRight.setPosition(0);
         }
 
-        if(gamepad1.right_bumper){
+        if (gamepad1.right_bumper) {
             telemetry.addLine("rest");
             schedule(new BlockerCommand(blocker, Blocker.BlockerState.REST, telemetry));
         }
-        else if(gamepad1.left_bumper){
+        else if (gamepad1.left_bumper) {
             telemetry.addLine("release");
             schedule(new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry));
         }
 
-        if(gamepad2.dpad_down) {
+        if (gamepad2.dpad_down) {
             subsystems.drone.setPosition(Math.toRadians(30));
         }
 

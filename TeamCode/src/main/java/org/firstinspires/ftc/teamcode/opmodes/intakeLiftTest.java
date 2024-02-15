@@ -37,18 +37,18 @@ public class intakeLiftTest extends OpMode {
 
     @Override
     public void loop() {
-        if(gamepad1.triangle){
+        if (gamepad1.triangle) {
             telemetry.addLine("0.5");
             leftServo.setPosition(0.15);
             rightServo.setPosition(0.15);
 
         }
-        else if(gamepad1.circle){
+        else if (gamepad1.circle) {
             telemetry.addLine("0");
             leftServo.setPosition(0);
             rightServo.setPosition(0);
         }
-        else if(gamepad1.square){
+        else if (gamepad1.square) {
             leftServo.turnToAngle(90);
             rightServo.turnToAngle(90);
 

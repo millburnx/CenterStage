@@ -26,7 +26,7 @@ public class AutonSeqBackBoardBlue1_5 extends CommandBase {
     private Deposit depositobj;
     Telemetry telemetry;
     private int pos;
-    public AutonSeqBackBoardBlue1_5(SampleMecanumDrive robot, int position, Telemetry t){
+    public AutonSeqBackBoardBlue1_5(SampleMecanumDrive robot, int position, Telemetry t) {
 
         pos = position;
         robotobj = robot;
@@ -35,11 +35,11 @@ public class AutonSeqBackBoardBlue1_5 extends CommandBase {
     }
 
     @Override
-    public void initialize(){
+    public void initialize() {
         x = 1000;
         y = 1000;
         telemetry.addLine("started2");
-        if(pos==0){
+        if (pos==0) {
             left_1 = robotobj.trajectoryBuilder(new Pose2d())
                     .lineToLinearHeading(new Pose2d(-33,4, Math.toRadians(0)))
                     .build();
@@ -47,7 +47,7 @@ public class AutonSeqBackBoardBlue1_5 extends CommandBase {
             y = 4;
             robotobj.followTrajectory(left_1);
         }
-        else if(pos==1){
+        else if (pos==1) {
             middle_1 = robotobj.trajectoryBuilder(new Pose2d())
                     .lineToLinearHeading(new Pose2d(0, 30 , Math.toRadians(-90)))
                     .build();
@@ -55,7 +55,7 @@ public class AutonSeqBackBoardBlue1_5 extends CommandBase {
             y = 30;
             robotobj.followTrajectory(middle_1);
         }
-        else{
+        else {
             right_1 = robotobj.trajectoryBuilder(right_0.end())
                     .lineToLinearHeading(new Pose2d(-8, -12, Math.toRadians(0)))
                     .build();
@@ -67,13 +67,13 @@ public class AutonSeqBackBoardBlue1_5 extends CommandBase {
 
     }
     @Override
-    public void execute(){
+    public void execute() {
         robotobj.update();
     }
 
     @Override
-    public boolean isFinished(){
-        if(Math.abs(robotobj.getPose().getX()-x) <1 && Math.abs(robotobj.getPose().getY()-y)<1){
+    public boolean isFinished() {
+        if (Math.abs(robotobj.getPose().getX()-x) <1 && Math.abs(robotobj.getPose().getY()-y)<1) {
             return true;
         }
         return false;

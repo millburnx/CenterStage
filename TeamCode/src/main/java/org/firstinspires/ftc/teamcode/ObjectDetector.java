@@ -64,7 +64,7 @@ public class ObjectDetector{
         return latest_x;
     }
 
-    public void close(){
+    public void close() {
         webcam.stopStreaming();
         webcam.closeCameraDevice();
         webcam.stopRecordingPipeline();

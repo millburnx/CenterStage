@@ -53,13 +53,13 @@ public class Intake {
                 //subsystems.stageTwo.set(0);
         }
     }
-    public void  updatePosition(int pos){
-        if(pos == 0){
+    public void  updatePosition(int pos) {
+        if (pos == 0) {
             subsystems.intakeRight.setPosition(0);
             subsystems.intakeLeft.setPosition(0);
 
         }
-        else if(pos==1){
+        else if (pos==1) {
             subsystems.intakeRight.setPosition(0.10);
             subsystems.intakeLeft.setPosition(0.10);
 

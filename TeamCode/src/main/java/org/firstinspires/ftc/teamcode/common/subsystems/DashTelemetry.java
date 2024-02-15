@@ -15,7 +15,7 @@ public class DashTelemetry {
         canvas.strokeLine(x1, y1, x2, y2);
     }
 
-    public void drawField(Pose2d pose, FtcDashboard dash){
+    public void drawField(Pose2d pose, FtcDashboard dash) {
         TelemetryPacket packet = new TelemetryPacket();
         Canvas fieldOverlay = packet.fieldOverlay();
 
@@ -34,7 +34,7 @@ public class DashTelemetry {
         dash.sendTelemetryPacket(packet);
     }
 
-    public void drawFieldRed(Pose2d pose, FtcDashboard dash){
+    public void drawFieldRed(Pose2d pose, FtcDashboard dash) {
         TelemetryPacket packet = new TelemetryPacket();
         Canvas fieldOverlay = packet.fieldOverlay();
 
@@ -53,7 +53,7 @@ public class DashTelemetry {
         dash.sendTelemetryPacket(packet);
     }
 
-    public void drawFieldAuto(Pose2d pose, Pose2d desiredPose, Pose2d startPose, FtcDashboard dash){
+    public void drawFieldAuto(Pose2d pose, Pose2d desiredPose, Pose2d startPose, FtcDashboard dash) {
         TelemetryPacket packet = new TelemetryPacket();
         Canvas fieldOverlay = packet.fieldOverlay();
 

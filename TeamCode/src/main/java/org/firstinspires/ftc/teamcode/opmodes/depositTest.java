@@ -43,13 +43,13 @@ public class depositTest extends OpMode {
     public void loop() {
         leftDeposit.setPosition(pos1);
         rightDeposit.setPosition(pos1);
-        if(gamepad1.a){
+        if (gamepad1.a) {
             telemetry.addLine("pos1");
             leftDeposit.setPosition(pos1);
             rightDeposit.setPosition(pos1);
 
         }
-        else if(gamepad1.b){
+        else if (gamepad1.b) {
             telemetry.addLine("0");
             leftDeposit.setPosition(0);
             rightDeposit.setPosition(0);

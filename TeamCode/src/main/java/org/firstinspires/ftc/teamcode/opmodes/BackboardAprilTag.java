@@ -134,7 +134,7 @@ public class BackboardAprilTag extends LinearOpMode {
         visionPortal.close();
 
     }   // end method runOpMode()
-    public void centerRobotYaw(int id){
+    public void centerRobotYaw(int id) {
         double yaw = getPosition(id)[0];
         controller.setPID(p, i, d);
         double pid = controller.calculate(yaw, 0);
@@ -146,7 +146,7 @@ public class BackboardAprilTag extends LinearOpMode {
         rr_robot.rightFront.setPower(-power);
         rr_robot.rightRear.setPower(power);
     }
-    public void centerRange(int id){
+    public void centerRange(int id) {
         double range = getPosition(id)[1];
         controller.setPID(p, i, d);
         double pid = controller.calculate(range, 0);
@@ -158,7 +158,7 @@ public class BackboardAprilTag extends LinearOpMode {
         rr_robot.rightFront.setVelocity(velocity);
         rr_robot.rightRear.setVelocity(velocity);
     }
-    public void centerRobotBearing(int id){
+    public void centerRobotBearing(int id) {
         double bearing = getPosition(id)[2];
         controller.setPID(p, i, d);
         double pid = controller.calculate(bearing, 0);
@@ -241,7 +241,7 @@ public class BackboardAprilTag extends LinearOpMode {
     public double[] getPosition(int id) {
         double[] stoof = new double[3];
         for (AprilTagDetection detection : aprilTag.getDetections()) {
-            if(detection.id==id){
+            if (detection.id==id) {
                 stoof[0] = detection.ftcPose.yaw;
                 stoof[1] = detection.ftcPose.range;
                 stoof[2] = detection.ftcPose.bearing;

@@ -21,14 +21,14 @@ public class AutonSeqBackBoardBlue2 extends CommandBase {
     Trajectory right_2, right_3;
     private SampleMecanumDrive robotobj;
     int pos;
-    public AutonSeqBackBoardBlue2(SampleMecanumDrive robot, int position){
+    public AutonSeqBackBoardBlue2(SampleMecanumDrive robot, int position) {
         robotobj = robot;
         pos = position;
 
     }
 
     @Override
-    public void initialize(){
+    public void initialize() {
         x = 1000;
         y = 1000;
         left_3 = robotobj.trajectoryBuilder(new Pose2d())
@@ -40,7 +40,7 @@ public class AutonSeqBackBoardBlue2 extends CommandBase {
 
     }
     @Override
-    public void execute(){
+    public void execute() {
         robotobj.update();
     }
 

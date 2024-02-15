@@ -23,13 +23,13 @@ public class LiftCommandBase extends CommandBase {
         addRequirements(lift);
     }
     @Override
-    public void initialize(){
+    public void initialize() {
         liftobj.update(stateobj);
         liftobj.ticker = 0;
     }
 
     @Override
-    public boolean isFinished(){
+    public boolean isFinished() {
         return liftobj.isFinished();
     }
 

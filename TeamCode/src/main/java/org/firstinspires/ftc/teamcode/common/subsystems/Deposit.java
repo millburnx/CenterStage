@@ -29,7 +29,7 @@ public class Deposit extends SubsystemBase {
         rowPos = 0;
     }
 
-    public double getPosition(){
+    public double getPosition() {
         return subsystems.leftDeposit.getPosition();
     }
 
@@ -90,11 +90,11 @@ public class Deposit extends SubsystemBase {
     public DepositState getDepositState() {
         return depositState;
     }
-    public void loop(){
+    public void loop() {
         ticks+=1;
     }
 
-    public double getTarget(){
+    public double getTarget() {
         return target;
     }
 }

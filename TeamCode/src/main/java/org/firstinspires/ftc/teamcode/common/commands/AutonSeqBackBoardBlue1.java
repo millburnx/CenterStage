@@ -26,18 +26,18 @@ public class AutonSeqBackBoardBlue1 extends CommandBase {
     private SampleMecanumDrive robotobj;
 
     private int pos;
-    public AutonSeqBackBoardBlue1(SampleMecanumDrive robot, int position,Telemetry t){
+    public AutonSeqBackBoardBlue1(SampleMecanumDrive robot, int position,Telemetry t) {
         pos = position;
         robotobj = robot;
         telemetry = t;
     }
 
     @Override
-    public void initialize(){
+    public void initialize() {
         //telemetry.addLine("started");
         x = 10000;
         y = 10000;
-        if(pos==0){
+        if (pos==0) {
             left_0 = robotobj.trajectoryBuilder(new Pose2d())
                     .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(-90)))
                     .build();
@@ -45,7 +45,7 @@ public class AutonSeqBackBoardBlue1 extends CommandBase {
             y = 9;
             robotobj.followTrajectory(left_0);
         }
-        else if(pos==1){
+        else if (pos==1) {
             middle_0 = robotobj.trajectoryBuilder(new Pose2d())
                     .lineToLinearHeading(new Pose2d(26,0,0))
                     .build();
@@ -53,7 +53,7 @@ public class AutonSeqBackBoardBlue1 extends CommandBase {
             y = 0;
             robotobj.followTrajectory(middle_0);
         }
-        else{
+        else {
             right_0 = robotobj.trajectoryBuilder(new Pose2d())
                     .lineToLinearHeading(new Pose2d(30, 25, Math.toRadians(-85)))
                     .build();
@@ -65,7 +65,7 @@ public class AutonSeqBackBoardBlue1 extends CommandBase {
 
     }
     @Override
-    public void execute(){
+    public void execute() {
         robotobj.update();
     }
 
@@ -75,7 +75,7 @@ public class AutonSeqBackBoardBlue1 extends CommandBase {
         telemetry.update();
     }
     @Override
-    public boolean isFinished(){
+    public boolean isFinished() {
         return !robotobj.isBusy();
     }
 

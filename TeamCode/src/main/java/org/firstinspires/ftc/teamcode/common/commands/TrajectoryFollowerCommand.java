@@ -23,7 +23,7 @@ public class TrajectoryFollowerCommand extends CommandBase {
         addRequirements(drive);
     }
 
-    public void loop(){
+    public void loop() {
         ticker += 1;
     }
 

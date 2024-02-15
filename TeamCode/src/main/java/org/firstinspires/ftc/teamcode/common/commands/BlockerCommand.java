@@ -19,14 +19,14 @@ public class BlockerCommand extends CommandBase {
         telemetry = t;
     }
     @Override
-    public void initialize(){
+    public void initialize() {
         blockerobj.ticks = 0;
         blockerobj.update(stateobj);
 
     }
 
     @Override
-    public boolean isFinished(){
+    public boolean isFinished() {
         return blockerobj.ticks>100;
     }
 

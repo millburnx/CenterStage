@@ -42,7 +42,7 @@ public class BackboardLeftAuton extends OpMode {
     private Blocker blocker;
 
     @Override
-    public void init(){
+    public void init() {
         detector = new ObjectDetector(hardwareMap, telemetry);
         subsystems.init(hardwareMap);
         drive = new Drive(hardwareMap);
@@ -53,14 +53,14 @@ public class BackboardLeftAuton extends OpMode {
     }
 
     @Override
-    public void init_loop(){
+    public void init_loop() {
         region = detector.getRegion();
         telemetry.addLine(Integer.toString(region));
         telemetry.update();
     }
 
     @Override
-    public void start(){
+    public void start() {
 
 
         robot = new SampleMecanumDrive(hardwareMap);
@@ -201,39 +201,39 @@ public class BackboardLeftAuton extends OpMode {
         telemetry.addData("activated: ", activated);
     }
 
-    public void intakeAsync(){
-        if(outtaking){
+    public void intakeAsync() {
+        if (outtaking) {
             intake.update(Intake.IntakeState.AUTON_OUT);
         }
-        else{
+        else {
             intake.update(Intake.IntakeState.IN);
         }
     }
 
-    public void depositAsync(){
-        if(deposit){
+    public void depositAsync() {
+        if (deposit) {
             depositobj.update(Deposit.DepositState.DEPOSIT2);
         }
-        else{
+        else {
             depositobj.update(Deposit.DepositState.INTAKE);
         }
     }
-    public void liftAsync(){
-        if(up){
+    public void liftAsync() {
+        if (up) {
             lift.target = 500;
 
         }
-        else if(down){
+        else if (down) {
             lift.update(Lift.LiftStates.DOWN);
         }
-        else{
+        else {
             lift.update(Lift.LiftStates.DOWN);
 
         }
     }
     @Override
-    public void loop(){
-        if(activated){
+    public void loop() {
+        if (activated) {
             telemetry.addData("target", lift.target);
             lift.loop();
             depositobj.loop();

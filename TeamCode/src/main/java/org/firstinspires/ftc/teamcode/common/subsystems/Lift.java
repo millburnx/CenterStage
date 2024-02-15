@@ -113,11 +113,11 @@ public class Lift extends SubsystemBase {
         double pid = controller.calculate(rightPos, target);
         double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
         double power = pid + ff;
-        if(switcher && target == DOWN_POS && ticker>200){
+        if (switcher && target == DOWN_POS && ticker>200) {
             subsystems.rightLift.setPower(0);
             subsystems.leftLift.setPower(0);
         }
-        else{
+        else {
             subsystems.rightLift.setPower(power);
             subsystems.leftLift.setPower(power);
         }
@@ -129,8 +129,8 @@ public class Lift extends SubsystemBase {
 
 
     public boolean isFinished() {
-        if(Math.abs(subsystems.rightLift.getCurrentPosition()-target)<100){
-//            if(switcher && target == DOWN_POS){
+        if (Math.abs(subsystems.rightLift.getCurrentPosition()-target)<100) {
+//            if (switcher && target == DOWN_POS) {
 //                subsystems.rightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //                subsystems.leftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //                subsystems.rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

@@ -18,14 +18,14 @@ public class DepositCommandBase extends CommandBase {
         telemetry = t;
     }
     @Override
-    public void initialize(){
+    public void initialize() {
         depositobj.ticks = 0;
 
         depositobj.update(stateobj);
     }
 
     @Override
-    public boolean isFinished(){
+    public boolean isFinished() {
         return depositobj.ticks>25;
 //        return Math.abs(depositobj.getTarget()-depositobj.getPosition())<0.01;
     }

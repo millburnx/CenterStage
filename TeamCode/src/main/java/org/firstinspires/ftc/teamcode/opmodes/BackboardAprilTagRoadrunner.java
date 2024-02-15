@@ -154,7 +154,7 @@ public class BackboardAprilTagRoadrunner extends CommandOpMode {
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
         controller = new PIDController(p, i, d);
-        while(opModeInInit()){
+        while (opModeInInit()) {
             positions = getPosition(id);
             telemetry.addData("Positions(x) : ",positions[0]);
             telemetry.addData("Positions(y) : ",positions[1]);
@@ -199,12 +199,12 @@ public class BackboardAprilTagRoadrunner extends CommandOpMode {
                     visionPortal.resumeStreaming();
                 }
                 positions = getPosition(id);
-                if(end){
+                if (end) {
                     telemetry.addData("Positions(x) Terminal: ",positions[0]);
                     telemetry.addData("Positions(y) Terminal: ",positions[1]);
                     telemetry.addData("Positions(yaw) Terminal: ",positions[2]);
                     telemetry.update();
-                    if(positions.length>0 && positions[0]!=0){
+                    if (positions.length>0 && positions[0]!=0) {
                         traj1 = drive.trajectoryBuilder(new Pose2d())
                                 .lineToLinearHeading(new Pose2d(-positions[1]+10, positions[0]+3, Math.toRadians(positions[2])))
                                 .build();
@@ -297,7 +297,7 @@ public class BackboardAprilTagRoadrunner extends CommandOpMode {
     public double[] getPosition(int id) {
         double[] stoof = new double[3];
         for (AprilTagDetection detection : aprilTag.getDetections()) {
-            if(detection.id==id){
+            if (detection.id==id) {
                 stoof[0] = detection.ftcPose.x;
                 stoof[1] = detection.ftcPose.y;
                 stoof[2] = detection.ftcPose.yaw;

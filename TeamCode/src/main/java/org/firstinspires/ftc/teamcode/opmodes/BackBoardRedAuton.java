@@ -5,6 +5,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import org.firstinspires.ftc.teamcode.common.drive.DriveConstants;
+
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -73,6 +75,9 @@ public class BackBoardRedAuton extends CommandOpMode {
 
     double[] positions;
     SequentialCommandGroup auton1;
+    double xEnd;
+    double yEnd;
+
 
 
     @Override
@@ -97,7 +102,7 @@ public class BackBoardRedAuton extends CommandOpMode {
         deposit.update(Deposit.DepositState.INTAKE);
         lift.update(Lift.LiftStates.DOWN);
 
-        while(opModeInInit()){
+        while (opModeInInit()) {
             region = detector.getRegion();
             telemetry.addLine(Integer.toString(region));
             telemetry.update();
@@ -108,7 +113,7 @@ public class BackBoardRedAuton extends CommandOpMode {
         return new SequentialCommandGroup( //
 //                new AutonSeqBackBoardBlue1(drive, region, telemetry),
 //                new AutonSeqBackBoardBlue2(drive, region),
-                //new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2, telemetry),
+//                new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
                 new IntakeUpCommand(intake, 1).withTimeout(1000),
                 //new LiftCommandBase(lift,Lift.LiftStates.POS2),
@@ -120,7 +125,7 @@ public class BackBoardRedAuton extends CommandOpMode {
         return new SequentialCommandGroup( //
 //                new AutonSeqBackBoardBlue1(drive, region, telemetry),
 //                new AutonSeqBackBoardBlue2(drive, region),
-                //new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2, telemetry),
+//                new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
                 new UpAndDeposit(lift, deposit,blocker, -1, telemetry),
                 new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry),
@@ -145,25 +150,26 @@ public class BackBoardRedAuton extends CommandOpMode {
 
         if (end) {
             end = false;
-            if(region==0){
+            if (region==2) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(90)))
+                        .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(87)))
                         .build();
-            }
-            else if(region ==1){
+                xEnd = 22;
+            } else if (region ==1) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
                         .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(0)))
                         .build();
-            }
-            else{
+                xEnd = 24;
+            } else {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(30, -25, Math.toRadians(90)))
+                        .lineToLinearHeading(new Pose2d(30, -20, Math.toRadians(87)))
                         .build();
+                xEnd = 26;
             }
 
 
             traj2 = drive.trajectoryBuilder(traj1.end())
-                    .lineToLinearHeading(new Pose2d(25, -27, Math.toRadians(90)))
+                    .lineToLinearHeading(new Pose2d(xEnd, -28, Math.toRadians(87)))
                     .build();
 
 
@@ -175,8 +181,7 @@ public class BackBoardRedAuton extends CommandOpMode {
         }
         telemetry.addData("auton1 finished: ", robot.isBusy());
         telemetry.addData("region: ", region);
-        telemetry.addData("end cond: ", (end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-25)<2 && Math.abs(robot.getPoseEstimate().getY()-25)<2)||inEnd);
-        if((end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-25)<2 && Math.abs(robot.getPoseEstimate().getY()-(-27))<2)||inEnd) {
+        if ((end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-xEnd)<2 && Math.abs(robot.getPoseEstimate().getY()-28)<2)||inEnd) {
             inEnd = true;
             telemetry.addLine("STARTED SECOND STAGE");
             positions = getPosition(3-region);
@@ -190,7 +195,10 @@ public class BackBoardRedAuton extends CommandOpMode {
                 telemetry.addData("apriltag heading terminal: ", positions[2]);
                 telemetry.update();
                 traj1pt2 = robot.trajectoryBuilder(traj2.end())
-                        .lineToLinearHeading(new Pose2d(31+positions[0], -25-positions[1] +10.2, Math.toRadians(90-positions[2])))
+                        .lineToLinearHeading(new Pose2d(xEnd+positions[0]+3, -28-positions[1] +10.2, Math.toRadians(87-positions[2])),
+                                SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
+                        )
                         .build();
                 traj2pt2 = robot.trajectoryBuilder(traj1pt2.end())
                         .forward(4)
@@ -204,8 +212,6 @@ public class BackBoardRedAuton extends CommandOpMode {
         }
 
         telemetry.update();
-
-
     }
 
 
@@ -277,7 +283,7 @@ public class BackBoardRedAuton extends CommandOpMode {
     public double[] getPosition(int id) {
         double[] stoof = new double[3];
         for (AprilTagDetection detection : aprilTag.getDetections()) {
-            if(detection.id==id){
+            if (detection.id==id) {
                 stoof[0] = detection.ftcPose.x;
                 stoof[1] = detection.ftcPose.y;
                 stoof[2] = detection.ftcPose.yaw;
