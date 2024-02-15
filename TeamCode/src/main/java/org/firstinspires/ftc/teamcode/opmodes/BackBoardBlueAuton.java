@@ -145,12 +145,25 @@ public class BackBoardBlueAuton extends CommandOpMode {
 
         if (end) {
             end = false;
-            traj1 = drive.trajectoryBuilder(new Pose2d())
-                    .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(-90)))
-                    .build();
+            if(region==0){
+                traj1 = drive.trajectoryBuilder(new Pose2d())
+                        .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(-90)))
+                        .build();
+            }
+            else if(region ==1){
+                traj1 = drive.trajectoryBuilder(new Pose2d())
+                        .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(0)))
+                        .build();
+            }
+            else{
+                traj1 = drive.trajectoryBuilder(new Pose2d())
+                        .lineToLinearHeading(new Pose2d(30, 25, Math.toRadians(-90)))
+                        .build();
+            }
+
 
             traj2 = drive.trajectoryBuilder(traj1.end())
-                    .lineToLinearHeading(new Pose2d(29, 25, Math.toRadians(-90)))
+                    .lineToLinearHeading(new Pose2d(25, 25, Math.toRadians(-90)))
                     .build();
 
 
@@ -162,8 +175,8 @@ public class BackBoardBlueAuton extends CommandOpMode {
         }
         telemetry.addData("auton1 finished: ", robot.isBusy());
         telemetry.addData("region: ", region);
-        telemetry.addData("end cond: ", (end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-29)<2 && Math.abs(robot.getPoseEstimate().getY()-25)<2)||inEnd);
-        if((end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-29)<2 && Math.abs(robot.getPoseEstimate().getY()-25)<2)||inEnd) {
+        telemetry.addData("end cond: ", (end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-25)<2 && Math.abs(robot.getPoseEstimate().getY()-25)<2)||inEnd);
+        if((end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-25)<2 && Math.abs(robot.getPoseEstimate().getY()-25)<2)||inEnd) {
             inEnd = true;
             telemetry.addLine("STARTED SECOND STAGE");
             positions = getPosition(3-region);
@@ -177,7 +190,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
                 telemetry.addData("apriltag heading terminal: ", positions[2]);
                 telemetry.update();
                 traj1pt2 = robot.trajectoryBuilder(traj2.end())
-                        .lineToLinearHeading(new Pose2d(31-positions[0]-3, 25+positions[1] -10, Math.toRadians(-90+positions[2])))
+                        .lineToLinearHeading(new Pose2d(31+positions[0], 25+positions[1] -10, Math.toRadians(-90+positions[2])))
                         .build();
                 traj2pt2 = robot.trajectoryBuilder(traj1pt2.end())
                         .forward(4)
