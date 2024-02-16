@@ -130,8 +130,9 @@ public class BackBoardRedAuton extends CommandOpMode {
 //                new AutonSeqBackBoardBlue1(drive, region, telemetry),
 //                new AutonSeqBackBoardBlue2(drive, region),
 //                new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2, telemetry),
-                new TrajectoryFollowerCommand(robot, trajj1, telemetry),
+
                 new UpAndDeposit(lift, deposit,blocker, -1, telemetry),
+                new TrajectoryFollowerCommand(robot, trajj1, telemetry),
                 new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj2, telemetry),
                 new UpAndDeposit(lift, deposit,blocker, 0, telemetry),
@@ -164,14 +165,14 @@ public class BackBoardRedAuton extends CommandOpMode {
                 traj1_1 = drive.trajectoryBuilder(traj1.end())
                         .forward(5)
                         .build();
-                xEnd = 27;
+                xEnd = 30;
                 dEnd = 87;
             } else if (region ==1) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
                         .lineToLinearHeading(new Pose2d(30, 1, Math.toRadians(3)))
                         .build();
-                xEnd = 30;
-                dEnd = 95;
+                xEnd = 29;
+                dEnd = 98;
             } else {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
                         .lineToLinearHeading(new Pose2d(30, -19.5, Math.toRadians(87)))
@@ -215,7 +216,7 @@ public class BackBoardRedAuton extends CommandOpMode {
                 telemetry.addData("apriltag heading terminal: ", positions[2]);
                 telemetry.update();
                 traj1pt2 = robot.trajectoryBuilder(traj2.end())
-                        .lineToLinearHeading(new Pose2d(xEnd-positions[0]-2, -(28+positions[1] -10.5), Math.toRadians(-(-87+positions[2]))),
+                        .lineToLinearHeading(new Pose2d(xEnd-positions[0]-2, -(28+positions[1] -10.5), Math.toRadians(-(-dEnd-positions[2]))),
                                 SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                         )
