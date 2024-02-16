@@ -61,7 +61,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
     boolean end;
     boolean end2;
     boolean inEnd;
-    Trajectory traj1, traj2, traj3, traj1pt2, traj2pt2;
+    Trajectory traj1,traj1_1, traj2, traj3, traj1pt2, traj2pt2, traj2pt3, traj2pt4;
     MecanumDriveSubsystem robot;
 
     double[] positions;
@@ -112,7 +112,20 @@ public class BackBoardBlueAuton extends CommandOpMode {
 
         );
     }
-    public SequentialCommandGroup getAutonomousCommand2(Trajectory trajj1, Trajectory trajj2, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
+    public SequentialCommandGroup getAutonomousCommand1Alt(Trajectory trajj1,Trajectory trajj1_1, Trajectory trajj2, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
+        return new SequentialCommandGroup( //
+//                new AutonSeqBackBoardBlue1(drive, region, telemetry),
+//                new AutonSeqBackBoardBlue2(drive, region),
+//                new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2, telemetry),
+                new TrajectoryFollowerCommand(robot, trajj1, telemetry),
+                new TrajectoryFollowerCommand(robot, trajj1_1, telemetry),
+                new IntakeUpCommand(intake, 1).withTimeout(1000),
+                //new LiftCommandBase(lift,Lift.LiftStates.POS2),
+                new TrajectoryFollowerCommand(robot, trajj2, telemetry)
+
+        );
+    }
+    public SequentialCommandGroup getAutonomousCommand2(Trajectory trajj1, Trajectory trajj2,Trajectory trajj3,Trajectory trajj4, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
         return new SequentialCommandGroup( //
 //                new AutonSeqBackBoardBlue1(drive, region, telemetry),
 //                new AutonSeqBackBoardBlue2(drive, region),
@@ -121,8 +134,11 @@ public class BackBoardBlueAuton extends CommandOpMode {
                 new UpAndDeposit(lift, deposit,blocker, -1, telemetry),
                 new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj2, telemetry),
-                new UpAndDeposit(lift, deposit,blocker, 0, telemetry)
-        );
+                new UpAndDeposit(lift, deposit,blocker, 0, telemetry),
+                new TrajectoryFollowerCommand(robot, trajj3, telemetry),
+                new TrajectoryFollowerCommand(robot, trajj4, telemetry)
+
+                );
     }
 
 
@@ -145,26 +161,36 @@ public class BackBoardBlueAuton extends CommandOpMode {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
                         .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(-87)))
                         .build();
-                xEnd = 26;
+                traj1_1 = drive.trajectoryBuilder(traj1.end())
+                        .forward(5)
+                        .build();
+                xEnd = 27;
             } else if (region ==1) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(0)))
+                        .lineToLinearHeading(new Pose2d(30, -1, Math.toRadians(3)))
                         .build();
                 xEnd = 24;
             } else {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(30, 20, Math.toRadians(-87)))
+                        .lineToLinearHeading(new Pose2d(30, 18, Math.toRadians(-87)))
                         .build();
-                xEnd = 22;
+                xEnd = 20;
             }
 
 
-            traj2 = drive.trajectoryBuilder(traj1.end())
-                    .lineToLinearHeading(new Pose2d(xEnd, 28, Math.toRadians(-87)))
-                    .build();
 
-
-            auton1=getAutonomousCommand1(traj1, traj2, deposit, blocker, lift, telemetry);
+            if(region==0){
+                traj2 = drive.trajectoryBuilder(traj1_1.end())
+                        .lineToLinearHeading(new Pose2d(xEnd, 28, Math.toRadians(-87)))
+                        .build();
+                auton1=getAutonomousCommand1Alt(traj1, traj1_1, traj2, deposit, blocker, lift, telemetry);
+            }
+            else{
+                traj2 = drive.trajectoryBuilder(traj1.end())
+                        .lineToLinearHeading(new Pose2d(xEnd, 28, Math.toRadians(-87)))
+                        .build();
+                auton1=getAutonomousCommand1(traj1, traj2, deposit, blocker, lift, telemetry);
+            }
             schedule(auton1);
             detector.close();
             initAprilTag();
@@ -186,7 +212,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
                 telemetry.addData("apriltag heading terminal: ", positions[2]);
                 telemetry.update();
                 traj1pt2 = robot.trajectoryBuilder(traj2.end())
-                        .lineToLinearHeading(new Pose2d(xEnd+positions[0]+3, 28+positions[1] -10.2, Math.toRadians(-87+positions[2])),
+                        .lineToLinearHeading(new Pose2d(xEnd+positions[0]+3, 28+positions[1] -10.5, Math.toRadians(-87+positions[2])),
                                 SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                         )
@@ -194,7 +220,13 @@ public class BackBoardBlueAuton extends CommandOpMode {
                 traj2pt2 = robot.trajectoryBuilder(traj1pt2.end())
                         .forward(4)
                         .build();
-                schedule(getAutonomousCommand2(traj1pt2, traj2pt2, deposit, blocker, lift, telemetry));
+                traj2pt3 = robot.trajectoryBuilder(traj2pt2.end())
+                        .lineToLinearHeading(new Pose2d(0, 31, Math.toRadians(-87+positions[2])))
+                        .build();
+                traj2pt4 = robot.trajectoryBuilder(traj2pt3.end())
+                        .back(18)
+                        .build();
+                schedule(getAutonomousCommand2(traj1pt2, traj2pt2, traj2pt3,traj2pt4, deposit, blocker, lift, telemetry));
                 end2 = false;
                 inEnd = false;
                 // Save more CPU resources when camera is no longer needed.

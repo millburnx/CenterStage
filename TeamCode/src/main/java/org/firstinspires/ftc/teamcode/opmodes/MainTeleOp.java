@@ -70,10 +70,6 @@ public class MainTeleOp extends CommandOpMode {
         }
 
 
-//        else if (gamepad1.square) {
-//            schedule(new UpAndDeposit(lift, deposit, 3, telemetry));
-//
-//        }
         lift.loop();
         deposit.loop();
         blocker.loop();
@@ -143,6 +139,10 @@ public class MainTeleOp extends CommandOpMode {
 
         if (gamepad2.dpad_down) {
             subsystems.drone.setPosition(Math.toRadians(30));
+        }
+
+        if(gamepad1.cross){
+            schedule(new IntakeCommand(intake, Intake.IntakeState.OUT));
         }
 
         telemetry.addData("Lift target: ", lift.target);
