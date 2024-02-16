@@ -68,6 +68,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
     SequentialCommandGroup auton1;
     double xEnd;
     double yEnd;
+    double offset;
 
 
 
@@ -164,30 +165,33 @@ public class BackBoardBlueAuton extends CommandOpMode {
                 traj1_1 = drive.trajectoryBuilder(traj1.end())
                         .forward(5.5)
                         .build();
-                xEnd = 30;
+                xEnd = 32;
+                offset = 5;
             } else if (region ==1) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
                         .lineToLinearHeading(new Pose2d(30, -1, Math.toRadians(3)))
                         .build();
                 xEnd = 24;
+                offset = 2.75;
             } else {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
                         .lineToLinearHeading(new Pose2d(30, 19, Math.toRadians(-87)))
                         .build();
-                xEnd = 20;
+                xEnd = 19;
+                offset = 1;
             }
 
 
 
             if(region==0){
                 traj2 = drive.trajectoryBuilder(traj1_1.end())
-                        .lineToLinearHeading(new Pose2d(xEnd, 28, Math.toRadians(-87)))
+                        .lineToLinearHeading(new Pose2d(xEnd, 29, Math.toRadians(-87)))
                         .build();
                 auton1=getAutonomousCommand1Alt(traj1, traj1_1, traj2, deposit, blocker, lift, telemetry);
             }
             else{
                 traj2 = drive.trajectoryBuilder(traj1.end())
-                        .lineToLinearHeading(new Pose2d(xEnd, 28, Math.toRadians(-87)))
+                        .lineToLinearHeading(new Pose2d(xEnd, 29, Math.toRadians(-87)))
                         .build();
                 auton1=getAutonomousCommand1(traj1, traj2, deposit, blocker, lift, telemetry);
             }
@@ -212,7 +216,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
                 telemetry.addData("apriltag heading terminal: ", positions[2]);
                 telemetry.update();
                 traj1pt2 = robot.trajectoryBuilder(traj2.end())
-                        .lineToLinearHeading(new Pose2d(xEnd+positions[0]+3, 28+positions[1] -10.5, Math.toRadians(-87-positions[2])),
+                        .lineToLinearHeading(new Pose2d(xEnd+positions[0]+offset, 29+positions[1] -10.5, Math.toRadians(-87-positions[2])),
                                 SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                         )
@@ -221,7 +225,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
                         .forward(4)
                         .build();
                 traj2pt3 = robot.trajectoryBuilder(traj2pt2.end())
-                        .lineToLinearHeading(new Pose2d(0, 31, Math.toRadians(-87+positions[2])))
+                        .lineToLinearHeading(new Pose2d(0, 30, Math.toRadians(-87+positions[2])))
                         .build();
                 traj2pt4 = robot.trajectoryBuilder(traj2pt3.end())
                         .back(18)

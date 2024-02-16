@@ -68,6 +68,7 @@ public class BackBoardRedAuton extends CommandOpMode {
     SequentialCommandGroup auton1;
     double xEnd;
     double dEnd;
+    double offset;
 
 
 
@@ -167,31 +168,34 @@ public class BackBoardRedAuton extends CommandOpMode {
                         .build();
                 xEnd = 30;
                 dEnd = 87;
+                offset = -1;
             } else if (region ==1) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
                         .lineToLinearHeading(new Pose2d(30, 1, Math.toRadians(3)))
                         .build();
                 xEnd = 29;
-                dEnd = 98;
+                dEnd = 100;
+                offset = -2;
             } else {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
                         .lineToLinearHeading(new Pose2d(30, -19.5, Math.toRadians(87)))
                         .build();
                 xEnd = 20;
                 dEnd = 87;
+                offset = -3;
             }
 
 
 
             if(region==2){
                 traj2 = drive.trajectoryBuilder(traj1_1.end())
-                        .lineToLinearHeading(new Pose2d(xEnd, -28, Math.toRadians(dEnd)))
+                        .lineToLinearHeading(new Pose2d(xEnd, -29, Math.toRadians(dEnd)))
                         .build();
                 auton1=getAutonomousCommand1Alt(traj1, traj1_1, traj2, deposit, blocker, lift, telemetry);
             }
             else{
                 traj2 = drive.trajectoryBuilder(traj1.end())
-                        .lineToLinearHeading(new Pose2d(xEnd, -28, Math.toRadians(dEnd)))
+                        .lineToLinearHeading(new Pose2d(xEnd, -29, Math.toRadians(dEnd)))
                         .build();
                 auton1=getAutonomousCommand1(traj1, traj2, deposit, blocker, lift, telemetry);
             }
@@ -216,7 +220,7 @@ public class BackBoardRedAuton extends CommandOpMode {
                 telemetry.addData("apriltag heading terminal: ", positions[2]);
                 telemetry.update();
                 traj1pt2 = robot.trajectoryBuilder(traj2.end())
-                        .lineToLinearHeading(new Pose2d(xEnd-positions[0]-2, -(28+positions[1] -10.5), Math.toRadians(-(-dEnd-positions[2]))),
+                        .lineToLinearHeading(new Pose2d(xEnd-positions[0]+offset, -(29+positions[1] -10.5), Math.toRadians(-(-dEnd-positions[2]))),
                                 SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                         )
