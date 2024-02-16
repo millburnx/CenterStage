@@ -5,6 +5,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+
+import org.firstinspires.ftc.teamcode.common.commands.DepositCommandBase;
 import org.firstinspires.ftc.teamcode.common.drive.DriveConstants;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
@@ -134,6 +136,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
                 new UpAndDeposit(lift, deposit,blocker, -1, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
                 new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry),
+                new DepositCommandBase(deposit, Deposit.DepositState.INTAKE, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj2, telemetry),
                 new UpAndDeposit(lift, deposit,blocker, 0, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj3, telemetry),
@@ -166,19 +169,19 @@ public class BackBoardBlueAuton extends CommandOpMode {
                         .forward(5.5)
                         .build();
                 xEnd = 32;
-                offset = 5;
+                offset = 2;
             } else if (region ==1) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
                         .lineToLinearHeading(new Pose2d(30, -1, Math.toRadians(3)))
                         .build();
                 xEnd = 24;
-                offset = 2.75;
+                offset = 2.5;
             } else {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
                         .lineToLinearHeading(new Pose2d(30, 19, Math.toRadians(-87)))
                         .build();
-                xEnd = 19;
-                offset = 1;
+                xEnd = 20;
+                offset = 7;
             }
 
 
@@ -216,7 +219,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
                 telemetry.addData("apriltag heading terminal: ", positions[2]);
                 telemetry.update();
                 traj1pt2 = robot.trajectoryBuilder(traj2.end())
-                        .lineToLinearHeading(new Pose2d(xEnd+positions[0]+offset, 29+positions[1] -10.5, Math.toRadians(-87-positions[2])),
+                        .lineToLinearHeading(new Pose2d(xEnd+positions[0]+offset, 29+positions[1] -10.5, Math.toRadians(-87)),
                                 SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                         )

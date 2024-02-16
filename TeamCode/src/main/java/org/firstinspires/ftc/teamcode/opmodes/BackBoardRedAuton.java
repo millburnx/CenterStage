@@ -5,6 +5,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+
+import org.firstinspires.ftc.teamcode.common.commands.DepositCommandBase;
 import org.firstinspires.ftc.teamcode.common.drive.DriveConstants;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
@@ -127,14 +129,11 @@ public class BackBoardRedAuton extends CommandOpMode {
         );
     }
     public SequentialCommandGroup getAutonomousCommand2(Trajectory trajj1, Trajectory trajj2,Trajectory trajj3,Trajectory trajj4, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
-        return new SequentialCommandGroup( //
-//                new AutonSeqBackBoardBlue1(drive, region, telemetry),
-//                new AutonSeqBackBoardBlue2(drive, region),
-//                new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2, telemetry),
-
+        return new SequentialCommandGroup(
                 new UpAndDeposit(lift, deposit,blocker, -1, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
                 new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry),
+                new DepositCommandBase(deposit, Deposit.DepositState.INTAKE, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj2, telemetry),
                 new UpAndDeposit(lift, deposit,blocker, 0, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj3, telemetry),
@@ -166,9 +165,9 @@ public class BackBoardRedAuton extends CommandOpMode {
                 traj1_1 = drive.trajectoryBuilder(traj1.end())
                         .forward(5)
                         .build();
-                xEnd = 30;
+                xEnd = 29;
                 dEnd = 87;
-                offset = -1;
+                offset = -5;
             } else if (region ==1) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
                         .lineToLinearHeading(new Pose2d(30, 1, Math.toRadians(3)))
@@ -182,7 +181,7 @@ public class BackBoardRedAuton extends CommandOpMode {
                         .build();
                 xEnd = 20;
                 dEnd = 87;
-                offset = -3;
+                offset = -1;
             }
 
 
