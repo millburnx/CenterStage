@@ -5,6 +5,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+
+import org.firstinspires.ftc.teamcode.common.commands.DepositCommandBase;
 import org.firstinspires.ftc.teamcode.common.drive.DriveConstants;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
@@ -127,14 +129,11 @@ public class BackBoardRedAuton extends CommandOpMode {
         );
     }
     public SequentialCommandGroup getAutonomousCommand2(Trajectory trajj1, Trajectory trajj2,Trajectory trajj3,Trajectory trajj4, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
-        return new SequentialCommandGroup( //
-//                new AutonSeqBackBoardBlue1(drive, region, telemetry),
-//                new AutonSeqBackBoardBlue2(drive, region),
-//                new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2, telemetry),
-
+        return new SequentialCommandGroup(
                 new UpAndDeposit(lift, deposit,blocker, -1, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
                 new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry),
+                new DepositCommandBase(deposit, Deposit.DepositState.INTAKE, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj2, telemetry),
                 new UpAndDeposit(lift, deposit,blocker, 0, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj3, telemetry),
@@ -161,14 +160,14 @@ public class BackBoardRedAuton extends CommandOpMode {
             end = false;
             if (region==2) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(87)))
+                        .lineToLinearHeading(new Pose2d(32, 0, Math.toRadians(87)))
                         .build();
                 traj1_1 = drive.trajectoryBuilder(traj1.end())
                         .forward(5)
                         .build();
-                xEnd = 30;
+                xEnd = 29;
                 dEnd = 87;
-                offset = -1;
+                offset = -4.5;
             } else if (region ==1) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
                         .lineToLinearHeading(new Pose2d(30, 1, Math.toRadians(3)))
@@ -178,11 +177,11 @@ public class BackBoardRedAuton extends CommandOpMode {
                 offset = -2;
             } else {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(30, -19.5, Math.toRadians(87)))
+                        .lineToLinearHeading(new Pose2d(32, -19.5, Math.toRadians(87)))
                         .build();
                 xEnd = 20;
                 dEnd = 87;
-                offset = -3;
+                offset = -1;
             }
 
 
@@ -220,7 +219,7 @@ public class BackBoardRedAuton extends CommandOpMode {
                 telemetry.addData("apriltag heading terminal: ", positions[2]);
                 telemetry.update();
                 traj1pt2 = robot.trajectoryBuilder(traj2.end())
-                        .lineToLinearHeading(new Pose2d(xEnd-positions[0]+offset, -(29+positions[1] -10.5), Math.toRadians(-(-dEnd-positions[2]))),
+                        .lineToLinearHeading(new Pose2d(xEnd-positions[0]+offset, -(29+positions[1] -10), Math.toRadians(-(-dEnd-positions[2]))),
                                 SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                         )
@@ -229,7 +228,7 @@ public class BackBoardRedAuton extends CommandOpMode {
                         .forward(4)
                         .build();
                 traj2pt3 = robot.trajectoryBuilder(traj2pt2.end())
-                        .lineToLinearHeading(new Pose2d(0, -31, Math.toRadians(-(-87+positions[2]))))
+                        .lineToLinearHeading(new Pose2d(1.5, -31, Math.toRadians(-(-87+positions[2]))))
                         .build();
                 traj2pt4 = robot.trajectoryBuilder(traj2pt3.end())
                         .back(18)
