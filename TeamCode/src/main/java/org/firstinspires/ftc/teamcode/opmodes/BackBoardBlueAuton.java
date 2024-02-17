@@ -219,7 +219,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
                 telemetry.addData("apriltag heading terminal: ", positions[2]);
                 telemetry.update();
                 traj1pt2 = robot.trajectoryBuilder(traj2.end())
-                        .lineToLinearHeading(new Pose2d(xEnd+positions[0]+offset, 29+positions[1] -10.5, Math.toRadians(-87)),
+                        .lineToLinearHeading(new Pose2d(xEnd+positions[0]+offset, 29+positions[1] -10, Math.toRadians(-87)),
                                 SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                         )
@@ -228,7 +228,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
                         .forward(4)
                         .build();
                 traj2pt3 = robot.trajectoryBuilder(traj2pt2.end())
-                        .lineToLinearHeading(new Pose2d(0, 30, Math.toRadians(-87+positions[2])))
+                        .lineToLinearHeading(new Pose2d(3, 30 , Math.toRadians(-87+positions[2])))
                         .build();
                 traj2pt4 = robot.trajectoryBuilder(traj2pt3.end())
                         .back(18)
