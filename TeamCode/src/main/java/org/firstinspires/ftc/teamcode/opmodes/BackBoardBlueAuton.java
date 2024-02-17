@@ -163,7 +163,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
             end = false;
             if (region==0) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(-87)))
+                        .lineToLinearHeading(new Pose2d(32, 0, Math.toRadians(-87)))
                         .build();
                 traj1_1 = drive.trajectoryBuilder(traj1.end())
                         .forward(5.5)
@@ -178,7 +178,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
                 offset = 2.5;
             } else {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(30, 19, Math.toRadians(-87)))
+                        .lineToLinearHeading(new Pose2d(32, 19, Math.toRadians(-87)))
                         .build();
                 xEnd = 20;
                 offset = 7;
@@ -228,7 +228,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
                         .forward(4)
                         .build();
                 traj2pt3 = robot.trajectoryBuilder(traj2pt2.end())
-                        .lineToLinearHeading(new Pose2d(3, 30 , Math.toRadians(-87+positions[2])))
+                        .lineToLinearHeading(new Pose2d(1.5, 30 , Math.toRadians(-87+positions[2])))
                         .build();
                 traj2pt4 = robot.trajectoryBuilder(traj2pt3.end())
                         .back(18)
