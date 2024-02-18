@@ -161,7 +161,7 @@ public class BasicBlueAuton extends CommandOpMode {
                 offset = -1;
             } else if (region ==1) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(30, 1, Math.toRadians(3)))
+                        .lineToLinearHeading(new Pose2d(30, 5, Math.toRadians(3)))
                         .build();
                 xEnd = 29;
                 dEnd = 100;
@@ -179,13 +179,13 @@ public class BasicBlueAuton extends CommandOpMode {
 
             if(region==2){
                 traj2 = drive.trajectoryBuilder(traj1_1.end())
-                        .lineToLinearHeading(new Pose2d(xEnd, -29, Math.toRadians(dEnd)))
+                        .back(8)
                         .build();
                 auton1=getAutonomousCommand1Alt(traj1, traj1_1, traj2, deposit, blocker, lift, telemetry);
             }
             else{
                 traj2 = drive.trajectoryBuilder(traj1.end())
-                        .lineToLinearHeading(new Pose2d(xEnd, -29, Math.toRadians(dEnd)))
+                        .back(8)
                         .build();
                 auton1=getAutonomousCommand1(traj1, traj2, deposit, blocker, lift, telemetry);
             }
