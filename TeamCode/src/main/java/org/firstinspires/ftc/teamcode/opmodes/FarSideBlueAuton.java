@@ -103,12 +103,8 @@ public class FarSideBlueAuton extends CommandOpMode {
     }
     public SequentialCommandGroup getAutonomousCommand1(Trajectory trajj1, Trajectory trajj2, Trajectory trajj3, Trajectory trajj4, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
         return new SequentialCommandGroup( //
-//                new AutonSeqBackBoardBlue1(drive, region, telemetry),
-//                new AutonSeqBackBoardBlue2(drive, region),
-//                new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
                 new IntakeUpCommand(intake, 1).withTimeout(1000),
-                //new LiftCommandBase(lift,Lift.LiftStates.POS2),
                 new TrajectoryFollowerCommand(robot, trajj2, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj3, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj4, telemetry)
@@ -117,13 +113,9 @@ public class FarSideBlueAuton extends CommandOpMode {
     }
     public SequentialCommandGroup getAutonomousCommand1Alt(Trajectory trajj1,Trajectory trajj1_1, Trajectory trajj2, Trajectory trajj3, Trajectory trajj4, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
         return new SequentialCommandGroup( //
-//                new AutonSeqBackBoardBlue1(drive, region, telemetry),
-//                new AutonSeqBackBoardBlue2(drive, region),
-//                new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj1_1, telemetry),
                 new IntakeUpCommand(intake, 1).withTimeout(1000),
-                //new LiftCommandBase(lift,Lift.LiftStates.POS2),
                 new TrajectoryFollowerCommand(robot, trajj2, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj3, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj4, telemetry)
@@ -132,9 +124,6 @@ public class FarSideBlueAuton extends CommandOpMode {
     }
     public SequentialCommandGroup getAutonomousCommand2(Trajectory trajj1, Trajectory trajj2,Trajectory trajj3,Trajectory trajj4, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
         return new SequentialCommandGroup( //
-//                new AutonSeqBackBoardBlue1(drive, region, telemetry),
-//                new AutonSeqBackBoardBlue2(drive, region),
-//                new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2, telemetry),
 
                 new UpAndDeposit(lift, deposit,blocker, -1, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
