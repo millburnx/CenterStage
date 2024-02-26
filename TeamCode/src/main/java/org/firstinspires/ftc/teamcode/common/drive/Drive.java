@@ -12,6 +12,11 @@ import static org.firstinspires.ftc.teamcode.common.drive.DriveConstants.kV;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import java.util.concurrent.TimeUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
@@ -38,6 +43,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import org.firstinspires.ftc.teamcode.common.utils.UltrasonicDistanceSensor;
+
+
 
 import org.firstinspires.ftc.teamcode.common.utils.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.common.utils.trajectorysequence.TrajectorySequenceBuilder;
@@ -86,6 +94,10 @@ public class Drive extends MecanumDrive {
 
     public Motor.Encoder leftOdom, rightOdom, centerOdom;
     public HolonomicOdometry odometry;
+    public UltrasonicDistanceSensor leftUltrasonic;
+    public UltrasonicDistanceSensor rightUltrasonic;
+    private TrajectorySequence queuedTrajectorySequence;
+
 
     public Drive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
@@ -156,6 +168,10 @@ public class Drive extends MecanumDrive {
 
         // change to reflect starting field position
         odometry.updatePose(new com.arcrobotics.ftclib.geometry.Pose2d(0, 0, new Rotation2d(0)));
+
+        leftUltrasonic = new UltrasonicDistanceSensor(hardwareMap.get(AnalogInput.class, "leftUltrasonic"));
+        rightUltrasonic = new UltrasonicDistanceSensor(hardwareMap.get(AnalogInput.class, "rightUltrasonic"));
+
     }
     public void auton() {
         rightRear.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
@@ -290,10 +306,12 @@ public class Drive extends MecanumDrive {
     }
 
     public void update() {
+
         updatePoseEstimate();
         odometry.updatePose();
         DriveSignal signal = trajectorySequenceRunner.update(getPos(), getPoseVelocity()); // change this
         if (signal != null) setDriveSignal(signal);
+
     }
 
     public void waitForIdle() {
@@ -396,4 +414,5 @@ public class Drive extends MecanumDrive {
         return imu.getAngularOrientation().firstAngle;
 //        return 0;
     }
+
 }
