@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.auton;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import org.firstinspires.ftc.teamcode.common.drive.DriveConstants;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -15,8 +14,6 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.ObjectDetector;
 import org.firstinspires.ftc.teamcode.common.commands.BlockerCommand;
 import org.firstinspires.ftc.teamcode.common.commands.IntakeUpCommand;
@@ -29,21 +26,16 @@ import org.firstinspires.ftc.teamcode.common.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.common.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.common.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.SubsystemsHardware;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @Config
-@TeleOp(name = "BasicBlueAuton")
-public class BasicBlueAuton extends CommandOpMode {
+@TeleOp(name = "BasicRedAuton")
+public class BasicRedAuton extends CommandOpMode {
     private final SubsystemsHardware subsystems = SubsystemsHardware.getInstance();
     private SampleMecanumDrive drive;
     private Intake intake;
     private Lift lift;
     private Deposit deposit;
     private Blocker blocker;
-
-    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     ObjectDetector detector;
     GamepadEx gamepadEx;
@@ -57,7 +49,7 @@ public class BasicBlueAuton extends CommandOpMode {
     double[] positions;
     SequentialCommandGroup auton1;
     double xEnd;
-    double dEnd;
+    double yEnd;
     double offset;
 
 
@@ -137,35 +129,32 @@ public class BasicBlueAuton extends CommandOpMode {
 
         if (end) {
             end = false;
-            if (region==2) {
+            if (region==0) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(87)))
+                        .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(-87)))
                         .build();
                 traj1_1 = drive.trajectoryBuilder(traj1.end())
-                        .forward(5)
+                        .forward(5.5)
                         .build();
-                xEnd = 30;
-                dEnd = 87;
-                offset = -1;
+                xEnd = 32;
+                offset = 5;
             } else if (region ==1) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(30, 5, Math.toRadians(3)))
+                        .lineToLinearHeading(new Pose2d(30, 4, Math.toRadians(3)))
                         .build();
-                xEnd = 29;
-                dEnd = 100;
-                offset = -2;
+                xEnd = 24;
+                offset = 2.75;
             } else {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(30, -19.5, Math.toRadians(87)))
+                        .lineToLinearHeading(new Pose2d(30, 19, Math.toRadians(-87)))
                         .build();
-                xEnd = 20;
-                dEnd = 87;
-                offset = -3;
+                xEnd = 19;
+                offset = 1;
             }
 
 
 
-            if(region==2){
+            if(region==0){
                 traj2 = drive.trajectoryBuilder(traj1_1.end())
                         .back(8)
                         .build();
@@ -183,7 +172,10 @@ public class BasicBlueAuton extends CommandOpMode {
         }
         telemetry.addData("auton1 finished: ", robot.isBusy());
         telemetry.addData("region: ", region);
-
         telemetry.update();
     }
+
+    /**
+     * Add telemetry about AprilTag detections.
+     */
 }

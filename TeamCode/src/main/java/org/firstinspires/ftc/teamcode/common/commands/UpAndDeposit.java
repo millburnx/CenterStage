@@ -22,7 +22,9 @@ public class UpAndDeposit extends SequentialCommandGroup{
                     new BlockerCommand(blocker, Blocker.BlockerState.REST, t)
 
 
-            );
+
+
+                    );
         }
         else if (pos ==1) {
             addCommands(

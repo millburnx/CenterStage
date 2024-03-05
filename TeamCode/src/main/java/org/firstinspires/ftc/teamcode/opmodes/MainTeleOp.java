@@ -117,23 +117,19 @@ public class MainTeleOp extends CommandOpMode {
         }
 
         if (gamepad1.right_stick_button) {
-            telemetry.addLine("0.5");
-            subsystems.intakeRight.setPosition(0.10);
-            subsystems.intakeLeft.setPosition(0.10);
+            subsystems.intakeRight.setPosition(0.15);
+            subsystems.intakeLeft.setPosition(0.15);
 
         }
         else if (gamepad1.left_stick_button) {
-            telemetry.addLine("0");
-            subsystems.intakeLeft.setPosition(0);
-            subsystems.intakeRight.setPosition(0);
+            subsystems.intakeLeft.setPosition(0.08);
+            subsystems.intakeRight.setPosition(0.08);
         }
 
         if (gamepad1.right_bumper) {
-            telemetry.addLine("rest");
             schedule(new BlockerCommand(blocker, Blocker.BlockerState.REST, telemetry));
         }
         else if (gamepad1.left_bumper) {
-            telemetry.addLine("release");
             schedule(new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry));
         }
 
@@ -143,6 +139,13 @@ public class MainTeleOp extends CommandOpMode {
 
         if(gamepad1.cross){
             schedule(new IntakeCommand(intake, Intake.IntakeState.OUT));
+        }
+
+        if(gamepad2.y){
+            subsystems.depositHook.setPosition(0.15);
+        }
+        if(gamepad2.x){
+            subsystems.depositHook.setPosition(0);
         }
 
         telemetry.addData("Lift target: ", lift.target);

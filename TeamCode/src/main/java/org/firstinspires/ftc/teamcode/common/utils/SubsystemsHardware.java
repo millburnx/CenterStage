@@ -17,7 +17,10 @@ public class SubsystemsHardware {
     public ServoEx intakeLeft;
     public ServoEx intakeRight;
 
-//    lift
+    public ServoEx depositHook;
+
+
+    //    lift
     public DcMotorEx leftLift;
     public DcMotorEx rightLift;
 
@@ -62,8 +65,8 @@ public class SubsystemsHardware {
                 hardwareMap, "intakeRight", 0, 180, AngleUnit.DEGREES
         );
         intakeLeft.setInverted(true);
-        intakeLeft.setPosition(0);
-        intakeRight.setPosition(0);
+        intakeLeft.setPosition(0.08);
+        intakeRight.setPosition(0.08);
 
         rightLift = hardwareMap.get(DcMotorEx.class, "rightLift");
         leftLift = hardwareMap.get(DcMotorEx.class, "leftLift");
@@ -93,5 +96,9 @@ public class SubsystemsHardware {
                 hardwareMap, "blocker", 0, 360, AngleUnit.DEGREES
         );
         blocker.setPosition(0);
+//        depositHook = new SimpleServo(
+//                hardwareMap, "depositHook", 0, 360, AngleUnit.DEGREES
+//        );
+//        depositHook.setPosition(0);
     }
 }
