@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.common.commands.UpAndDeposit;
 import org.firstinspires.ftc.teamcode.common.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.common.subsystems.Blocker;
 import org.firstinspires.ftc.teamcode.common.subsystems.Deposit;
+import org.firstinspires.ftc.teamcode.common.subsystems.Hook;
 import org.firstinspires.ftc.teamcode.common.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.common.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.common.subsystems.MecanumDriveSubsystem;
@@ -37,10 +38,11 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @Config
 @TeleOp(name = "NewBackBoardRedAuton")
-public class NewBackBoardRedAuton extends CommandOpMode {
+public class NewBackboardRedAuton extends CommandOpMode {
     private final SubsystemsHardware subsystems = SubsystemsHardware.getInstance();
     private SampleMecanumDrive drive;
     private Intake intake;
+    private Hook hook;
     private Lift lift;
     private Deposit deposit;
     private Blocker blocker;
@@ -89,6 +91,7 @@ public class NewBackBoardRedAuton extends CommandOpMode {
         deposit = new Deposit(subsystems);
         blocker = new Blocker(subsystems);
         detector = new ObjectDetector(hardwareMap, telemetry);
+        hook = new Hook(subsystems);
         inEnd = false;
 
 
@@ -105,37 +108,31 @@ public class NewBackBoardRedAuton extends CommandOpMode {
     }
     public SequentialCommandGroup getAutonomousCommand1(Trajectory trajj1, Trajectory trajj2, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
         return new SequentialCommandGroup( //
-//                new AutonSeqBackBoardBlue1(drive, region, telemetry),
-//                new AutonSeqBackBoardBlue2(drive, region),
-//                new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
                 new IntakeUpCommand(intake, 1).withTimeout(1000),
-                //new LiftCommandBase(lift,Lift.LiftStates.POS2),
                 new TrajectoryFollowerCommand(robot, trajj2, telemetry)
 
         );
     }
     public SequentialCommandGroup getAutonomousCommand1Alt(Trajectory trajj1,Trajectory trajj1_1, Trajectory trajj2, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
         return new SequentialCommandGroup( //
-//                new AutonSeqBackBoardBlue1(drive, region, telemetry),
-//                new AutonSeqBackBoardBlue2(drive, region),
-//                new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT2, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj1_1, telemetry),
                 new IntakeUpCommand(intake, 1).withTimeout(1000),
-                //new LiftCommandBase(lift,Lift.LiftStates.POS2),
                 new TrajectoryFollowerCommand(robot, trajj2, telemetry)
 
         );
     }
-    public SequentialCommandGroup getAutonomousCommand2(Trajectory trajj1, Trajectory trajj2, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
+    public SequentialCommandGroup getAutonomousCommand2(Trajectory trajj1, Trajectory trajj2,Trajectory trajj3,Trajectory trajj4, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
         return new SequentialCommandGroup(
-                new UpAndDeposit(lift, deposit,blocker, -1, telemetry),
+                new UpAndDeposit(lift, deposit,blocker, hook,-1, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
                 new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry),
                 new DepositCommandBase(deposit, Deposit.DepositState.INTAKE, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj2, telemetry),
-                new UpAndDeposit(lift, deposit,blocker, 0, telemetry)
+                new UpAndDeposit(lift, deposit,blocker, hook,0, telemetry),
+                new TrajectoryFollowerCommand(robot, trajj3, telemetry),
+                new TrajectoryFollowerCommand(robot, trajj4, telemetry)
 
         );
     }
@@ -154,6 +151,7 @@ public class NewBackBoardRedAuton extends CommandOpMode {
         telemetry.addData("robot heading: ", robot.getPoseEstimate().getHeading());
         telemetry.addData("robot busy: ", drive.isBusy());
 
+        // place purple pixel
         if (end) {
             end = false;
             if (region==2) {
@@ -201,6 +199,8 @@ public class NewBackBoardRedAuton extends CommandOpMode {
             initAprilTag();
             end2 = true;
         }
+
+
         telemetry.addData("auton1 finished: ", robot.isBusy());
         telemetry.addData("region: ", region);
         if ((end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-xEnd)<2 && Math.abs(robot.getPoseEstimate().getY()+28)<2)||inEnd) {
@@ -225,7 +225,13 @@ public class NewBackBoardRedAuton extends CommandOpMode {
                 traj2pt2 = robot.trajectoryBuilder(traj1pt2.end())
                         .forward(4)
                         .build();
-                schedule(getAutonomousCommand2(traj1pt2, traj2pt2, deposit, blocker, lift, telemetry));
+                traj2pt3 = robot.trajectoryBuilder(traj2pt2.end())
+                        .lineToLinearHeading(new Pose2d(1.5, -31, Math.toRadians(-(-dEnd+positions[2]))))
+                        .build();
+                traj2pt4 = robot.trajectoryBuilder(traj2pt3.end())
+                        .back(10)
+                        .build();
+                schedule(getAutonomousCommand2(traj1pt2, traj2pt2, traj2pt3,traj2pt4, deposit, blocker, lift, telemetry));
                 end2 = false;
                 inEnd = false;
                 // Save more CPU resources when camera is no longer needed.
@@ -317,4 +323,14 @@ public class NewBackBoardRedAuton extends CommandOpMode {
     /**
      * Add telemetry about AprilTag detections.
      */
+
+
+
+
+
+
+
+
+
+
 }

@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.teamcode.common.drive.opmode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.common.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.common.drive.StandardTrackingWheelLocalizer;
+import org.firstinspires.ftc.teamcode.common.subsystems.Intake;
 
 /**
  * This is a simple teleop routine for testing localization. Drive the robot around like a normal
@@ -16,10 +20,13 @@ import org.firstinspires.ftc.teamcode.common.drive.SampleMecanumDrive;
  */
 @TeleOp(group = "drive")
 public class LocalizationTest extends LinearOpMode {
+
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive rrDrive = new SampleMecanumDrive(hardwareMap);
-
+        MotorEx stageOne = new MotorEx(hardwareMap, "stageOne", Motor.GoBILDA.RPM_1620);
+        stageOne.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
+        stageOne.set(0);
         rrDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
@@ -32,13 +39,14 @@ public class LocalizationTest extends LinearOpMode {
                             -gamepad1.right_stick_x
                     )
             );
+//            rrDrive.setMotorPowers(0,0,0,0);
 
             rrDrive.update();
 
             Pose2d poseEstimate = rrDrive.getPoseEstimate();
-            telemetry.addData("Left Pos: ", rrDrive.leftFront.getCurrentPosition());
-            telemetry.addData("Right Pos: ", rrDrive.rightFront.getCurrentPosition());
-            telemetry.addData("Middle Pos: ", rrDrive.rightRear.getCurrentPosition());
+            telemetry.addData("Left Pos: ", stageOne.getCurrentPosition());
+            telemetry.addData("Right Pos: ", rrDrive.rightRear.getCurrentPosition());
+            telemetry.addData("Middle Pos: ", rrDrive.leftRear.getCurrentPosition());
 
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());

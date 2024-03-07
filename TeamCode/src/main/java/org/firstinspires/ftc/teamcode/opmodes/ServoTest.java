@@ -31,8 +31,9 @@ public class ServoTest extends OpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         servo1 = new SimpleServo(
-                hardwareMap, "blocker", 0, 180, AngleUnit.DEGREES
+                hardwareMap, "depositHook", 0, 180, AngleUnit.DEGREES
         );
+
 //        servo2 = new SimpleServo(
 //                hardwareMap, "intakeRight", 0, 180, AngleUnit.DEGREES
 //        );
@@ -44,10 +45,6 @@ public class ServoTest extends OpMode {
 
     public void loop() {
         servo1.setPosition(pos);
-//        servo2.setPosition(pos);
-
-        telemetry.addData("left ", servo1.getAngle());
-        telemetry.addData("right ", servo2.getPosition());
 
     }
 }

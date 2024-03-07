@@ -21,6 +21,11 @@ android {
     packagingOptions {
         jniLibs.useLegacyPackaging true
     }
+
+}
+
+repositories {
+    maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
@@ -29,6 +34,7 @@ dependencies {
     implementation 'com.acmerobotics.roadrunner:core:0.5.6'
     implementation 'org.ftclib.ftclib:vision:2.0.1' // vision
     implementation 'org.ftclib.ftclib:core:2.0.1' // core
+    implementation 'com.github.Eeshwar-Krishnan:PhotonFTC:v3.0.0-ALPHA' //photon
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 }

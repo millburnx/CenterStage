@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.common.commands.BlockerCommand;
+import org.firstinspires.ftc.teamcode.common.commands.HookCommand;
 import org.firstinspires.ftc.teamcode.common.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.common.commands.LiftCommandBase;
 import org.firstinspires.ftc.teamcode.common.commands.UpAndDeposit;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.common.commands.DepositCommandBase;
 import org.firstinspires.ftc.teamcode.common.drive.Drive;
 import org.firstinspires.ftc.teamcode.common.subsystems.Blocker;
 import org.firstinspires.ftc.teamcode.common.subsystems.Deposit;
+import org.firstinspires.ftc.teamcode.common.subsystems.Hook;
 import org.firstinspires.ftc.teamcode.common.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.common.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.common.utils.SubsystemsHardware;
@@ -26,6 +28,7 @@ public class MainTeleOp extends CommandOpMode {
     private final SubsystemsHardware subsystems = SubsystemsHardware.getInstance();
     private Drive drive;
     private Intake intake;
+    private Hook hook;
     private Lift lift;
     private Deposit deposit;
     private Blocker blocker;
@@ -39,6 +42,7 @@ public class MainTeleOp extends CommandOpMode {
 
         subsystems.init(hardwareMap);
         drive = new Drive(hardwareMap);
+        hook = new Hook(subsystems);
         intake = new Intake(subsystems);
         lift = new Lift(subsystems);
         deposit = new Deposit(subsystems);
@@ -58,21 +62,23 @@ public class MainTeleOp extends CommandOpMode {
 
         if (gamepad1.triangle) {
             blocker.target = 0;
-            schedule(new UpAndDeposit(lift, deposit, blocker, 0, telemetry));
+            schedule(new UpAndDeposit(lift, deposit, blocker, hook, 0, telemetry));
         }
         else if (gamepad1.circle) {
-            schedule(new UpAndDeposit(lift, deposit,blocker, 1, telemetry));
+            schedule(new UpAndDeposit(lift, deposit,blocker,hook, 1, telemetry));
         }
 
         else if (gamepad1.square) {
-            schedule(new UpAndDeposit(lift, deposit,blocker, 2, telemetry));
+            schedule(new UpAndDeposit(lift, deposit,blocker,hook, 2, telemetry));
 
         }
 
 
         lift.loop();
         deposit.loop();
+        hook.loop();
         blocker.loop();
+
 
         double power = -gamepad1.left_stick_y;
         double strafe = gamepad1.left_stick_x;
@@ -89,7 +95,16 @@ public class MainTeleOp extends CommandOpMode {
             turn = 0;
 
         }
-        drive.moveTeleOp(power, strafe, turn);
+
+        if (deposit.getDepositState() == Deposit.DepositState.DEPOSIT1 || deposit.getDepositState() == Deposit.DepositState.DEPOSIT2 || deposit.getDepositState() == Deposit.DepositState.DEPOSIT3) {
+            if (Math.abs(power) > Math.abs(strafe)) {
+                drive.moveTeleOp(power, 0, turn);
+            } else {
+                drive.moveTeleOp(0, strafe, turn);
+            }
+        } else {
+            drive.moveTeleOp(power, strafe, turn);
+        }
 
         if (subsystems.rightLift.getCurrentPosition() <1800 && gamepad1.right_trigger>0.8) {
             lift.target += 10;
@@ -112,6 +127,13 @@ public class MainTeleOp extends CommandOpMode {
 
         }
 
+        if (gamepad2.right_stick_button){
+            schedule(new HookCommand(hook, Hook.HookState.REST, telemetry));
+        }
+        else if(gamepad2.left_stick_button){
+            schedule(new HookCommand(hook, Hook.HookState.HOOK, telemetry));
+        }
+
         if (gamepad2.b) {
             schedule(new LiftCommandBase(lift, Lift.LiftStates.DOWN, true));
         }
@@ -122,8 +144,8 @@ public class MainTeleOp extends CommandOpMode {
 
         }
         else if (gamepad1.left_stick_button) {
-            subsystems.intakeLeft.setPosition(0.08);
-            subsystems.intakeRight.setPosition(0.08);
+            subsystems.intakeLeft.setPosition(0.065);
+            subsystems.intakeRight.setPosition(0.065);
         }
 
         if (gamepad1.right_bumper) {
@@ -142,7 +164,7 @@ public class MainTeleOp extends CommandOpMode {
         }
 
         if(gamepad2.y){
-            subsystems.depositHook.setPosition(0.15);
+            subsystems.depositHook.setPosition(0.142);
         }
         if(gamepad2.x){
             subsystems.depositHook.setPosition(0);

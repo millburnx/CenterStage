@@ -25,6 +25,7 @@ import org.firstinspires.ftc.teamcode.common.commands.UpAndDeposit;
 import org.firstinspires.ftc.teamcode.common.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.common.subsystems.Blocker;
 import org.firstinspires.ftc.teamcode.common.subsystems.Deposit;
+import org.firstinspires.ftc.teamcode.common.subsystems.Hook;
 import org.firstinspires.ftc.teamcode.common.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.common.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.common.subsystems.MecanumDriveSubsystem;
@@ -39,6 +40,8 @@ public class FarSideBlueAuton extends CommandOpMode {
     private final SubsystemsHardware subsystems = SubsystemsHardware.getInstance();
     private SampleMecanumDrive drive;
     private Intake intake;
+    private Hook hook;
+
     private Lift lift;
     private Deposit deposit;
     private Blocker blocker;
@@ -83,6 +86,7 @@ public class FarSideBlueAuton extends CommandOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
         robot = new MecanumDriveSubsystem(drive, false);
         intake = new Intake(subsystems);
+        hook = new Hook(subsystems);
         lift = new Lift(subsystems);
         deposit = new Deposit(subsystems);
         blocker = new Blocker(subsystems);
@@ -125,11 +129,11 @@ public class FarSideBlueAuton extends CommandOpMode {
     public SequentialCommandGroup getAutonomousCommand2(Trajectory trajj1, Trajectory trajj2,Trajectory trajj3,Trajectory trajj4, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
         return new SequentialCommandGroup( //
 
-                new UpAndDeposit(lift, deposit,blocker, -1, telemetry),
+                new UpAndDeposit(lift, deposit,blocker, hook,-1, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
                 new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj2, telemetry),
-                new UpAndDeposit(lift, deposit,blocker, 0, telemetry),
+                new UpAndDeposit(lift, deposit,blocker,hook, 0, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj3, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj4, telemetry)
 

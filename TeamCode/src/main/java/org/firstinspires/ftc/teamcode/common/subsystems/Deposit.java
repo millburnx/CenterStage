@@ -12,7 +12,7 @@ public class Deposit extends SubsystemBase {
 
     public DepositState depositState = DepositState.INTAKE;
     public int ticks = 0;
-    public static double intakePos = 0.13, intakePos2=0.16, deposit1Pos = 1, deposit2Pos = 1, deposit3Pos = 1;
+    public static double intakePos = 0.146, intakePos2=0.16, deposit1Pos = 1, deposit2Pos = 1, deposit3Pos = 1;
 
     public enum DepositState {
         INTAKE,
@@ -47,6 +47,7 @@ public class Deposit extends SubsystemBase {
             case INTAKE2:
                 subsystems.rightDeposit.setPosition(intakePos2);
                 subsystems.leftDeposit.setPosition(intakePos2);
+                subsystems.rightDeposit.disable();
                 target = intakePos2;
                 rowPos = 0;
                 break;
