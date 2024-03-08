@@ -144,8 +144,8 @@ public class MainTeleOp extends CommandOpMode {
 
         }
         else if (gamepad1.left_stick_button) {
-            subsystems.intakeLeft.setPosition(0.065);
-            subsystems.intakeRight.setPosition(0.065);
+            subsystems.intakeLeft.setPosition(0.069);
+            subsystems.intakeRight.setPosition(0.069);
         }
 
         if (gamepad1.right_bumper) {

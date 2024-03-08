@@ -16,6 +16,7 @@ public class Intake {
     public static double secondMaxSpeed = -1;
     public static double secondInSpeed = -0.6;
     public static double secondOutSpeed = 0.6;
+    public int ticks;
 
     public enum IntakeState {
         OFF,
@@ -53,16 +54,11 @@ public class Intake {
                 //subsystems.stageTwo.set(0);
         }
     }
-    public void  updatePosition(int pos) {
-        if (pos == 0) {
-            subsystems.intakeRight.setPosition(0);
-            subsystems.intakeLeft.setPosition(0);
-
-        }
-        else if (pos==1) {
-            subsystems.intakeRight.setPosition(0.10);
-            subsystems.intakeLeft.setPosition(0.10);
-
-        }
+    public void  updatePosition(double pos) {
+        subsystems.intakeRight.setPosition(pos);
+        subsystems.intakeLeft.setPosition(pos);
+    }
+    public void loop(){
+        ticks +=1;
     }
 }

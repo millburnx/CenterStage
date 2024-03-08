@@ -49,7 +49,8 @@ public class TrajectoryFollowerCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return Thread.currentThread().isInterrupted() || !drive.isBusy();
+        //Thread.currentThread().isInterrupted() ||
+        return !drive.isBusy();
     }
 
 }
