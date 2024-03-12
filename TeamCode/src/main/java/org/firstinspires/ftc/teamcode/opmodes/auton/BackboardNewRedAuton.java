@@ -454,7 +454,7 @@ public class BackboardNewRedAuton extends CommandOpMode {
 
     public double[] getPosition2(int id) {
         double[] stoof = new double[3];
-        for (AprilTagDetection detection : aprilTag1.getDetections()) {
+        for (AprilTagDetection detection : aprilTag2.getDetections()) {
             if (detection.id==id) {
                 stoof[0] = detection.ftcPose.x;
                 stoof[1] = detection.ftcPose.y;
