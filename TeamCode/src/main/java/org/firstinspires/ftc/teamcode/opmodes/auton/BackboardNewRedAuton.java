@@ -232,11 +232,11 @@ public class BackboardNewRedAuton extends CommandOpMode {
             }
             schedule(auton1);
             detector.close();
-            initAprilTag();
+            initAprilTag1();
             end2 = true;
             xEnd = 25;
         }
-        positions = getPosition(8);
+        positions = getPosition1(8);
         telemetry.addLine("STARTED SECOND STAGE");
         telemetry.addData("apriltag x: ", positions[0]);
         telemetry.addData("apriltag y: ", positions[1]);
@@ -244,7 +244,7 @@ public class BackboardNewRedAuton extends CommandOpMode {
         telemetry.addData("region: ", region);
         if ((end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-xEnd)<5 && Math.abs(robot.getPoseEstimate().getY()-8)<5)||inEnd) {
             inEnd = true;
-            positions = getPosition(8);
+            positions = getPosition1(8);
             telemetry.addLine("STARTED SECOND STAGE");
             telemetry.addData("apriltag x: ", positions[0]);
             telemetry.addData("apriltag y: ", positions[1]);
@@ -278,13 +278,14 @@ public class BackboardNewRedAuton extends CommandOpMode {
                 end2 = false;
                 end3 = true;
                 inEnd = false;
-                aprilTag1.
+                visionPortal.close();
+                initAprilTag2();
             }
         }
 
         if ((end3 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-33)<5 && Math.abs(robot.getPoseEstimate().getY()-(-73))<5)||inEnd2) {
             inEnd2 = true;
-            positions2 = getPosition(6-region);
+            positions2 = getPosition2(6-region);
             if (positions2.length > 0 && positions2[0] != 0) {
                 boardTraj1 = robot.trajectoryBuilder(traj2.end())
                         .lineToLinearHeading(new Pose2d(aprilTx+positions2[0]+offset, -73+positions2[1], Math.toRadians(90+positions2[2])),
@@ -309,10 +310,10 @@ public class BackboardNewRedAuton extends CommandOpMode {
     }
 
 
-    private void initAprilTag1() {
+    private void initAprilTag2() {
 
         // Create the AprilTag processor.
-        aprilTag = new AprilTagProcessor.Builder()
+        aprilTag2 = new AprilTagProcessor.Builder()
 
                 // The following default settings are available to un-comment and edit as needed.
                 .setDrawAxes(true)
@@ -364,7 +365,7 @@ public class BackboardNewRedAuton extends CommandOpMode {
         builder.setAutoStopLiveView(false);
 
         // Set and enable the processor.
-        builder.addProcessor(aprilTag);
+        builder.addProcessor(aprilTag2);
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
@@ -377,7 +378,7 @@ public class BackboardNewRedAuton extends CommandOpMode {
     private void initAprilTag1() {
 
         // Create the AprilTag processor.
-        aprilTag = new AprilTagProcessor.Builder()
+        aprilTag1 = new AprilTagProcessor.Builder()
 
                 // The following default settings are available to un-comment and edit as needed.
                 .setDrawAxes(true)
@@ -429,7 +430,7 @@ public class BackboardNewRedAuton extends CommandOpMode {
         builder.setAutoStopLiveView(false);
 
         // Set and enable the processor.
-        builder.addProcessor(aprilTag);
+        builder.addProcessor(aprilTag1);
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
@@ -439,9 +440,21 @@ public class BackboardNewRedAuton extends CommandOpMode {
 
     }
 
-    public double[] getPosition(int id) {
+    public double[] getPosition1(int id) {
         double[] stoof = new double[3];
-        for (AprilTagDetection detection : aprilTag.getDetections()) {
+        for (AprilTagDetection detection : aprilTag1.getDetections()) {
+            if (detection.id==id) {
+                stoof[0] = detection.ftcPose.x;
+                stoof[1] = detection.ftcPose.y;
+                stoof[2] = detection.ftcPose.yaw;
+            }
+        }
+        return stoof;
+    }
+
+    public double[] getPosition2(int id) {
+        double[] stoof = new double[3];
+        for (AprilTagDetection detection : aprilTag1.getDetections()) {
             if (detection.id==id) {
                 stoof[0] = detection.ftcPose.x;
                 stoof[1] = detection.ftcPose.y;
