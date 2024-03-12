@@ -212,7 +212,7 @@ public class BackBoardBlueAuton extends CommandOpMode {
                 telemetry.update();
                 traj1pt2 = robot.trajectoryBuilder(traj2.end())
                         .lineToLinearHeading(new Pose2d(xEnd+positions[0]+offset, 29+positions[1] -9, Math.toRadians(-87)),
-                                SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                         )
                         .build();

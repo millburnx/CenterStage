@@ -65,8 +65,8 @@ public class SubsystemsHardware {
                 hardwareMap, "intakeRight", 0, 180, AngleUnit.DEGREES
         );
         intakeLeft.setInverted(true);
-        intakeLeft.setPosition(0.069);
-        intakeRight.setPosition(0.069);
+        intakeLeft.setPosition(0.077);
+        intakeRight.setPosition(0.077);
 
         rightLift = hardwareMap.get(DcMotorEx.class, "rightLift");
         leftLift = hardwareMap.get(DcMotorEx.class, "leftLift");

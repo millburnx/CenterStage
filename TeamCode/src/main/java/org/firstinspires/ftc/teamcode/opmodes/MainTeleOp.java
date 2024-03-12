@@ -139,13 +139,13 @@ public class MainTeleOp extends CommandOpMode {
         }
 
         if (gamepad1.right_stick_button) {
-            subsystems.intakeRight.setPosition(0.15);
-            subsystems.intakeLeft.setPosition(0.15);
+            subsystems.intakeRight.setPosition(0.16);
+            subsystems.intakeLeft.setPosition(0.16);
 
         }
         else if (gamepad1.left_stick_button) {
-            subsystems.intakeLeft.setPosition(0.069);
-            subsystems.intakeRight.setPosition(0.069);
+            subsystems.intakeLeft.setPosition(0.077);
+            subsystems.intakeRight.setPosition(0.077);
         }
 
         if (gamepad1.right_bumper) {
