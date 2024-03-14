@@ -34,6 +34,7 @@ public class MainTeleOp extends CommandOpMode {
     private Blocker blocker;
 
     GamepadEx gamepadEx;
+    boolean lastLeftBumper = false;
 
     @Override
     public void initialize() {
@@ -151,9 +152,14 @@ public class MainTeleOp extends CommandOpMode {
         if (gamepad1.right_bumper) {
             schedule(new BlockerCommand(blocker, Blocker.BlockerState.REST, telemetry));
         }
-        else if (gamepad1.left_bumper) {
-            schedule(new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry));
+        else if (gamepad1.left_bumper && !lastLeftBumper) {
+            if (blocker.blockerState.equals(Blocker.BlockerState.REST)) {
+                schedule(new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry));
+            } else if (hook.hookState.equals(Hook.HookState.HOOK)) {
+                schedule(new HookCommand(hook, Hook.HookState.REST, telemetry));
+            }
         }
+        lastLeftBumper = gamepad1.left_bumper;
 
         if (gamepad2.dpad_down) {
             subsystems.drone.setPosition(Math.toRadians(30));
