@@ -29,7 +29,7 @@ public class HookCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return hookobj.ticks>100;
+        return hookobj.ticks>50;
     }
 
 }

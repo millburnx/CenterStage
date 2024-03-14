@@ -20,6 +20,6 @@ public class IntakeUpCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return intakeObj.ticks>20;
+        return intakeObj.ticks>10;
     }
 }

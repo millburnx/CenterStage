@@ -19,8 +19,9 @@ public class UpAndDeposit extends SequentialCommandGroup{
         }
         else if (pos==0) {
             addCommands(
-                    new DepositCommandBase(deposit, Deposit.DepositState.INTAKE, t),
+                    new DepositCommandBase(deposit, Deposit.DepositState.INTAKE2, t),
                     new LiftCommandBase(lift, Lift.LiftStates.DOWN),
+                    new DepositCommandBase(deposit, Deposit.DepositState.INTAKE, t),
                     new BlockerCommand(blocker, Blocker.BlockerState.REST, t),
                     new HookCommand(hook, Hook.HookState.REST, t)
 

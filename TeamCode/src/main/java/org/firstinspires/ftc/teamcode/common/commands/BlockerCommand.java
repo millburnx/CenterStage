@@ -27,7 +27,7 @@ public class BlockerCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return blockerobj.ticks>100;
+        return blockerobj.ticks>5;
     }
 
 }

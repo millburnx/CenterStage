@@ -65,8 +65,8 @@ public class SubsystemsHardware {
                 hardwareMap, "intakeRight", 0, 180, AngleUnit.DEGREES
         );
         intakeLeft.setInverted(true);
-        intakeLeft.setPosition(0.077);
-        intakeRight.setPosition(0.077);
+        intakeLeft.setPosition(0.085);
+        intakeRight.setPosition(0.085);
 
         rightLift = hardwareMap.get(DcMotorEx.class, "rightLift");
         leftLift = hardwareMap.get(DcMotorEx.class, "leftLift");
@@ -91,6 +91,7 @@ public class SubsystemsHardware {
         drone = new SimpleServo(
                 hardwareMap, "drone", -360, 360, AngleUnit.DEGREES
         );
+        drone.setInverted(true);
 
         blocker = new SimpleServo(
                 hardwareMap, "blocker", 0, 360, AngleUnit.DEGREES
@@ -99,6 +100,6 @@ public class SubsystemsHardware {
         depositHook = new SimpleServo(
                 hardwareMap, "depositHook", 0, 360, AngleUnit.DEGREES
         );
-        depositHook.setPosition(1);
+        depositHook.setPosition(0.95);
     }
 }

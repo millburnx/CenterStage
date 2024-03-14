@@ -21,9 +21,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class ServoTest extends OpMode {
     SimpleServo intakeLeft;
     MotorEx stageOne;
+
     SimpleServo intakeRight;
+    SimpleServo rightDeposit;
+    SimpleServo leftDeposit;
+
 
     public static double pos;
+    public static double pos2;
+
     TelemetryPacket packet;
 
 
@@ -31,6 +37,15 @@ public class ServoTest extends OpMode {
     public void init() {
         pos = 0.15;
         packet = new TelemetryPacket();
+        rightDeposit = new SimpleServo(
+                hardwareMap, "rightDeposit", 0, 120, AngleUnit.DEGREES
+        );
+        leftDeposit = new SimpleServo(
+                hardwareMap, "leftDeposit", 0, 120, AngleUnit.DEGREES
+        );
+        rightDeposit.setInverted(true);
+        rightDeposit.setPosition(0);
+        leftDeposit.setPosition(0);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         stageOne = new MotorEx(hardwareMap, "stageOne", Motor.GoBILDA.RPM_1620);
         stageOne.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
@@ -46,16 +61,14 @@ public class ServoTest extends OpMode {
         intakeLeft.setPosition(0.15);
         intakeRight.setPosition(0.15);
 
-//        servo2 = new SimpleServo(
-//                hardwareMap, "intakeRight", 0, 180, AngleUnit.DEGREES
-//        );
-//        servo1.setInverted(true);
 
     }
 
     @Override
 
     public void loop() {
+        rightDeposit.setPosition(pos2);
+        leftDeposit.setPosition(pos2);
         intakeLeft.setPosition(pos);
         intakeRight.setPosition(pos);
     }
