@@ -264,9 +264,9 @@ public class TwoPlusOneAltBackboardBlue extends CommandOpMode {
                 traj1_1 = drive.trajectoryBuilder(traj1.end())
                         .forward(4)
                         .build();
-                offsetBackboard =-2;
+                offsetBackboard =-6;
                 offsetApriltag = 3;
-                aprilTx = 25;
+                aprilTx = 24;
                 xEnd = 26;
                 park = 10;
                 trusssX = 3;
@@ -358,7 +358,7 @@ public class TwoPlusOneAltBackboardBlue extends CommandOpMode {
                         )
                         .build();
                 traj1pt2_2 = robot.trajectoryBuilder(traj1pt2.end())
-                        .back(3)
+                        .back(2.5)
                         .build();
                 lastX = xEnd+positions[0]+1;
                 lastY = 6+positions[1]-3;
