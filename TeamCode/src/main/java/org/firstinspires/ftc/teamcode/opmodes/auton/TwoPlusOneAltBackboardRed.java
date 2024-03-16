@@ -100,6 +100,8 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
 
     double park;
 
+    double white;
+
 
 
 
@@ -177,14 +179,17 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
 
     public SequentialCommandGroup getAutonomousCommandStackOne(Trajectory trajj1, Trajectory traj1pt2_2, Trajectory trajj2,Trajectory trajj3, Trajectory traj2pt4, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
         return new SequentialCommandGroup(
-                new IntakeCommand(intake, Intake.IntakeState.IN),
+                new IntakeCommand(intake, Intake.IntakeState.INAlt),
                 new IntakeUpCommand(intake, 0.17),
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
                 new IntakeUpCommand(intake, 0.17),
                 new TrajectoryFollowerCommand(robot, traj1pt2_2, telemetry),
+                new IntakeCommand(intake, Intake.IntakeState.IN),
                 new IntakeUpCommand(intake, 0.085),
 //                new IntakeCommand(intake, Intake.IntakeState.OUT),
                 new TrajectoryFollowerCommand(robot, trajj2, telemetry),
+//                new IntakeUpCommand(intake, 0.3),
+//                new IntakeCommand(intake, Intake.IntakeState.AUTON_OUT),
                 new TrajectoryFollowerCommand(robot, trajj3, telemetry),
                 new TrajectoryFollowerCommand(robot, traj2pt4, telemetry)
 
@@ -200,7 +205,8 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
                 new HookCommand(hook, Hook.HookState.REST, telemetry),
                 new DepositCommandBase(deposit, Deposit.DepositState.INTAKE2, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj3, telemetry),
-                new TrajectoryFollowerCommand(robot, trajj4, telemetry),
+//                new TrajectoryFollowerCommand(robot, trajj4, telemetry),
+//                new IntakeUpCommand(intake, 0.085),
                 new UpAndDeposit(lift, deposit,blocker, hook,0, telemetry).withTimeout(2000)
 //                new TrajectoryFollowerCommand(robot, trajj3, telemetry)
 //                new TrajectoryFollowerCommand(robot, trajj4, telemetry),
@@ -265,35 +271,38 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
                         .forward(4)
                         .build();
                 offsetBackboard =-1;
-                offsetApriltag = 1;
-                aprilTx = 22;
-                xEnd = 27;
+                offsetApriltag = 2;
+                aprilTx = 26;
+                xEnd = 26;
                 park = 20;
-                trusssX = 5;
-                offsetApriltagY = -3.5;
+                trusssX = 6;
+                offsetApriltagY = -4;
+                white = 6;
 
             } else if (region ==1) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
                         .lineToLinearHeading(new Pose2d(30, 0, Math.toRadians(0)))
                         .build();
-                offsetBackboard =-1;
-                offsetApriltag = 2;
-                aprilTx = 27;
-                xEnd = 25;
+                offsetBackboard =-2.5;
+                offsetApriltag = 3.5;
+                aprilTx = 28;
+                xEnd = 27;
                 park = 25;
-                trusssX = 3;
-                offsetApriltagY = -3.5;
+                trusssX = 4;
+                offsetApriltagY = -4;
+                white = 7;
             } else {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(38, 1, Math.toRadians(90)))
+                        .lineToLinearHeading(new Pose2d(39, 1, Math.toRadians(90)))
                         .build();
-                offsetBackboard = -3.5;
-                offsetApriltag = 0.5;
-                aprilTx = 33;
+                offsetBackboard = -2.3;
+                offsetApriltag = 1.5;
+                aprilTx = 30;
                 park = 30;
-                xEnd = 25;
-                trusssX = 2.5;
-                offsetApriltagY = -5;
+                xEnd = 27;
+                trusssX = 2;
+                offsetApriltagY = -5.5;
+                white = -8;
             }
 
 
@@ -309,7 +318,7 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
             }
             else if (region==1){
                 traj1_2 = drive.trajectoryBuilder(traj1.end())
-                        .back(4)
+                        .back(6)
                         .build();
                 traj2 = drive.trajectoryBuilder(traj1_2.end())
                         .lineToLinearHeading(new Pose2d(xEnd, 6, Math.toRadians(90)))
@@ -358,7 +367,7 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
                         )
                         .build();
                 traj1pt2_2 = robot.trajectoryBuilder(traj1pt2.end())
-                        .back(2)
+                        .back(3)
                         .build();
                 lastX = xEnd+positions[0]+1;
                 lastY = 6+positions[1]-3;
@@ -367,7 +376,7 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
                         .lineToLinearHeading(new Pose2d(trusssX, 6, Math.toRadians(92)))
                         .build();
                 traj2pt3 = robot.trajectoryBuilder(traj2pt2.end())
-                        .lineToLinearHeading(new Pose2d(trusssX, -73, Math.toRadians(92)))
+                        .lineToLinearHeading(new Pose2d(trusssX+3, -73, Math.toRadians(92)))
                         .build();
                 traj2pt4 = robot.trajectoryBuilder(traj2pt3.end())
                         .lineToLinearHeading(new Pose2d(aprilTx, -76 , Math.toRadians(92)))
@@ -388,16 +397,16 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
             positions2 = getPosition2(6-region);
             if (positions2.length > 0 && positions2[0] != 0) {
                 boardTraj1 = robot.trajectoryBuilder(traj2pt4.end())
-                        .lineToLinearHeading(new Pose2d(aprilTx-positions2[0]+offsetBackboard, -76-positions2[1]+8.5, Math.toRadians(92)),
+                        .lineToLinearHeading(new Pose2d(aprilTx-positions2[0]+offsetBackboard, -76-positions2[1]+10.8, Math.toRadians(92)),
                                 SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                         )
                         .build();
                 boardTraj2 = robot.trajectoryBuilder(boardTraj1.end())
-                        .strafeRight(4)
+                        .strafeRight(white)
                         .build();
                 backTraj3 = robot.trajectoryBuilder(boardTraj2.end())
-                        .forward(2)
+                        .strafeLeft(park)
                         .build();
                 backTraj4 = robot.trajectoryBuilder(backTraj3.end())
                         .strafeLeft(park)

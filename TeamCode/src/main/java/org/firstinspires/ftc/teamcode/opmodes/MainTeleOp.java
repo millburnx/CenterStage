@@ -36,6 +36,8 @@ public class MainTeleOp extends CommandOpMode {
     GamepadEx gamepadEx;
     boolean lastLeftBumper = false;
 
+    boolean hookToggle;
+
     @Override
     public void initialize() {
         CommandScheduler.getInstance().reset();
@@ -48,7 +50,7 @@ public class MainTeleOp extends CommandOpMode {
         lift = new Lift(subsystems);
         deposit = new Deposit(subsystems);
         blocker = new Blocker(subsystems);
-
+        hookToggle = false;
 
         subsystems.enabled = true;
         subsystems.drone.setPosition(Math.toRadians(90));
@@ -121,7 +123,14 @@ public class MainTeleOp extends CommandOpMode {
             schedule(new DepositCommandBase(deposit, Deposit.DepositState.DEPOSIT1, telemetry));
         }
         if (gamepad2.right_bumper) {
-            schedule(new IntakeCommand(intake, Intake.IntakeState.IN));
+            if(hookToggle){
+                schedule(new HookCommand(hook, Hook.HookState.REST, telemetry));
+                hookToggle = false;
+            }
+            else {
+                schedule(new IntakeCommand(intake, Intake.IntakeState.IN));
+                hookToggle = true;
+            }
         }
         else if (gamepad2.left_bumper) {
             schedule(new IntakeCommand(intake, Intake.IntakeState.OFF));
@@ -149,6 +158,23 @@ public class MainTeleOp extends CommandOpMode {
             subsystems.intakeRight.setPosition(0.085);
         }
 
+        if(gamepad2.dpad_up){
+            subsystems.intakeRight.setPosition(0.17);
+            subsystems.intakeLeft.setPosition(0.17);
+        }
+        else if(gamepad2.dpad_right){
+            subsystems.intakeRight.setPosition(0.15);
+            subsystems.intakeLeft.setPosition(0.15);
+        }
+        else if(gamepad2.dpad_down){
+            subsystems.intakeRight.setPosition(0.15);
+            subsystems.intakeLeft.setPosition(0.15);
+        }
+        else if(gamepad2.dpad_left){
+            subsystems.intakeRight.setPosition(0.11);
+            subsystems.intakeLeft.setPosition(0.11);
+        }
+
         if (gamepad1.right_bumper) {
             schedule(new BlockerCommand(blocker, Blocker.BlockerState.REST, telemetry));
         }
@@ -161,7 +187,7 @@ public class MainTeleOp extends CommandOpMode {
         }
         lastLeftBumper = gamepad1.left_bumper;
 
-        if (gamepad2.dpad_down) {
+        if (gamepad2.y) {
             subsystems.drone.setPosition(Math.toRadians(30));
         }
 
@@ -169,12 +195,6 @@ public class MainTeleOp extends CommandOpMode {
             schedule(new IntakeCommand(intake, Intake.IntakeState.OUT));
         }
 
-        if(gamepad2.y){
-            subsystems.depositHook.setPosition(0.142);
-        }
-        if(gamepad2.x){
-            subsystems.depositHook.setPosition(0);
-        }
 
         telemetry.addData("Lift target: ", lift.target);
         telemetry.addData("Lift pos: ", subsystems.rightLift.getCurrentPosition());

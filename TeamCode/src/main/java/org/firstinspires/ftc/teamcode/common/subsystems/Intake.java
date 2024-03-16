@@ -10,9 +10,12 @@ public class Intake {
     public IntakeState intakeState = IntakeState.IN;
 
     public static double intakeMaxSpeed = 1;
+    //0.85
     public static double intakeInSpeed = 0.85;
+    public static double intakeInSpeedAlt = 0.45;
+
     public static double intakeOutSpeed = -0.6;
-    public static double intakeOutSpeedAuton = -0.2;
+    public static double intakeOutSpeedAuton = -0.6;
     public static double secondMaxSpeed = -1;
     public static double secondInSpeed = -0.6;
     public static double secondOutSpeed = 0.6;
@@ -21,6 +24,7 @@ public class Intake {
     public enum IntakeState {
         OFF,
         IN,
+        INAlt,
         MAX,
         OUT,
         AUTON_OUT
@@ -52,6 +56,9 @@ public class Intake {
             case AUTON_OUT:
                 subsystems.stageOne.set(intakeOutSpeedAuton);
                 //subsystems.stageTwo.set(0);
+            case INAlt:
+                subsystems.stageOne.set(intakeInSpeedAlt);
+
         }
     }
     public void  updatePosition(double pos) {

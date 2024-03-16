@@ -26,7 +26,7 @@ public class DepositCommandBase extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return depositobj.ticks>100;
+        return depositobj.ticks>50;
 //        return Math.abs(depositobj.getTarget()-depositobj.getPosition())<0.01;
     }
 
