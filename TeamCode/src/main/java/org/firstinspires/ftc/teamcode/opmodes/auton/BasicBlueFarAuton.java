@@ -11,6 +11,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -29,8 +30,8 @@ import org.firstinspires.ftc.teamcode.common.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.SubsystemsHardware;
 
 @Config
-@TeleOp(name = "BasicBlueAuton")
-public class BasicBlueAuton extends CommandOpMode {
+@Autonomous(name = "BasicBlueFarAuton")
+public class BasicBlueFarAuton extends CommandOpMode {
     private final SubsystemsHardware subsystems = SubsystemsHardware.getInstance();
     private SampleMecanumDrive drive;
     private Intake intake;
@@ -140,21 +141,21 @@ public class BasicBlueAuton extends CommandOpMode {
                         .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(87)))
                         .build();
                 traj1_1 = drive.trajectoryBuilder(traj1.end())
-                        .forward(5)
+                        .forward(3)
                         .build();
                 xEnd = 30;
                 dEnd = 87;
                 offset = -1;
             } else if (region ==1) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(30, 5, Math.toRadians(3)))
+                        .lineToLinearHeading(new Pose2d(32, 2, Math.toRadians(3)))
                         .build();
                 xEnd = 29;
                 dEnd = 100;
                 offset = -2;
             } else {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(30, -19.5, Math.toRadians(87)))
+                        .lineToLinearHeading(new Pose2d(30, -21.5, Math.toRadians(87)))
                         .build();
                 xEnd = 20;
                 dEnd = 87;

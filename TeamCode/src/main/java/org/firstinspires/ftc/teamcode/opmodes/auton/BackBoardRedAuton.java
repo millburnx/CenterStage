@@ -14,6 +14,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -37,13 +38,13 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @Config
-@TeleOp(name = "BackBoardRedAuton")
+@Autonomous(name = "BackBoardRedAuton")
 public class BackBoardRedAuton extends CommandOpMode {
     private final SubsystemsHardware subsystems = SubsystemsHardware.getInstance();
     private SampleMecanumDrive drive;
     private Intake intake;
-    private Hook hook;
     private Lift lift;
+    private Hook hook;
     private Deposit deposit;
     private Blocker blocker;
 
@@ -65,13 +66,13 @@ public class BackBoardRedAuton extends CommandOpMode {
     boolean end;
     boolean end2;
     boolean inEnd;
-    Trajectory traj1,traj1_1, traj2, traj3, traj1pt2, traj2pt2, traj2pt3, traj2pt4;
+    Trajectory traj1,traj1_1, traj2, traj3, traj1pt2, traj2pt2, traj2pt3, traj2pt4, traj2pt5;
     MecanumDriveSubsystem robot;
 
     double[] positions;
     SequentialCommandGroup auton1;
     double xEnd;
-    double dEnd;
+    double yEnd;
     double offset;
 
 
@@ -88,10 +89,10 @@ public class BackBoardRedAuton extends CommandOpMode {
         robot = new MecanumDriveSubsystem(drive, false);
         intake = new Intake(subsystems);
         lift = new Lift(subsystems);
+        hook = new Hook(subsystems);
         deposit = new Deposit(subsystems);
         blocker = new Blocker(subsystems);
         detector = new ObjectDetector(hardwareMap, telemetry);
-        hook = new Hook(subsystems);
         inEnd = false;
 
 
@@ -109,7 +110,7 @@ public class BackBoardRedAuton extends CommandOpMode {
     public SequentialCommandGroup getAutonomousCommand1(Trajectory trajj1, Trajectory trajj2, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
         return new SequentialCommandGroup( //
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
-                new IntakeUpCommand(intake, 1).withTimeout(1000),
+                new IntakeUpCommand(intake, 0.3).withTimeout(1000),
                 new TrajectoryFollowerCommand(robot, trajj2, telemetry)
 
         );
@@ -118,21 +119,23 @@ public class BackBoardRedAuton extends CommandOpMode {
         return new SequentialCommandGroup( //
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj1_1, telemetry),
-                new IntakeUpCommand(intake, 1).withTimeout(1000),
+                new IntakeUpCommand(intake, 0.3).withTimeout(1000),
                 new TrajectoryFollowerCommand(robot, trajj2, telemetry)
 
         );
     }
-    public SequentialCommandGroup getAutonomousCommand2(Trajectory trajj1, Trajectory trajj2,Trajectory trajj3,Trajectory trajj4, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
-        return new SequentialCommandGroup(
-                new UpAndDeposit(lift, deposit,blocker, hook,-1, telemetry),
+    public SequentialCommandGroup getAutonomousCommand2(Trajectory trajj1, Trajectory trajj2,Trajectory trajj3,Trajectory trajj4,Trajectory trajj5, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
+        return new SequentialCommandGroup( //
+                new IntakeUpCommand(intake, 0.085).withTimeout(1000),
+                new UpAndDeposit(lift, deposit,blocker, hook,-2, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
                 new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry),
                 new DepositCommandBase(deposit, Deposit.DepositState.INTAKE, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj2, telemetry),
-                new UpAndDeposit(lift, deposit,blocker, hook,0, telemetry),
-                new TrajectoryFollowerCommand(robot, trajj3, telemetry),
-                new TrajectoryFollowerCommand(robot, trajj4, telemetry)
+                new UpAndDeposit(lift, deposit,blocker, hook,0, telemetry)
+//                new TrajectoryFollowerCommand(robot, trajj3, telemetry)
+//                new TrajectoryFollowerCommand(robot, trajj4, telemetry),
+//                new TrajectoryFollowerCommand(robot, trajj5, telemetry)
 
         );
     }
@@ -155,41 +158,38 @@ public class BackBoardRedAuton extends CommandOpMode {
             end = false;
             if (region==2) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(32, 0, Math.toRadians(87)))
+                        .lineToLinearHeading(new Pose2d(31, 0, Math.toRadians(87)))
                         .build();
                 traj1_1 = drive.trajectoryBuilder(traj1.end())
-                        .forward(5)
-                        .build();
-                xEnd = 30.5;
-                dEnd = 87;
-                offset = -4.25;
-            } else if (region ==1) {
-                traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(29, 5, Math.toRadians(3)))
+                        .forward(3)
                         .build();
                 xEnd = 31;
-                dEnd = 105;
-                offset = -2;
+                offset = -1.5;
+            } else if (region ==1) {
+                traj1 = drive.trajectoryBuilder(new Pose2d())
+                        .lineToLinearHeading(new Pose2d(31, -1, Math.toRadians(-3)))
+                        .build();
+                xEnd = 24.5;
+                offset = -2.5;
             } else {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(32, -19.5, Math.toRadians(87)))
+                        .lineToLinearHeading(new Pose2d(35, -19.5, Math.toRadians(87)))
                         .build();
                 xEnd = 20;
-                dEnd = 87;
-                offset = -1;
+                offset = -3;
             }
 
 
 
             if(region==2){
                 traj2 = drive.trajectoryBuilder(traj1_1.end())
-                        .lineToLinearHeading(new Pose2d(xEnd, -29, Math.toRadians(dEnd)))
+                        .lineToLinearHeading(new Pose2d(xEnd, -29, Math.toRadians(87)))
                         .build();
                 auton1=getAutonomousCommand1Alt(traj1, traj1_1, traj2, deposit, blocker, lift, telemetry);
             }
             else{
                 traj2 = drive.trajectoryBuilder(traj1.end())
-                        .lineToLinearHeading(new Pose2d(xEnd, -29, Math.toRadians(dEnd)))
+                        .lineToLinearHeading(new Pose2d(xEnd, -29, Math.toRadians(87)))
                         .build();
                 auton1=getAutonomousCommand1(traj1, traj2, deposit, blocker, lift, telemetry);
             }
@@ -214,21 +214,26 @@ public class BackBoardRedAuton extends CommandOpMode {
                 telemetry.addData("apriltag heading terminal: ", positions[2]);
                 telemetry.update();
                 traj1pt2 = robot.trajectoryBuilder(traj2.end())
-                        .lineToLinearHeading(new Pose2d(xEnd-positions[0]+offset, -(29+positions[1] -9), Math.toRadians(-(-dEnd-positions[2]))),
-                                SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        .lineToLinearHeading(new Pose2d(xEnd-positions[0]+offset, -(29+positions[1] -10), Math.toRadians(87)),
+                                SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                         )
                         .build();
                 traj2pt2 = robot.trajectoryBuilder(traj1pt2.end())
-                        .forward(4)
+//                        .forward(4)
+                        .lineToLinearHeading(new Pose2d(4, -34 , Math.toRadians(87)))
                         .build();
                 traj2pt3 = robot.trajectoryBuilder(traj2pt2.end())
-                        .lineToLinearHeading(new Pose2d(1.5, -31, Math.toRadians(-(-dEnd+positions[2]))))
+//                        .lineToLinearHeading(new Pose2d(0.5, 30 , Math.toRadians(-87+positions[2])))\
+                        .forward(4)
                         .build();
                 traj2pt4 = robot.trajectoryBuilder(traj2pt3.end())
-                        .back(10)
+                        .back(6)
                         .build();
-                schedule(getAutonomousCommand2(traj1pt2, traj2pt2, traj2pt3,traj2pt4, deposit, blocker, lift, telemetry));
+                traj2pt5 = robot.trajectoryBuilder(traj2pt4.end())
+                        .lineToLinearHeading(new Pose2d(0.5, 30 , Math.toRadians(-87+positions[2])))
+                        .build();
+                schedule(getAutonomousCommand2(traj1pt2, traj2pt2, traj2pt3,traj2pt4,traj2pt5, deposit, blocker, lift, telemetry));
                 end2 = false;
                 inEnd = false;
                 // Save more CPU resources when camera is no longer needed.
@@ -320,14 +325,6 @@ public class BackBoardRedAuton extends CommandOpMode {
     /**
      * Add telemetry about AprilTag detections.
      */
-
-
-
-
-
-
-
-
 
 
 }

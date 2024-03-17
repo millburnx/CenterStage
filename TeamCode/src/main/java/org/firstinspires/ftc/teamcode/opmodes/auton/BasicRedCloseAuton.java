@@ -11,6 +11,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -22,20 +23,25 @@ import org.firstinspires.ftc.teamcode.common.commands.UpAndDeposit;
 import org.firstinspires.ftc.teamcode.common.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.common.subsystems.Blocker;
 import org.firstinspires.ftc.teamcode.common.subsystems.Deposit;
+import org.firstinspires.ftc.teamcode.common.subsystems.Hook;
 import org.firstinspires.ftc.teamcode.common.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.common.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.common.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.common.utils.SubsystemsHardware;
 
 @Config
-@TeleOp(name = "BasicRedAuton")
-public class BasicRedAuton extends CommandOpMode {
+@Autonomous(name = "BasicRedCloseAuton")
+public class BasicRedCloseAuton extends CommandOpMode {
     private final SubsystemsHardware subsystems = SubsystemsHardware.getInstance();
     private SampleMecanumDrive drive;
     private Intake intake;
+    private Hook hook;
+
     private Lift lift;
     private Deposit deposit;
     private Blocker blocker;
+
+    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     ObjectDetector detector;
     GamepadEx gamepadEx;
@@ -49,7 +55,7 @@ public class BasicRedAuton extends CommandOpMode {
     double[] positions;
     SequentialCommandGroup auton1;
     double xEnd;
-    double yEnd;
+    double dEnd;
     double offset;
 
 
@@ -66,6 +72,7 @@ public class BasicRedAuton extends CommandOpMode {
         robot = new MecanumDriveSubsystem(drive, false);
         intake = new Intake(subsystems);
         lift = new Lift(subsystems);
+        hook = new Hook(subsystems);
         deposit = new Deposit(subsystems);
         blocker = new Blocker(subsystems);
         detector = new ObjectDetector(hardwareMap, telemetry);
@@ -100,7 +107,18 @@ public class BasicRedAuton extends CommandOpMode {
 
         );
     }
+    public SequentialCommandGroup getAutonomousCommand2(Trajectory trajj1, Trajectory trajj2,Trajectory trajj3,Trajectory trajj4, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
+        return new SequentialCommandGroup( //
+                new UpAndDeposit(lift, deposit,blocker, hook,-1, telemetry),
+                new TrajectoryFollowerCommand(robot, trajj1, telemetry),
+                new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry),
+                new TrajectoryFollowerCommand(robot, trajj2, telemetry),
+                new UpAndDeposit(lift, deposit,blocker,hook, 0, telemetry),
+                new TrajectoryFollowerCommand(robot, trajj3, telemetry),
+                new TrajectoryFollowerCommand(robot, trajj4, telemetry)
 
+        );
+    }
 
 
 
@@ -118,32 +136,35 @@ public class BasicRedAuton extends CommandOpMode {
 
         if (end) {
             end = false;
-            if (region==0) {
+            if (region==2) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(-87)))
+                        .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(87)))
                         .build();
                 traj1_1 = drive.trajectoryBuilder(traj1.end())
-                        .forward(5.5)
+                        .forward(3)
                         .build();
-                xEnd = 32;
-                offset = 5;
+                xEnd = 30;
+                dEnd = 87;
+                offset = -1;
             } else if (region ==1) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(30, 4, Math.toRadians(3)))
+                        .lineToLinearHeading(new Pose2d(32, 2, Math.toRadians(3)))
                         .build();
-                xEnd = 24;
-                offset = 2.75;
+                xEnd = 29;
+                dEnd = 100;
+                offset = -2;
             } else {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(30, 19, Math.toRadians(-87)))
+                        .lineToLinearHeading(new Pose2d(30, -21.5, Math.toRadians(87)))
                         .build();
-                xEnd = 19;
-                offset = 1;
+                xEnd = 20;
+                dEnd = 87;
+                offset = -3;
             }
 
 
 
-            if(region==0){
+            if(region==2){
                 traj2 = drive.trajectoryBuilder(traj1_1.end())
                         .back(8)
                         .build();
@@ -161,10 +182,7 @@ public class BasicRedAuton extends CommandOpMode {
         }
         telemetry.addData("auton1 finished: ", robot.isBusy());
         telemetry.addData("region: ", region);
+
         telemetry.update();
     }
-
-    /**
-     * Add telemetry about AprilTag detections.
-     */
 }

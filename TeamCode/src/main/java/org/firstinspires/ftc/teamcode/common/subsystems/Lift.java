@@ -26,11 +26,12 @@ public class Lift extends SubsystemBase {
 
     public int ticker;
 
-    public static int DOWN_POS = 0, AUTON_POS = 950, POS1_POS = 850, POS2_POS = 1750, POS3_POS = 1500, CLIMB_POS = 1700;
+    public static int DOWN_POS = 0, AUTON_POS_LOW = 850, AUTON_POS = 900, POS1_POS = 850, POS2_POS = 1750, POS3_POS = 1500, CLIMB_POS = 1700;
 
     public enum LiftStates {
         DOWN,
         AUTON,
+        AUTON_POS_LOW,
         POS1,
         POS2,
         POS3,
@@ -77,6 +78,9 @@ public class Lift extends SubsystemBase {
                 break;
             case CLIMB:
                 target = CLIMB_POS;
+                liftStates = state;
+            case AUTON_POS_LOW:
+                target = AUTON_POS_LOW;
                 liftStates = state;
         }
     }

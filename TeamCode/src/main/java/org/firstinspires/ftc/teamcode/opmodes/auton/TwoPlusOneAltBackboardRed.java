@@ -16,6 +16,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -39,7 +40,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @Config
-@TeleOp(name = "TwoPlusOneAltBackboardRed")
+@Autonomous(name = "TwoPlusOneAltBackboardRed")
 public class TwoPlusOneAltBackboardRed extends CommandOpMode {
     private final SubsystemsHardware subsystems = SubsystemsHardware.getInstance();
     private SampleMecanumDrive drive;
@@ -265,15 +266,15 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
             end = false;
             if (region==0) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(-90)))
+                        .lineToLinearHeading(new Pose2d(29, 1, Math.toRadians(-90)))
                         .build();
                 traj1_1 = drive.trajectoryBuilder(traj1.end())
                         .forward(4)
                         .build();
-                offsetBackboard =-1;
-                offsetApriltag = 2;
+                offsetBackboard =-2;
+                offsetApriltag = 2.5;
                 aprilTx = 26;
-                xEnd = 26;
+                xEnd = 26.5;
                 park = 20;
                 trusssX = 6;
                 offsetApriltagY = -4;
@@ -281,7 +282,7 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
 
             } else if (region ==1) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(30, 0, Math.toRadians(0)))
+                        .lineToLinearHeading(new Pose2d(31, 0, Math.toRadians(0)))
                         .build();
                 offsetBackboard =-2.5;
                 offsetApriltag = 3.5;
@@ -318,7 +319,7 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
             }
             else if (region==1){
                 traj1_2 = drive.trajectoryBuilder(traj1.end())
-                        .back(6)
+                        .back(6.5)
                         .build();
                 traj2 = drive.trajectoryBuilder(traj1_2.end())
                         .lineToLinearHeading(new Pose2d(xEnd, 6, Math.toRadians(90)))
@@ -367,7 +368,7 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
                         )
                         .build();
                 traj1pt2_2 = robot.trajectoryBuilder(traj1pt2.end())
-                        .back(3)
+                        .back(3.5)
                         .build();
                 lastX = xEnd+positions[0]+1;
                 lastY = 6+positions[1]-3;
@@ -397,7 +398,7 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
             positions2 = getPosition2(6-region);
             if (positions2.length > 0 && positions2[0] != 0) {
                 boardTraj1 = robot.trajectoryBuilder(traj2pt4.end())
-                        .lineToLinearHeading(new Pose2d(aprilTx-positions2[0]+offsetBackboard, -76-positions2[1]+10.8, Math.toRadians(92)),
+                        .lineToLinearHeading(new Pose2d(aprilTx-positions2[0]+offsetBackboard, -76-positions2[1]+10, Math.toRadians(92)),
                                 SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                         )

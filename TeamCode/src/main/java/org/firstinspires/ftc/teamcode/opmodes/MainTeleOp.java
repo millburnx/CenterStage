@@ -7,7 +7,10 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.common.commands.BlockerCommand;
 import org.firstinspires.ftc.teamcode.common.commands.HookCommand;
 import org.firstinspires.ftc.teamcode.common.commands.IntakeCommand;
@@ -22,11 +25,15 @@ import org.firstinspires.ftc.teamcode.common.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.common.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.common.utils.SubsystemsHardware;
 
+import java.util.Locale;
+
 @Config
 @TeleOp(name = "MainTeleOp")
 public class MainTeleOp extends CommandOpMode {
     private final SubsystemsHardware subsystems = SubsystemsHardware.getInstance();
     private Drive drive;
+    ColorSensor sensorColor;
+    DistanceSensor sensorDistance;
     private Intake intake;
     private Hook hook;
     private Lift lift;
@@ -51,6 +58,12 @@ public class MainTeleOp extends CommandOpMode {
         deposit = new Deposit(subsystems);
         blocker = new Blocker(subsystems);
         hookToggle = false;
+
+        sensorColor = hardwareMap.get(ColorSensor.class, "sensor_color_distance");
+
+        // get a reference to the distance sensor that shares the same name.
+        sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
+
 
         subsystems.enabled = true;
         subsystems.drone.setPosition(Math.toRadians(90));
@@ -97,6 +110,11 @@ public class MainTeleOp extends CommandOpMode {
             power = 0;
             turn = 0;
 
+        }
+        telemetry.addData("Distance (cm)",
+                String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
+        if(sensorDistance.getDistance(DistanceUnit.INCH)<0.5){
+            gamepad1.rumble(500);
         }
 
         if (deposit.getDepositState() == Deposit.DepositState.DEPOSIT1 || deposit.getDepositState() == Deposit.DepositState.DEPOSIT2 || deposit.getDepositState() == Deposit.DepositState.DEPOSIT3) {
@@ -203,6 +221,8 @@ public class MainTeleOp extends CommandOpMode {
 
         telemetry.addData("blocker ticks", blocker.ticks);
         telemetry.addData("cond",  blocker.ticks>150);
+
+        telemetry.addData("color: ", sensorDistance.getDistance(DistanceUnit.INCH));
 
         telemetry.update();
     }
