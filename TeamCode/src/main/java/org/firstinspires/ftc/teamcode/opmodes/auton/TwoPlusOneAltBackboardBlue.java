@@ -231,7 +231,7 @@ public class TwoPlusOneAltBackboardBlue extends CommandOpMode {
             end = false;
             if (region==2) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(29, 0, Math.toRadians(90)))
+                        .lineToLinearHeading(new Pose2d(30, 0, Math.toRadians(90)))
                         .build();
                 traj1_1 = drive.trajectoryBuilder(traj1.end())
                         .forward(2)
@@ -242,7 +242,7 @@ public class TwoPlusOneAltBackboardBlue extends CommandOpMode {
                 xEnd = 25;
                 park = 15;
                 trusssX = 6;
-                offsetApriltagY = -4.5;
+                offsetApriltagY = -2.5;
                 white = -10;
 
             } else if (region ==1) {
@@ -254,9 +254,9 @@ public class TwoPlusOneAltBackboardBlue extends CommandOpMode {
                 aprilTx = 28;
                 xEnd = 25;
                 park = 17;
-                trusssX = 3;
+                trusssX = 4;
                 white = 8;
-                offsetApriltagY = -3.5;
+                offsetApriltagY = -1.5;
             } else {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
                         .lineToLinearHeading(new Pose2d(38, -2, Math.toRadians(-90)))
@@ -266,9 +266,9 @@ public class TwoPlusOneAltBackboardBlue extends CommandOpMode {
                 aprilTx = 32;
                 park = 20;
                 xEnd = 28;
-                trusssX = 3;
+                trusssX = 4;
                 white = 7;
-                offsetApriltagY = -5;
+                offsetApriltagY = -3;
             }
 
 
@@ -309,7 +309,6 @@ public class TwoPlusOneAltBackboardBlue extends CommandOpMode {
             detector.close();
             initAprilTag1();
             end2 = true;
-            xEnd = 25;
         }
         positions = getPosition1(8);
         telemetry.addLine("STARTED SECOND STAGE");

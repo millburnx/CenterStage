@@ -275,9 +275,10 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
                 offsetApriltag = 2.5;
                 aprilTx = 26;
                 xEnd = 26.5;
-                park = 20;
+//                park = 20;
+                park = 0;
                 trusssX = 6;
-                offsetApriltagY = -4;
+                offsetApriltagY = -1;
                 white = 6;
 
             } else if (region ==1) {
@@ -285,25 +286,27 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
                         .lineToLinearHeading(new Pose2d(31, 0, Math.toRadians(0)))
                         .build();
                 offsetBackboard =-2.5;
-                offsetApriltag = 3.5;
+                offsetApriltag = 6;
                 aprilTx = 28;
-                xEnd = 27;
+                xEnd = 28;
                 park = 25;
+                park = 0;
                 trusssX = 4;
-                offsetApriltagY = -4;
+                offsetApriltagY = 0;
                 white = 7;
             } else {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(39, 1, Math.toRadians(90)))
+                        .lineToLinearHeading(new Pose2d(39, 0, Math.toRadians(90)))
                         .build();
-                offsetBackboard = -2.3;
-                offsetApriltag = 1.5;
+                offsetBackboard = -1.8;
+                offsetApriltag = 2;
                 aprilTx = 30;
-                park = 30;
-                xEnd = 27;
+                park = 20;
+                xEnd = 28;
                 trusssX = 2;
-                offsetApriltagY = -5.5;
+                offsetApriltagY = -1.5;
                 white = -8;
+                park = 0;
             }
 
 
@@ -319,7 +322,7 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
             }
             else if (region==1){
                 traj1_2 = drive.trajectoryBuilder(traj1.end())
-                        .back(6.5)
+                        .back(7)
                         .build();
                 traj2 = drive.trajectoryBuilder(traj1_2.end())
                         .lineToLinearHeading(new Pose2d(xEnd, 6, Math.toRadians(90)))
@@ -329,13 +332,13 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
             }
             else{
                 traj1_1 = drive.trajectoryBuilder(traj1.end())
-                        .back(3)
+                        .back(4)
                         .build();
                 traj1_2 = drive.trajectoryBuilder(traj1_1.end())
-                        .strafeLeft(13)
+                        .strafeLeft(15)
                         .build();
                 traj2 = drive.trajectoryBuilder(traj1_2.end())
-                        .lineToLinearHeading(new Pose2d(xEnd, 6, Math.toRadians(90)))
+                        .lineToLinearHeading(new Pose2d(xEnd, 70, Math.toRadians(90)))
                         .build();
                 auton1=getAutonomousCommandPurpleLeft(traj1,traj1_1,traj1_2, traj2,  deposit, blocker, lift, telemetry);
 
@@ -344,7 +347,6 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
             detector.close();
             initAprilTag1();
             end2 = true;
-            xEnd = 25;
         }
         positions = getPosition1(8);
         telemetry.addLine("STARTED SECOND STAGE");
@@ -352,7 +354,7 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
         telemetry.addData("apriltag y: ", positions[1]);
         telemetry.addData("apriltag heading: ", positions[2]);
         telemetry.addData("region: ", region);
-        if ((end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-xEnd)<5 && Math.abs(robot.getPoseEstimate().getY()-8)<5)||inEnd) {
+        if ((end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-xEnd)<5 && Math.abs(robot.getPoseEstimate().getY()-7)<5)||inEnd) {
             inEnd = true;
             positions = getPosition1(8);
             telemetry.addLine("STARTED SECOND STAGE");
@@ -362,7 +364,7 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
             telemetry.update();
             if (positions.length > 0 && positions[0] != 0) {
                 traj1pt2 = robot.trajectoryBuilder(traj2.end())
-                        .lineToLinearHeading(new Pose2d(xEnd+positions[0]+offsetApriltag, 6+positions[1]+offsetApriltagY, Math.toRadians(92)),
+                        .lineToLinearHeading(new Pose2d(xEnd+positions[0]+offsetApriltag, 7+positions[1]+offsetApriltagY, Math.toRadians(92)),
                                 SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                         )
