@@ -180,12 +180,10 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
 
     public SequentialCommandGroup getAutonomousCommandStackOne(Trajectory trajj1, Trajectory traj1pt2_2, Trajectory trajj2,Trajectory trajj3, Trajectory traj2pt4, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
         return new SequentialCommandGroup(
-                new IntakeCommand(intake, Intake.IntakeState.INAlt),
                 new IntakeUpCommand(intake, 0.17),
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
                 new IntakeUpCommand(intake, 0.17),
                 new TrajectoryFollowerCommand(robot, traj1pt2_2, telemetry),
-                new IntakeCommand(intake, Intake.IntakeState.IN),
                 new IntakeUpCommand(intake, 0.085),
 //                new IntakeCommand(intake, Intake.IntakeState.OUT),
                 new TrajectoryFollowerCommand(robot, trajj2, telemetry),
@@ -275,10 +273,10 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
                 offsetApriltag = 2.5;
                 aprilTx = 26;
                 xEnd = 26.5;
-//                park = 20;
-                park = 0;
+                park = 20;
+//                park = 0;
                 trusssX = 6;
-                offsetApriltagY = -1;
+                offsetApriltagY = -5;
                 white = 6;
 
             } else if (region ==1) {
@@ -290,9 +288,9 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
                 aprilTx = 28;
                 xEnd = 28;
                 park = 25;
-                park = 0;
+//                park = 0;
                 trusssX = 4;
-                offsetApriltagY = 0;
+                offsetApriltagY = -5;
                 white = 7;
             } else {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
@@ -301,12 +299,12 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
                 offsetBackboard = -1.8;
                 offsetApriltag = 2;
                 aprilTx = 30;
-                park = 20;
+                park = 25;
                 xEnd = 28;
                 trusssX = 2;
-                offsetApriltagY = -1.5;
+                offsetApriltagY = -5;
                 white = -8;
-                park = 0;
+//                park = 0;
             }
 
 
@@ -338,7 +336,7 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
                         .strafeLeft(15)
                         .build();
                 traj2 = drive.trajectoryBuilder(traj1_2.end())
-                        .lineToLinearHeading(new Pose2d(xEnd, 70, Math.toRadians(90)))
+                        .lineToLinearHeading(new Pose2d(xEnd, 7, Math.toRadians(90)))
                         .build();
                 auton1=getAutonomousCommandPurpleLeft(traj1,traj1_1,traj1_2, traj2,  deposit, blocker, lift, telemetry);
 
@@ -370,7 +368,7 @@ public class TwoPlusOneAltBackboardRed extends CommandOpMode {
                         )
                         .build();
                 traj1pt2_2 = robot.trajectoryBuilder(traj1pt2.end())
-                        .back(3.5)
+                        .back(4)
                         .build();
                 lastX = xEnd+positions[0]+1;
                 lastY = 6+positions[1]-3;

@@ -204,9 +204,9 @@ public class Drive extends MecanumDrive {
         double backRightPower = (power + strafe - turn) / denominator;
 
         leftFront.set(frontLeftPower);
-        leftRear.set(backLeftPower*1.25);
+        leftRear.set(backLeftPower);
         rightFront.set(frontRightPower);
-        rightRear.set(backRightPower*1.25);
+        rightRear.set(backRightPower);
     }
 
     public void fieldCentric(double power, double strafe, double turn) {

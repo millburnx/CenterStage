@@ -40,8 +40,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @Config
-@Autonomous(name = "TwoPlusOneAltBackboardBlue")
-public class TwoPlusOneAltBackboardBlue extends CommandOpMode {
+@Autonomous(name = "FarSideBackboardRed")
+public class FarSideBackboardRed extends CommandOpMode {
     private final SubsystemsHardware subsystems = SubsystemsHardware.getInstance();
     private SampleMecanumDrive drive;
     private Intake intake;
@@ -100,6 +100,7 @@ public class TwoPlusOneAltBackboardBlue extends CommandOpMode {
 
 
     double park;
+
     double white;
 
 
@@ -182,12 +183,14 @@ public class TwoPlusOneAltBackboardBlue extends CommandOpMode {
                 new IntakeCommand(intake, Intake.IntakeState.INAlt),
                 new IntakeUpCommand(intake, 0.17),
                 new TrajectoryFollowerCommand(robot, trajj1, telemetry),
+                new IntakeUpCommand(intake, 0.17),
                 new TrajectoryFollowerCommand(robot, traj1pt2_2, telemetry),
                 new IntakeCommand(intake, Intake.IntakeState.IN),
                 new IntakeUpCommand(intake, 0.085),
 //                new IntakeCommand(intake, Intake.IntakeState.OUT),
                 new TrajectoryFollowerCommand(robot, trajj2, telemetry),
 //                new IntakeUpCommand(intake, 0.3),
+//                new IntakeCommand(intake, Intake.IntakeState.AUTON_OUT),
                 new TrajectoryFollowerCommand(robot, trajj3, telemetry),
                 new TrajectoryFollowerCommand(robot, traj2pt4, telemetry)
 
@@ -203,6 +206,8 @@ public class TwoPlusOneAltBackboardBlue extends CommandOpMode {
                 new HookCommand(hook, Hook.HookState.REST, telemetry),
                 new DepositCommandBase(deposit, Deposit.DepositState.INTAKE2, telemetry),
                 new TrajectoryFollowerCommand(robot, trajj3, telemetry),
+//                new TrajectoryFollowerCommand(robot, trajj4, telemetry),
+//                new IntakeUpCommand(intake, 0.085),
                 new UpAndDeposit(lift, deposit,blocker, hook,0, telemetry).withTimeout(2000)
 //                new TrajectoryFollowerCommand(robot, trajj3, telemetry)
 //                new TrajectoryFollowerCommand(robot, trajj4, telemetry),
@@ -210,6 +215,36 @@ public class TwoPlusOneAltBackboardBlue extends CommandOpMode {
 
         );
     }
+    public SequentialCommandGroup getAutonomousCommandBackboardTwo(Trajectory trajj1, Trajectory trajj2, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
+        return new SequentialCommandGroup(
+                new UpAndDeposit(lift, deposit,blocker, hook,-1, telemetry),
+                new TrajectoryFollowerCommand(robot, trajj1, telemetry),
+                new BlockerCommand(blocker, Blocker.BlockerState.RELEASE, telemetry),
+                new DepositCommandBase(deposit, Deposit.DepositState.INTAKE, telemetry),
+                new TrajectoryFollowerCommand(robot, trajj2, telemetry),
+                new UpAndDeposit(lift, deposit,blocker, hook,0, telemetry).withTimeout(2000)
+
+        );
+    }
+    public SequentialCommandGroup getAutonomousCommandStackTwo(Trajectory trajj1, Trajectory trajj2, Trajectory trajj3,Trajectory trajj4, Trajectory trajj5, Trajectory trajj6, Trajectory trajj7, Deposit deposit, Blocker blocker, Lift lift, Telemetry telemetry) {
+        return new SequentialCommandGroup(
+                new IntakeCommand(intake, Intake.IntakeState.IN),
+                new IntakeUpCommand(intake, 0.235),
+                new TrajectoryFollowerCommand(robot, trajj1, telemetry),
+                new TrajectoryFollowerCommand(robot, trajj2, telemetry),
+                new IntakeUpCommand(intake, 0.17),
+                new IntakeUpCommand(intake, 0.20),
+                new TrajectoryFollowerCommand(robot, trajj3, telemetry),
+                new TrajectoryFollowerCommand(robot, trajj4, telemetry),
+                new IntakeUpCommand(intake, 0.17),
+                new TrajectoryFollowerCommand(robot, trajj5, telemetry),
+                new TrajectoryFollowerCommand(robot, trajj6, telemetry),
+                new IntakeCommand(intake, Intake.IntakeState.OUT),
+                new TrajectoryFollowerCommand(robot, trajj7, telemetry)
+
+        );
+    }
+
 
 
     @Override
@@ -229,140 +264,118 @@ public class TwoPlusOneAltBackboardBlue extends CommandOpMode {
         if (end) {
             schedule(new BlockerCommand(blocker, Blocker.BlockerState.REST, telemetry));
             end = false;
-            if (region==2) {
+            if (region==0) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(30, 0, Math.toRadians(90)))
+                        .lineToLinearHeading(new Pose2d(29, 1, Math.toRadians(-90)))
                         .build();
                 traj1_1 = drive.trajectoryBuilder(traj1.end())
-                        .forward(2)
+                        .forward(4)
                         .build();
-                offsetBackboard =0;
-                offsetApriltag = 0;
-                aprilTx = 30;
-                xEnd = 25;
-                park = 15;
+                offsetBackboard =-2;
+                offsetApriltag = 2.5;
+                aprilTx = 26;
+                xEnd = 26.5;
+                park = 20;
+//                park = 0;
                 trusssX = 6;
-                offsetApriltagY = -7;
-                white = -10;
+                offsetApriltagY = -1;
+                white = 6;
 
             } else if (region ==1) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(30, 0, Math.toRadians(0)))
+                        .lineToLinearHeading(new Pose2d(31, 0, Math.toRadians(0)))
                         .build();
-                offsetBackboard = 2;
-                offsetApriltag = 0;
+                offsetBackboard =-2.5;
+                offsetApriltag = 6;
                 aprilTx = 28;
-                xEnd = 25;
-                park = 17;
+                xEnd = 28;
+                park = 25;
+//                park = 0;
                 trusssX = 4;
-                white = 8;
-                offsetApriltagY = -7;
+                offsetApriltagY = 0;
+                white = 7;
             } else {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(38, -2, Math.toRadians(-90)))
+                        .lineToLinearHeading(new Pose2d(39, 0, Math.toRadians(90)))
                         .build();
-                offsetBackboard = 1;
+                offsetBackboard = -1.8;
                 offsetApriltag = 2;
-                aprilTx = 32;
+                aprilTx = 30;
                 park = 20;
                 xEnd = 28;
-                trusssX = 4;
-                white = 7;
-                offsetApriltagY = -8;
+                trusssX = 2;
+                offsetApriltagY = -1.5;
+                white = -8;
+//                park = 0;
             }
 
 
-            if(region==2){
+            if(region==0){
                 traj1_2 = drive.trajectoryBuilder(traj1_1.end())
                         .back(4)
                         .build();
-                traj2 = drive.trajectoryBuilder(traj1_2.end())
-                        .lineToLinearHeading(new Pose2d(xEnd, -6, Math.toRadians(-90)))
+                traj2pt2 = robot.trajectoryBuilder(traj1_2.end())
+                        .lineToLinearHeading(new Pose2d(trusssX, 6, Math.toRadians(92)))
                         .build();
-
+                traj2pt3 = robot.trajectoryBuilder(traj2pt2.end())
+                        .lineToLinearHeading(new Pose2d(trusssX+3, -73, Math.toRadians(92)))
+                        .build();
+                traj2pt4 = robot.trajectoryBuilder(traj2pt3.end())
+                        .lineToLinearHeading(new Pose2d(aprilTx, -76 , Math.toRadians(92)))
+                        .build();
                 auton1=getAutonomousCommandPurpleRight(traj1, traj1_1,traj1_2, traj2,  deposit, blocker, lift, telemetry);
             }
             else if (region==1){
                 traj1_2 = drive.trajectoryBuilder(traj1.end())
-                        .back(4)
+                        .back(7)
                         .build();
-                traj2 = drive.trajectoryBuilder(traj1_2.end())
-                        .lineToLinearHeading(new Pose2d(xEnd, -6, Math.toRadians(-90)))
+
+                traj2pt2 = robot.trajectoryBuilder(traj1_2.end())
+                        .lineToLinearHeading(new Pose2d(trusssX, 6, Math.toRadians(92)))
+                        .build();
+                traj2pt3 = robot.trajectoryBuilder(traj2pt2.end())
+                        .lineToLinearHeading(new Pose2d(trusssX+3, -73, Math.toRadians(92)))
+                        .build();
+                traj2pt4 = robot.trajectoryBuilder(traj2pt3.end())
+                        .lineToLinearHeading(new Pose2d(aprilTx, -76 , Math.toRadians(92)))
                         .build();
                 auton1=getAutonomousCommandPurpleMiddle(traj1,traj1_2, traj2,  deposit, blocker, lift, telemetry);
 
             }
             else{
                 traj1_1 = drive.trajectoryBuilder(traj1.end())
-                        .back(3)
+                        .back(4)
                         .build();
                 traj1_2 = drive.trajectoryBuilder(traj1_1.end())
-                        .strafeRight(13)
+                        .strafeLeft(15)
                         .build();
-                traj2 = drive.trajectoryBuilder(traj1_2.end())
-                        .lineToLinearHeading(new Pose2d(xEnd, -6, Math.toRadians(-90)))
+                traj2pt2 = robot.trajectoryBuilder(traj1_2.end())
+                        .lineToLinearHeading(new Pose2d(trusssX, 6, Math.toRadians(92)))
                         .build();
+                traj2pt3 = robot.trajectoryBuilder(traj2pt2.end())
+                        .lineToLinearHeading(new Pose2d(trusssX+3, -73, Math.toRadians(92)))
+                        .build();
+                traj2pt4 = robot.trajectoryBuilder(traj2pt3.end())
+                        .lineToLinearHeading(new Pose2d(aprilTx, -76 , Math.toRadians(92)))
+                        .build();
+
                 auton1=getAutonomousCommandPurpleLeft(traj1,traj1_1,traj1_2, traj2,  deposit, blocker, lift, telemetry);
 
             }
             schedule(auton1);
             detector.close();
-            initAprilTag1();
-            end2 = true;
+            initAprilTag2();
+            end3 = true;
         }
         positions = getPosition1(8);
-        telemetry.addLine("STARTED SECOND STAGE");
-        telemetry.addData("apriltag x: ", positions[0]);
-        telemetry.addData("apriltag y: ", positions[1]);
-        telemetry.addData("apriltag heading: ", positions[2]);
-        telemetry.addData("region: ", region);
-        if ((end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-xEnd)<5 && Math.abs(robot.getPoseEstimate().getY()-(-6))<5)||inEnd) {
-            inEnd = true;
-            positions = getPosition1(9);
-            telemetry.addLine("STARTED SECOND STAGE");
-            telemetry.addData("apriltag x: ", positions[0]);
-            telemetry.addData("apriltag y: ", positions[1]);
-            telemetry.addData("apriltag heading: ", positions[2]);
-            telemetry.update();
-            if (positions.length > 0 && positions[0] != 0) {
-                traj1pt2 = robot.trajectoryBuilder(traj2.end())
-                        .lineToLinearHeading(new Pose2d(xEnd+positions[0]+offsetApriltag, -(6+positions[1]+offsetApriltagY), Math.toRadians(-92)),
-                                SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                                SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
-                        )
-                        .build();
-                traj1pt2_2 = robot.trajectoryBuilder(traj1pt2.end())
-                        .back(2)
-                        .build();
-                lastX = xEnd+positions[0]+1;
-                lastY = 6+positions[1]-3;
-                lastH = Math.toRadians(90+positions[2]+2);
-                traj2pt2 = robot.trajectoryBuilder(traj1pt2_2.end())
-                        .lineToLinearHeading(new Pose2d(trusssX, -6, Math.toRadians(-92)))
-                        .build();
-                traj2pt3 = robot.trajectoryBuilder(traj2pt2.end())
-                        .lineToLinearHeading(new Pose2d(trusssX+8, 73, Math.toRadians(-92)))
-                        .build();
-                traj2pt4 = robot.trajectoryBuilder(traj2pt3.end())
-                        .lineToLinearHeading(new Pose2d(aprilTx, 76 , Math.toRadians(-92)))
-                        .build();
 
-                schedule(getAutonomousCommandStackOne(traj1pt2,traj1pt2_2, traj2pt2, traj2pt3, traj2pt4,deposit, blocker, lift, telemetry));
-                lastY = lastY-80;
-                end2 = false;
-                end3 = true;
-                inEnd = false;
-                visionPortal.close();
-                initAprilTag2();
-            }
-        }
 
-        if ((end3 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-aprilTx)<5 && Math.abs(robot.getPoseEstimate().getY()-(76))<5)||inEnd2) {
+        if ((end3 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-aprilTx)<5 && Math.abs(robot.getPoseEstimate().getY()-(-76))<5)||inEnd2) {
             inEnd2 = true;
-            positions2 = getPosition2(3-region);
+            positions2 = getPosition2(6-region);
             if (positions2.length > 0 && positions2[0] != 0) {
                 boardTraj1 = robot.trajectoryBuilder(traj2pt4.end())
-                        .lineToLinearHeading(new Pose2d(aprilTx+positions2[0]+offsetBackboard, -(-76-positions2[1]+9.7), Math.toRadians(-92)),
+                        .lineToLinearHeading(new Pose2d(aprilTx-positions2[0]+offsetBackboard, -76-positions2[1]+10, Math.toRadians(92)),
                                 SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                         )
@@ -371,10 +384,10 @@ public class TwoPlusOneAltBackboardBlue extends CommandOpMode {
                         .strafeRight(white)
                         .build();
                 backTraj3 = robot.trajectoryBuilder(boardTraj2.end())
-                        .strafeRight(park)
+                        .strafeLeft(park)
                         .build();
                 backTraj4 = robot.trajectoryBuilder(backTraj3.end())
-                        .strafeRight(park)
+                        .strafeLeft(park)
                         .build();
 
                 xEnd = 24;
@@ -551,6 +564,14 @@ public class TwoPlusOneAltBackboardBlue extends CommandOpMode {
     /**
      * Add telemetry about AprilTag detections.
      */
+
+
+
+
+
+
+
+
 
 
 }

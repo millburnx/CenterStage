@@ -38,8 +38,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @Config
-@Autonomous(name = "BackBoardRedAuton")
-public class BackBoardRedAuton extends CommandOpMode {
+@Autonomous(name = "DontBlink")
+public class DontBlink extends CommandOpMode {
     private final SubsystemsHardware subsystems = SubsystemsHardware.getInstance();
     private SampleMecanumDrive drive;
     private Intake intake;
@@ -156,40 +156,40 @@ public class BackBoardRedAuton extends CommandOpMode {
 
         if (end) {
             end = false;
-            if (region==2) {
+            if (region==0) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(31, 0, Math.toRadians(87)))
+                        .lineToLinearHeading(new Pose2d(31, 0, Math.toRadians(-87)))
                         .build();
                 traj1_1 = drive.trajectoryBuilder(traj1.end())
-                        .forward(3)
+                        .forward(4)
                         .build();
                 xEnd = 31;
-                offset = -1.5;
+                offset = 2.5;
             } else if (region ==1) {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(31, -1, Math.toRadians(-3)))
+                        .lineToLinearHeading(new Pose2d(31, 1, Math.toRadians(3)))
                         .build();
                 xEnd = 24.5;
-                offset = -2.5;
+                offset = 1;
             } else {
                 traj1 = drive.trajectoryBuilder(new Pose2d())
-                        .lineToLinearHeading(new Pose2d(35, -19.5, Math.toRadians(87)))
+                        .lineToLinearHeading(new Pose2d(33, 18.5, Math.toRadians(-87)))
                         .build();
                 xEnd = 20;
-                offset = -3;
+                offset = 3;
             }
 
 
 
-            if(region==2){
+            if(region==0){
                 traj2 = drive.trajectoryBuilder(traj1_1.end())
-                        .lineToLinearHeading(new Pose2d(xEnd, -29, Math.toRadians(87)))
+                        .lineToLinearHeading(new Pose2d(xEnd, 29, Math.toRadians(-87)))
                         .build();
                 auton1=getAutonomousCommand1Alt(traj1, traj1_1, traj2, deposit, blocker, lift, telemetry);
             }
             else{
                 traj2 = drive.trajectoryBuilder(traj1.end())
-                        .lineToLinearHeading(new Pose2d(xEnd, -29, Math.toRadians(87)))
+                        .lineToLinearHeading(new Pose2d(xEnd, 29, Math.toRadians(-87)))
                         .build();
                 auton1=getAutonomousCommand1(traj1, traj2, deposit, blocker, lift, telemetry);
             }
@@ -200,10 +200,10 @@ public class BackBoardRedAuton extends CommandOpMode {
         }
         telemetry.addData("auton1 finished: ", robot.isBusy());
         telemetry.addData("region: ", region);
-        if ((end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-xEnd)<2 && Math.abs(robot.getPoseEstimate().getY()+28)<2)||inEnd) {
+        if ((end2 && !robot.isBusy() && Math.abs(robot.getPoseEstimate().getX()-xEnd)<2 && Math.abs(robot.getPoseEstimate().getY()-29)<2)||inEnd) {
             inEnd = true;
             telemetry.addLine("STARTED SECOND STAGE");
-            positions = getPosition(6-region);
+            positions = getPosition(3-region);
             telemetry.addData("apriltag x: ", positions[0]);
             telemetry.addData("apriltag y: ", positions[1]);
             telemetry.addData("apriltag heading: ", positions[2]);
@@ -214,14 +214,14 @@ public class BackBoardRedAuton extends CommandOpMode {
                 telemetry.addData("apriltag heading terminal: ", positions[2]);
                 telemetry.update();
                 traj1pt2 = robot.trajectoryBuilder(traj2.end())
-                        .lineToLinearHeading(new Pose2d(xEnd-positions[0]+offset, -(29+positions[1] -9.5), Math.toRadians(87)),
+                        .lineToLinearHeading(new Pose2d(xEnd+positions[0]+offset, 29+positions[1] -10.5, Math.toRadians(-87)),
                                 SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                         )
                         .build();
                 traj2pt2 = robot.trajectoryBuilder(traj1pt2.end())
 //                        .forward(4)
-                        .lineToLinearHeading(new Pose2d(4, -34 , Math.toRadians(87)))
+                        .lineToLinearHeading(new Pose2d(50, 29+positions[1] -10.5-2 , Math.toRadians(-87+positions[2])))
                         .build();
                 traj2pt3 = robot.trajectoryBuilder(traj2pt2.end())
 //                        .lineToLinearHeading(new Pose2d(0.5, 30 , Math.toRadians(-87+positions[2])))\
@@ -231,7 +231,7 @@ public class BackBoardRedAuton extends CommandOpMode {
                         .back(6)
                         .build();
                 traj2pt5 = robot.trajectoryBuilder(traj2pt4.end())
-                        .lineToLinearHeading(new Pose2d(0.5, 30 , Math.toRadians(-87+positions[2])))
+                        .lineToLinearHeading(new Pose2d(33, 30 , Math.toRadians(-87+positions[2])))
                         .build();
                 schedule(getAutonomousCommand2(traj1pt2, traj2pt2, traj2pt3,traj2pt4,traj2pt5, deposit, blocker, lift, telemetry));
                 end2 = false;
